@@ -9,14 +9,13 @@ public class User
     public string Name { get; set; }
     public string FirstName { get; set; }
     public DateTime Birthday { get; set; }
-    public string Gender { get; set; }
+    public Gender Gender { get; set; }
     public string Email { get; set; }
     public string Phone { get; set; }
-    public string PasswordHash { get; set; }
-    public int Salt { get; set; }
+    public string? PasswordHash { get; set; }
     public UserRole Role { get; set; }
    
-    User(int id, string surname, string name, string firstName, DateTime birthday, string gender, string email, string phone, string passwordHash, int salt, UserRole role)
+    public User (int id, string surname, string name, string firstName, DateTime birthday, Gender gender, string email, string phone, string? passwordHash, UserRole role = UserRole.User)
     {
         Id = id;
         Surname = surname;
@@ -27,7 +26,35 @@ public class User
         Email = email;
         Phone = phone;
         PasswordHash = passwordHash;
-        Salt = salt;
         Role = role;
+    }
+
+    public User(int id, string surname, string name, string firstName, DateTime birthday, Gender gender, string email, string phone, UserRole role = UserRole.User)
+    {
+        Id = id;
+        Surname = surname;
+        Name = name;
+        FirstName = firstName;
+        Birthday = birthday;
+        Gender = gender;
+        Email = email;
+        Phone = phone;
+        PasswordHash = null;
+        Role = UserRole.User;
+    }
+
+    public void ChangePermission(UserRole role) 
+    {
+        Role = role;
+    }
+
+    public void CreateHash(string password) 
+    {
+        PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
+    }
+
+    public bool VerifyPassword(string password)
+    {
+        return BCrypt.Net.BCrypt.Verify(password, PasswordHash);
     }
 }

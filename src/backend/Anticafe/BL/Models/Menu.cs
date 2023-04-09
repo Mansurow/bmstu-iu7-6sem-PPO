@@ -10,7 +10,7 @@ public class Menu
     public double Price { get; set; }
     public string Description { get; set; }
 
-    Menu(int id, string name, DishType type, double price, string description)
+    public Menu (int id, string name, DishType type, double price, string description)
     {
         Id = id;
         Name = name;

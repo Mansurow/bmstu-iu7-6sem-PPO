@@ -9,13 +9,11 @@ public class Booking
     public int UserId { get; set; }
     public BookingStatus Status { get; set; }
     public DateTime StartTime { get; set; }
-    public DateTime EndTime { get; set; }
+    public DateTime EndTime { get; set; } 
 
-    // public TimeSpan TimeBooking { get; set; }
+    // Может  EndTime заменить на количество часов аренды, а не на когда заканчивается ...
 
-    // подумать про время !!!
-
-    Booking(int id, int roomId, int userId, BookingStatus status, DateTime startTime, DateTime dateTime)
+    public Booking(int id, int roomId, int userId, DateTime startTime, DateTime dateTime, BookingStatus status)
     {
         Id = id;
         RoomId = roomId;
@@ -23,5 +21,15 @@ public class Booking
         Status = status;
         StartTime = startTime;
         EndTime = dateTime;
+    }
+
+    public void ChangeStatus(BookingStatus status)
+    {
+        Status = status;
+    }
+
+    public bool IsBookingExpired()
+    {
+        return EndTime >= DateTime.UtcNow;
     }
 }

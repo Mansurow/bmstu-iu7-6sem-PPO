@@ -4,6 +4,7 @@ namespace Anticafe.BL.IRepositories
 {
     public interface IUserRepository
     {
+        Task<List<User>> GetAllUsersAsync();
         Task<User> GetUserByIdAsync(int userId);
         Task<User> GetUserByEmailAsync(string email);
         Task AddUserAsync(User createUser);

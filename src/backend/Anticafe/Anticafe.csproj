@@ -7,16 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="BL\Exceptions\" />
-    <Folder Include="BL\IRepositories\" />
     <Folder Include="BL\Services\UserService\" />
     <Folder Include="BL\Services\FeedbackService\" />
     <Folder Include="BL\Services\OauthService\" />
-    <Folder Include="BL\Services\RoomService\" />
     <Folder Include="BL\Services\BookingService\" />
   </ItemGroup>
 

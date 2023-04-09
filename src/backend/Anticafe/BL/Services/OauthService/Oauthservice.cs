@@ -1,5 +1,7 @@
-﻿using Anticafe.BL.IRepositories;
+﻿using Anticafe.BL.Exceptions;
+using Anticafe.BL.IRepositories;
 using Anticafe.BL.Models;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace Anticafe.BL.Sevices.OauthService
 {
@@ -7,7 +9,7 @@ namespace Anticafe.BL.Sevices.OauthService
     {
         private readonly IUserRepository _userRepository;
 
-        Oauthservice(IUserRepository userRepository)
+        public Oauthservice(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
@@ -17,24 +19,28 @@ namespace Anticafe.BL.Sevices.OauthService
             var userModel = await _userRepository.GetUserByEmailAsync(user.Email);
             if (userModel is not null)
             {
-                new Exception();
+                throw new UserLoginAlreadyExistsException($"User with login: {user.Email} already exists.");
             }
 
-            // Create Hash for password
+            user.CreateHash(password);
 
             await _userRepository.AddUserAsync(user);
         }
 
-        public async Task LogIn(string login, string password)
+        public async Task<User> LogIn(string login, string password)
         {
-            var userModel = await _userRepository.GetUserByEmailAsync(login);
-            if (userModel is null)
+            var user = await _userRepository.GetUserByEmailAsync(login);
+            if (user is null)
             {
-                new Exception();
+                throw new UserLoginNotFoundException($"User with login: {user.Email} not found.");
             }
-            // Verify password 
-            // Check password error password incorrect
-            // 
+
+            if (!user.VerifyPassword(password))
+            {
+                throw new IncorrectPasswordException("User password is incorrect.");
+            }
+
+            return user;
         }
     }
 }

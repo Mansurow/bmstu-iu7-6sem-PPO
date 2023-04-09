@@ -9,7 +9,7 @@ public class Feedback
     public int Mark { get; set; }
     public string? Message { get; set; }
 
-    Feedback(int id, int userId, int roomId, DateTime date, int mark, string? message)
+    public Feedback(int id, int userId, int roomId, DateTime date, int mark, string? message)
     {
         Id = id;
         UserId = userId;

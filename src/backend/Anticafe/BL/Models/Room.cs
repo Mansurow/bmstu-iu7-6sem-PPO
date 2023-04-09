@@ -10,7 +10,7 @@ public class Room
     public ICollection<Inventory>? Inventories { get; set; }
     public ICollection<Menu>? Menu { get; set; }
 
-    Room(int id, string name, int size, double price, double rating, ICollection<Inventory>? inventories, ICollection<Menu>? menu)
+    public Room(int id, string name, int size, double price, double rating, ICollection<Inventory>? inventories, ICollection<Menu>? menu)
     {
         Id = id;
         Name = name;
@@ -19,5 +19,31 @@ public class Room
         Rating = rating;
         Inventories = inventories;
         Menu = menu;
+    }
+
+    public void ChangeRating(double rating)
+    {
+        Rating = rating;
+    }
+    
+    public void ChangePrice(double price)
+    {
+        Price = price;
+    }
+
+    public void AddInventory(Inventory newInventory) 
+    {
+        if (Inventories == null)
+            Inventories = new List<Inventory>() { newInventory };
+        else
+            Inventories.Add(newInventory);
+    }
+
+    public void AddMenu(Menu newMenu)
+    {
+        if (Menu == null)
+            Menu = new List<Menu>() { newMenu };
+        else
+            Menu.Add(newMenu);
     }
 }

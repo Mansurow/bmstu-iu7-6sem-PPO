@@ -2,7 +2,7 @@
 
 public enum BookingStatus
 {
-    Free = 1,
+    TemporaryReserved = 1,
     Reserved = 2,
-    TemporaryReserved = 3
+    NoActual = 3
 }
