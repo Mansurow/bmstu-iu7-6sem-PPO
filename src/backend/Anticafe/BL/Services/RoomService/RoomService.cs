@@ -71,15 +71,6 @@ public class RoomService: IRoomService
         await UpdateRoomAsync(room);
     }
 
-    public async Task AddMenuForRoomAsync(int roomId, Menu menu)
-    {
-        var room = await GetRoomByIdAsync(roomId);
-
-        room.AddMenu(menu);
-
-        await UpdateRoomAsync(room);
-    }
-
     public async Task DeleteRoomAsync(int roomId)
     {
         if (!_RoomExists(roomId).Result)

@@ -10,5 +10,4 @@ public interface IRoomService
     Task UpdateRoomAsync(Room createRoom);
     Task DeleteRoomAsync(int roomId);
     Task AddInventoryForRoomAsync(int roomId, Inventory inventory);
-    Task AddMenuForRoomAsync(int roomId, Menu menu);
 }
