@@ -1,5 +1,4 @@
-﻿
-using Anticafe.BL.Models;
+﻿using Anticafe.BL.Models;
 using Anticafe.DataAccess.DBModels;
 
 namespace Anticafe.DataAccess.Converter

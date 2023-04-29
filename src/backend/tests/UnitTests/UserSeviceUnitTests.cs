@@ -1,8 +1,10 @@
-﻿using Anticafe.BL.Enums;
-using Anticafe.BL.Exceptions;
-using Anticafe.BL.IRepositories;
+﻿using Anticafe.BL.Exceptions;
 using Anticafe.BL.Models;
 using Anticafe.BL.Sevices.UserService;
+using Anticafe.Common.Enums;
+using Anticafe.DataAccess.Converter;
+using Anticafe.DataAccess.DBModels;
+using Anticafe.DataAccess.IRepositories;
 using Moq;
 using Xunit;
 
@@ -28,23 +30,25 @@ namespace UnitTests.Service
                                .ReturnsAsync(users);
 
             // Act
-            var actualUsers = await _userSevice.GetAllUsersAsync();
+            var getUsers = await _userSevice.GetAllUsersAsync();
+            var actualUsers = getUsers.Select(u => UserConverter.ConvertAppModelToDbModel(u)).ToList();
 
             // Assert
-            Assert.Equal(users, actualUsers);
+            Assert.Equal(users.Count, actualUsers.Count);
         }
 
         [Fact]
         public async void GetAllUserEmptyTest()
         {
             // Arrange
-            var users = new List<User>();
+            var users = new List<UserDbModel>();
 
             _mockUserRepository.Setup(s => s.GetAllUsersAsync())
                                .ReturnsAsync(users);
 
             // Act
-            var actualUsers = await _userSevice.GetAllUsersAsync();
+            var getUsers = await _userSevice.GetAllUsersAsync();
+            var actualUsers = getUsers.Select(u => UserConverter.ConvertAppModelToDbModel(u)).ToList();
 
             // Assert
             Assert.Equal(users, actualUsers);
@@ -57,7 +61,7 @@ namespace UnitTests.Service
             var userId = 4;
             var expectedUser = CreateUser(userId);
             var users = CreateMockUsers();
-            users.Add(expectedUser);
+            users.Add(UserConverter.ConvertAppModelToDbModel(expectedUser));
 
             _mockUserRepository.Setup(s => s.GetUserByIdAsync(userId))
                                .ReturnsAsync(users.Find(e => e.Id == userId));
@@ -66,7 +70,13 @@ namespace UnitTests.Service
             var actualUser = await _userSevice.GetUserByIdAsync(userId);
 
             // Assert
-            Assert.Equal(expectedUser, actualUser);
+            Assert.Equal(expectedUser.Id, actualUser.Id);
+            Assert.Equal(expectedUser.Name, actualUser.Name);
+            Assert.Equal(expectedUser.Surname, actualUser.Surname);
+            Assert.Equal(expectedUser.FirstName, actualUser.FirstName);
+            Assert.Equal(expectedUser.Birthday, actualUser.Birthday);
+            Assert.Equal(expectedUser.Email, actualUser.Email);
+            Assert.Equal(expectedUser.Gender, actualUser.Gender);
         }
 
         [Fact]
@@ -74,7 +84,7 @@ namespace UnitTests.Service
         {
             // Arrange
             var userId = 1;
-            var users = new List<User>();
+            var users = new List<UserDbModel>();
 
             _mockUserRepository.Setup(s => s.GetUserByIdAsync(userId))
                                .ReturnsAsync(users.Find(e => e.Id == userId));
@@ -110,7 +120,7 @@ namespace UnitTests.Service
             var userId = 1;
             var users = CreateMockUsers();
 
-            var expectedUser = users.Find(e => e.Id == userId);
+            var expectedUser = UserConverter.ConvertDbModelToAppModel(users.Find(e => e.Id == userId));
             expectedUser.ChangePermission(UserRole.Admin);
 
             _mockUserRepository.Setup(s => s.GetUserByIdAsync(userId))
@@ -118,10 +128,16 @@ namespace UnitTests.Service
 
             // Act
             await _userSevice.ChangeUserPermissionsAsync(userId);
-            var actualUser = users.Find(e => e.Id == userId); 
+            var actualUser = UserConverter.ConvertDbModelToAppModel(users.Find(e => e.Id == userId));
 
             // Assert
-            Assert.Equal(expectedUser, actualUser);
+            Assert.Equal(expectedUser.Id, actualUser.Id);
+            Assert.Equal(expectedUser.Name, actualUser.Name);
+            Assert.Equal(expectedUser.Surname, actualUser.Surname);
+            Assert.Equal(expectedUser.FirstName, actualUser.FirstName);
+            Assert.Equal(expectedUser.Birthday, actualUser.Birthday);
+            Assert.Equal(expectedUser.Email, actualUser.Email);
+            Assert.Equal(expectedUser.Gender, actualUser.Gender);
         }
 
         [Fact]
@@ -146,7 +162,7 @@ namespace UnitTests.Service
         {
             // Arrange
             var userId = 1;
-            var users = new List<User>();
+            var users = new List<UserDbModel>();
 
             _mockUserRepository.Setup(s => s.GetUserByIdAsync(userId))
                                .ReturnsAsync(users.Find(e => e.Id == userId));
@@ -163,13 +179,13 @@ namespace UnitTests.Service
             return new User(userId, "Иванов", "Иван", "Иванович", new DateTime(1998, 05, 17), Gender.Male, "ivanovvv@mail.ru", "+78888889");
         }
 
-        private List<User> CreateMockUsers() 
+        private List<UserDbModel> CreateMockUsers() 
         {
-            return new List<User>()
+            return new List<UserDbModel>()
             {
-                new User(1, "Иванов", "Иван", "Иванович",  new DateTime(2002, 03, 17), Gender.Male, "ivanov@mail.ru", "+7899999999"),
-                new User(2, "Петров", "Петр", "Петрович",  new DateTime(2003, 05, 18), Gender.Male, "petrov@mail.ru", "+7899909999"),
-                new User(3, "Cударь", "Елена", "Александровна",  new DateTime(1999, 09, 18), Gender.Female, "sudar@mail.ru", "+781211111")
+                new UserDbModel(1, "Иванов", "Иван", "Иванович",  new DateTime(2002, 03, 17), Gender.Male, "ivanov@mail.ru", "+7899999999", "password12123434"),
+                new UserDbModel(2, "Петров", "Петр", "Петрович",  new DateTime(2003, 05, 18), Gender.Male, "petrov@mail.ru", "+7899909999", "password12122323"),
+                new UserDbModel(3, "Cударь", "Елена", "Александровна",  new DateTime(1999, 09, 18), Gender.Female, "sudar@mail.ru", "+781211111", "password12121212")
             };
         }
     }

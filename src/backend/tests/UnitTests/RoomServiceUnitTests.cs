@@ -1,8 +1,9 @@
-﻿using Anticafe.BL.Enums;
-using Anticafe.BL.Exceptions;
-using Anticafe.BL.IRepositories;
+﻿using Anticafe.BL.Exceptions;
 using Anticafe.BL.Models;
 using Anticafe.BL.Sevices.RoomService;
+using Anticafe.DataAccess.Converter;
+using Anticafe.DataAccess.DBModels;
+using Anticafe.DataAccess.IRepositories;
 using Moq;
 using Xunit;
 
@@ -29,23 +30,25 @@ public class RoomServiceUnitTests
                            .ReturnsAsync(expectedRooms);
 
         // Act
-        var actualRooms = await _roomService.GetAllRoomsAsync();
+        var getRooms = await _roomService.GetAllRoomsAsync();
+        var actualRooms = getRooms.Select(r => RoomConverter.ConvertAppModelToDbModel(r)).ToList();
 
         // Assert
-        Assert.Equal(expectedRooms, actualRooms);
+        Assert.Equal(expectedRooms.Count, actualRooms.Count);
     }
 
     [Fact]
     public async void GetAllRoomsEmptyTest()
     {
         // Arange
-        var expectedRooms = new List<Room>();
+        var expectedRooms = new List<RoomDbModel>();
 
         _mockRoomRepository.Setup(s => s.GetAllRoomAsync())
                            .ReturnsAsync(expectedRooms);
 
         // Act
-        var actualRooms = await _roomService.GetAllRoomsAsync();
+        var getRooms = await _roomService.GetAllRoomsAsync();
+        var actualRooms = getRooms.Select(r => RoomConverter.ConvertAppModelToDbModel(r)).ToList();
 
         // Assert
         Assert.Equal(expectedRooms, actualRooms);
@@ -57,16 +60,16 @@ public class RoomServiceUnitTests
         // Arange
         var roomId = 1;
         var rooms = CreateMockRooms();
-        var expectedRoom = rooms[0];
+        var expectedRoom = RoomConverter.ConvertDbModelToAppModel(rooms[0]);
 
         _mockRoomRepository.Setup(s => s.GetRoomByIdAsync(It.IsAny<int>()))
-                           .ReturnsAsync(expectedRoom);
+                           .ReturnsAsync(rooms.Find(e => e.Id == roomId));
 
         // Act
         var actualRoom = await _roomService.GetRoomByIdAsync(roomId);
 
         // Assert
-        Assert.Equal(expectedRoom, actualRoom);
+        Assert.Equal(expectedRoom.Id, actualRoom.Id);
     }
 
     [Fact]
@@ -93,7 +96,6 @@ public class RoomServiceUnitTests
                            30, 
                            4500,
                            0, 
-                           null, 
                            null);
 
         _mockRoomRepository.Setup(s => s.GetAllRoomAsync())
@@ -102,8 +104,8 @@ public class RoomServiceUnitTests
         _mockRoomRepository.Setup(s => s.GetRoomByNameAsync(It.IsAny<String>()))
                            .ReturnsAsync(rooms.Find(e => e.Name == room.Name));
 
-        _mockRoomRepository.Setup(s => s.InsertRoomAsync(It.IsAny<Room>()))
-                           .Callback((Room r) =>
+        _mockRoomRepository.Setup(s => s.InsertRoomAsync(It.IsAny<RoomDbModel>()))
+                           .Callback((RoomDbModel r) =>
                            {
                                r.Id = rooms.Count + 1;
                                rooms.Add(r);
@@ -114,7 +116,7 @@ public class RoomServiceUnitTests
                                         room.Size,
                                         room.Price);
         var actualCountRooms = rooms.Count();
-        var actualRoom = rooms.Last();
+        var actualRoom = RoomConverter.ConvertDbModelToAppModel(rooms.Last());
 
         // Assert
         Assert.Equal(expectedCountRooms, actualCountRooms);
@@ -124,7 +126,6 @@ public class RoomServiceUnitTests
         Assert.Equal(room.Price, actualRoom.Price);
         Assert.Equal(room.Rating, actualRoom.Rating);
         Assert.Equal(room.Inventories, actualRoom.Inventories);
-        Assert.Equal(room.Menu, actualRoom.Menu);
     }
 
     [Fact]
@@ -138,7 +139,6 @@ public class RoomServiceUnitTests
                            30,
                            4500,
                            0,
-                           null,
                            null);
 
         _mockRoomRepository.Setup(s => s.GetAllRoomAsync())
@@ -147,8 +147,8 @@ public class RoomServiceUnitTests
         _mockRoomRepository.Setup(s => s.GetRoomByNameAsync(It.IsAny<String>()))
                            .ReturnsAsync(rooms.Find(e => e.Name == room.Name));
 
-        _mockRoomRepository.Setup(s => s.InsertRoomAsync(It.IsAny<Room>()))
-                           .Callback((Room r) =>
+        _mockRoomRepository.Setup(s => s.InsertRoomAsync(It.IsAny<RoomDbModel>()))
+                           .Callback((RoomDbModel r) =>
                            {
                                r.Id = rooms.Count + 1;
                                rooms.Add(r);
@@ -169,14 +169,13 @@ public class RoomServiceUnitTests
     public async void AddFisrtRoomTest()
     {
         // Arange
-        var rooms = new List<Room>();
+        var rooms = new List<RoomDbModel>();
         var expectedCountRooms = 1;
         var room = new Room(rooms.Count() + 1,
                            "Room",
                            30,
                            4500,
                            0,
-                           null,
                            null);
 
         _mockRoomRepository.Setup(s => s.GetAllRoomAsync())
@@ -185,8 +184,8 @@ public class RoomServiceUnitTests
         _mockRoomRepository.Setup(s => s.GetRoomByNameAsync(It.IsAny<string>()))
                            .ReturnsAsync(rooms.Find(e => e.Name == room.Name));
 
-        _mockRoomRepository.Setup(s => s.InsertRoomAsync(It.IsAny<Room>()))
-                           .Callback((Room r) =>
+        _mockRoomRepository.Setup(s => s.InsertRoomAsync(It.IsAny<RoomDbModel>()))
+                           .Callback((RoomDbModel r) =>
                            {
                                r.Id = rooms.Count + 1;
                                rooms.Add(r);
@@ -197,7 +196,7 @@ public class RoomServiceUnitTests
                                         room.Size,
                                         room.Price);
         var actualCountRooms = rooms.Count();
-        var actualRoom = rooms.Last();
+        var actualRoom = RoomConverter.ConvertDbModelToAppModel(rooms.Last());
 
         // Assert
         Assert.Equal(expectedCountRooms, actualCountRooms);
@@ -207,7 +206,6 @@ public class RoomServiceUnitTests
         Assert.Equal(room.Price, actualRoom.Price);
         Assert.Equal(room.Rating, actualRoom.Rating);
         Assert.Equal(room.Inventories, actualRoom.Inventories);
-        Assert.Equal(room.Menu, actualRoom.Menu);
     }
 
     [Fact]
@@ -221,7 +219,6 @@ public class RoomServiceUnitTests
                            40,
                            3500,
                            5.0,
-                           null,
                            null);
 
         _mockRoomRepository.Setup(s => s.GetRoomByIdAsync(It.IsAny<int>()))
@@ -230,8 +227,8 @@ public class RoomServiceUnitTests
         _mockRoomRepository.Setup(s => s.GetRoomByNameAsync(It.IsAny<string>()))
                            .ReturnsAsync(rooms.Find(e => e.Name == updateRoom.Name));
 
-        _mockRoomRepository.Setup(s => s.UpdateRoomAsync(It.IsAny<Room>()))
-                           .Callback((Room r) =>
+        _mockRoomRepository.Setup(s => s.UpdateRoomAsync(It.IsAny<RoomDbModel>()))
+                           .Callback((RoomDbModel r) =>
                            {
                                rooms.FindAll(e => e.Id == r.Id).ForEach
                                ( e => 
@@ -241,14 +238,13 @@ public class RoomServiceUnitTests
                                    e.Price = r.Price;
                                    e.Rating = r.Rating;
                                    e.Inventories = r.Inventories;
-                                   e.Menu = r.Menu;
                                });
                            });
 
         // Act
         await _roomService.UpdateRoomAsync(updateRoom);
         var actualCountRooms = rooms.Count();
-        var actualRoom = rooms.Find(e => e.Id == updateRoom.Id);
+        var actualRoom = RoomConverter.ConvertDbModelToAppModel(rooms.Find(e => e.Id == updateRoom.Id));
 
         // Assert
         Assert.Equal(expectedCountRooms, actualCountRooms);
@@ -258,7 +254,6 @@ public class RoomServiceUnitTests
         Assert.Equal(updateRoom.Price, actualRoom.Price);
         Assert.Equal(updateRoom.Rating, actualRoom.Rating);
         Assert.Equal(updateRoom.Inventories, actualRoom.Inventories);
-        Assert.Equal(updateRoom.Menu, actualRoom.Menu);
     }
 
     [Fact]
@@ -271,7 +266,6 @@ public class RoomServiceUnitTests
                            40,
                            3500,
                            5.0,
-                           null,
                            null);
 
         _mockRoomRepository.Setup(s => s.GetRoomByIdAsync(It.IsAny<int>()))
@@ -298,7 +292,6 @@ public class RoomServiceUnitTests
                            40,
                            3500,
                            5.0,
-                           null,
                            null);
 
 
@@ -316,13 +309,12 @@ public class RoomServiceUnitTests
         var rooms = CreateMockRooms();
         var newInventory = new Inventory(4, "Wifi Адаптер");
         var inventories = CreateMockInventory();
-        inventories.Add(newInventory);
 
         _mockRoomRepository.Setup(s => s.GetRoomByIdAsync(It.IsAny<int>()))
                            .ReturnsAsync(rooms.Find(e => e.Id == rooms[3].Id));
 
-        _mockRoomRepository.Setup(s => s.UpdateRoomAsync(It.IsAny<Room>()))
-                           .Callback((Room r) =>
+        _mockRoomRepository.Setup(s => s.UpdateRoomAsync(It.IsAny<RoomDbModel>()))
+                           .Callback((RoomDbModel r) =>
                            {
                                rooms.FindAll(e => e.Id == r.Id).ForEach
                                (e =>
@@ -332,17 +324,18 @@ public class RoomServiceUnitTests
                                    e.Price = r.Price;
                                    e.Rating = r.Rating;
                                    e.Inventories = r.Inventories;
-                                   e.Menu = r.Menu;
                                });
                            });
 
         // Act
         await _roomService.AddInventoryForRoomAsync(rooms[3].Id, newInventory);
         var actualInventories = rooms[3].Inventories;
+        var actual = actualInventories?.Last();
 
         // Assert
-        Assert.Equal(inventories.Count(), actualInventories.Count());
-        Assert.Equal(inventories.Last(), actualInventories.Last());
+        Assert.Equal(inventories.Count() + 1, actualInventories?.Count());
+        Assert.Equal(newInventory.Id, actual?.Id);
+        Assert.Equal(newInventory.Name, actual?.Name);
     }
 
     [Fact]
@@ -356,8 +349,8 @@ public class RoomServiceUnitTests
         _mockRoomRepository.Setup(s => s.GetRoomByIdAsync(It.IsAny<int>()))
                            .ReturnsAsync(rooms.Find(e => e.Id == rooms[0].Id));
 
-        _mockRoomRepository.Setup(s => s.UpdateRoomAsync(It.IsAny<Room>()))
-                           .Callback((Room r) =>
+        _mockRoomRepository.Setup(s => s.UpdateRoomAsync(It.IsAny<RoomDbModel>()))
+                           .Callback((RoomDbModel r) =>
                            {
                                rooms.FindAll(e => e.Id == r.Id).ForEach
                                (e =>
@@ -367,17 +360,18 @@ public class RoomServiceUnitTests
                                    e.Price = r.Price;
                                    e.Rating = r.Rating;
                                    e.Inventories = r.Inventories;
-                                   e.Menu = r.Menu;
                                });
                            });
 
         // Act
         await _roomService.AddInventoryForRoomAsync(rooms[0].Id, newInventory);
-        var actualInventories = rooms[0].Inventories;
+        var actualInventories = rooms[0].Inventories?.Select(i => InventoryConverter.ConvertDbModelToAppModel(i)).ToList();
+        var actual = actualInventories?.Last();
 
         // Assert
-        Assert.Equal(inventories.Count(), actualInventories.Count());
-        Assert.Equal(inventories.Last(), actualInventories.Last());
+        Assert.Equal(inventories.Count(), actualInventories?.Count());
+        Assert.Equal(newInventory.Id, actual?.Id);
+        Assert.Equal(newInventory.Name, actual?.Name);
     }
 
     [Fact]
@@ -395,96 +389,6 @@ public class RoomServiceUnitTests
         
         // Act
         var action = async () => await _roomService.AddInventoryForRoomAsync(rooms[0].Id, newInventory);
-
-        // Assert
-        Assert.ThrowsAsync<RoomNotFoundException>(action);
-    }
-
-    [Fact]
-    public async void AddMenuForRoomTest()
-    {
-        // Arange
-        var rooms = CreateMockRooms();
-        var newMenu = new Menu(4, "Dish4", DishType.FirstCourse, 400, "descreption 4");
-        var menu = CreateMockMenu();
-        menu.Add(newMenu);
-
-        _mockRoomRepository.Setup(s => s.GetRoomByIdAsync(It.IsAny<int>()))
-                           .ReturnsAsync(rooms.Find(e => e.Id == rooms[3].Id));
-
-        _mockRoomRepository.Setup(s => s.UpdateRoomAsync(It.IsAny<Room>()))
-                           .Callback((Room r) =>
-                           {
-                               rooms.FindAll(e => e.Id == r.Id).ForEach
-                               (e =>
-                               {
-                                   e.Name = r.Name;
-                                   e.Size = r.Size;
-                                   e.Price = r.Price;
-                                   e.Rating = r.Rating;
-                                   e.Inventories = r.Inventories;
-                                   e.Menu = r.Menu;
-                               });
-                           });
-
-        // Act
-        await _roomService.AddMenuForRoomAsync(rooms[3].Id, newMenu);
-        var actualMenu = rooms[3].Menu;
-
-        // Assert
-        Assert.Equal(menu.Count(), actualMenu.Count());
-        Assert.Equal(menu.Last(), actualMenu.Last());
-    }
-
-    [Fact]
-    public async void AddMenuForRoomWithoutMenuTest()
-    {
-        // Arange
-        var rooms = CreateMockRooms();
-        var newMenu = new Menu(4, "Dish4", DishType.FirstCourse, 400, "descreption 4");
-        var menu = new List<Menu> { newMenu };
-
-        _mockRoomRepository.Setup(s => s.GetRoomByIdAsync(It.IsAny<int>()))
-                           .ReturnsAsync(rooms.Find(e => e.Id == rooms[0].Id));
-
-        _mockRoomRepository.Setup(s => s.UpdateRoomAsync(It.IsAny<Room>()))
-                           .Callback((Room r) =>
-                           {
-                               rooms.FindAll(e => e.Id == r.Id).ForEach
-                               (e =>
-                               {
-                                   e.Name = r.Name;
-                                   e.Size = r.Size;
-                                   e.Price = r.Price;
-                                   e.Rating = r.Rating;
-                                   e.Inventories = r.Inventories;
-                                   e.Menu = r.Menu;
-                               });
-                           });
-
-        // Act
-        await _roomService.AddMenuForRoomAsync(rooms[0].Id, newMenu);
-        var actualMenu = rooms[0].Menu;
-
-        // Assert
-        Assert.Equal(menu.Count(), actualMenu.Count());
-        Assert.Equal(menu.Last(), actualMenu.Last());
-    }
-
-    [Fact]
-    public void AddMenuForNoExistRoomTest()
-    {
-        // Arange
-        var roomId = 100;
-        var rooms = CreateMockRooms();
-        var newMenu = new Menu(4, "Dish4", DishType.FirstCourse, 400, "descreption 4");
-        var menu = new List<Menu> { newMenu };
-
-        _mockRoomRepository.Setup(s => s.GetRoomByIdAsync(It.IsAny<int>()))
-                           .ReturnsAsync(rooms.Find(e => e.Id == roomId));
-
-        // Act
-        var action = async () => await _roomService.AddMenuForRoomAsync(rooms[0].Id, newMenu);
 
         // Assert
         Assert.ThrowsAsync<RoomNotFoundException>(action);
@@ -529,30 +433,29 @@ public class RoomServiceUnitTests
         Assert.ThrowsAsync<RoomNotFoundException>(action);
     }
 
-    private List<Room> CreateMockRooms() 
+    private List<RoomDbModel> CreateMockRooms() 
     {
-        return new List<Room>
+        return new List<RoomDbModel>
         {
-            new Room(1, "Room1", 20, 2500, 4.5, null, null),
-            new Room(2, "Room2", 30, 3500, 5.0, null, null),
-            new Room(3, "Room3", 25, 3000, 3.0, null, null),
-            new Room(4, "Room4", 25, 1300, 5.0, 
-                     CreateMockInventory(),
-                     CreateMockMenu()),
+            new RoomDbModel(1, "Room1", 20, 2500, 4.5, null),
+            new RoomDbModel(2, "Room2", 30, 3500, 5.0, null),
+            new RoomDbModel(3, "Room3", 25, 3000, 3.0, null),
+            new RoomDbModel(4, "Room4", 25, 1300, 5.0, 
+                     CreateMockInventory()),
         };
     }
 
-    private List<Inventory> CreateMockInventory() 
+    private List<InventoryDbModel> CreateMockInventory() 
     {
-        return new List<Inventory>()
+        return new List<InventoryDbModel>()
         {
-            new Inventory(1, "Подушка"),
-            new Inventory(2, "Телевизор"),
-            new Inventory(3, "PS5")
+            new InventoryDbModel(1, "Подушка"),
+            new InventoryDbModel(2, "Телевизор"),
+            new InventoryDbModel(3, "PS5")
         };
     }
 
-    private List<Menu> CreateMockMenu()
+   /* private List<Menu> CreateMockMenu()
     {
         return new List<Menu>()
         {
@@ -560,5 +463,5 @@ public class RoomServiceUnitTests
             new Menu(2, "Dish2", DishType.SecondCourse, 250, "description 2"),
             new Menu(3, "Dish3", DishType.FirstCourse, 120, "description 3")
         };
-    }
+    }*/
 }

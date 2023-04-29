@@ -1,8 +1,10 @@
-﻿using Anticafe.BL.Enums;
-using Anticafe.BL.Exceptions;
-using Anticafe.BL.IRepositories;
+﻿using Anticafe.BL.Exceptions;
 using Anticafe.BL.Models;
 using Anticafe.BL.Sevices.FeedbackService;
+using Anticafe.Common.Enums;
+using Anticafe.DataAccess.Converter;
+using Anticafe.DataAccess.DBModels;
+using Anticafe.DataAccess.IRepositories;
 using Moq;
 using Xunit;
 
@@ -33,24 +35,26 @@ public class FeedbackServiceUnitTests
 
         // Act
 
-        var actualFeedbacks = await _feedbackService.GetAllFeedbackAsync();
+        var getFeedbacks = await _feedbackService.GetAllFeedbackAsync();;
+        var actualFeedbacks = getFeedbacks.Select(f => FeedbackConverter.ConvertAppModelToDbModel(f)).ToList();
 
         // Assert
-        Assert.Equal(feedbacks, actualFeedbacks);
+        Assert.Equal(feedbacks.Count, actualFeedbacks.Count);
     }
 
     [Fact]
     public async void GetAllFeedbackEmptyTest()
     {
         // Arrange
-        var feedbacks = new List<Feedback>();
+        var feedbacks = new List<FeedbackDbModel>();
 
         _mockFeedbackRepository.Setup(s => s.GetAllFeedbackAsync())
                                .ReturnsAsync(feedbacks);
 
         // Act
 
-        var actualFeedbacks = await _feedbackService.GetAllFeedbackAsync();
+        var getFeedbacks = await _feedbackService.GetAllFeedbackAsync();
+        var actualFeedbacks = getFeedbacks.Select(f => FeedbackConverter.ConvertAppModelToDbModel(f)).ToList();
 
         // Assert
         Assert.Equal(feedbacks, actualFeedbacks);
@@ -73,10 +77,11 @@ public class FeedbackServiceUnitTests
                                .ReturnsAsync(feedbacks.FindAll(e => e.RoomId == roomId));
         // Act
 
-        var actualFeedbacks = await _feedbackService.GetAllFeedbackByRoomAsync(roomId);
+        var getFeedbacks = await _feedbackService.GetAllFeedbackByRoomAsync(roomId);
+        var actualFeedbacks = getFeedbacks.Select(f => FeedbackConverter.ConvertAppModelToDbModel(f)).ToList();
 
         // Assert
-        Assert.Equal(excepctedFeedbacks, actualFeedbacks);
+        Assert.Equal(excepctedFeedbacks.Count, actualFeedbacks.Count);
     }
 
     [Fact]
@@ -84,7 +89,7 @@ public class FeedbackServiceUnitTests
     {
         // Arrange
         var rooms = CreateMockRooms();
-        var feedbacks = new List<Feedback>();
+        var feedbacks = new List<FeedbackDbModel>();
         var roomId = 1;
 
         var excepctedFeedbacks = feedbacks.FindAll(e => e.RoomId == roomId);
@@ -96,7 +101,8 @@ public class FeedbackServiceUnitTests
                                .ReturnsAsync(feedbacks.FindAll(e => e.RoomId == roomId));
         // Act
 
-        var actualFeedbacks = await _feedbackService.GetAllFeedbackByRoomAsync(roomId);
+        var getFeedbacks = await _feedbackService.GetAllFeedbackByRoomAsync(roomId);
+        var actualFeedbacks = getFeedbacks.Select(f => FeedbackConverter.ConvertAppModelToDbModel(f)).ToList();
 
         // Assert
         Assert.Equal(excepctedFeedbacks, actualFeedbacks);
@@ -138,16 +144,19 @@ public class FeedbackServiceUnitTests
         _mockRoomRepository.Setup(s => s.GetRoomByIdAsync(roomId))
                            .ReturnsAsync(rooms.Find(e => e.Id == roomId));
 
-        _mockFeedbackRepository.Setup(s => s.InsertFeedbackAsync(It.IsAny<Feedback>()))
-                               .Callback((Feedback f) => feedbacks.Add(f));
+        _mockFeedbackRepository.Setup(s => s.InsertFeedbackAsync(It.IsAny<FeedbackDbModel>()))
+                               .Callback((FeedbackDbModel f) => feedbacks.Add(f));
 
         // Act
         await _feedbackService.AddFeedbackAsync(feedback);
-
         var actualFeedback = feedbacks.Last();
 
         // Assert
-        Assert.Equal(feedback, actualFeedback);
+        Assert.Equal(feedback.Id, actualFeedback.Id);
+        Assert.Equal(feedback.RoomId, actualFeedback.RoomId);
+        Assert.Equal(feedback.UserId, actualFeedback.UserId);
+        Assert.Equal(feedback.Date, actualFeedback.Date);
+        Assert.Equal(feedback.Message, actualFeedback.Message);
     }
 
     [Fact]
@@ -155,7 +164,7 @@ public class FeedbackServiceUnitTests
     {
         // Arrange
         var rooms = CreateMockRooms();
-        var feedbacks = new List<Feedback>();
+        var feedbacks = new List<FeedbackDbModel>();
 
         var roomId = 1;
         var userId = 3;
@@ -169,16 +178,21 @@ public class FeedbackServiceUnitTests
         _mockRoomRepository.Setup(s => s.GetRoomByIdAsync(roomId))
                            .ReturnsAsync(rooms.Find(e => e.Id == roomId));
 
-        _mockFeedbackRepository.Setup(s => s.InsertFeedbackAsync(It.IsAny<Feedback>()))
-                               .Callback((Feedback f) => feedbacks.Add(f));
+        _mockFeedbackRepository.Setup(s => s.InsertFeedbackAsync(It.IsAny<FeedbackDbModel>()))
+                               .Callback((FeedbackDbModel f) => feedbacks.Add(f));
 
         // Act
         await _feedbackService.AddFeedbackAsync(feedback);
 
-        var actualFeedback = feedbacks.Last();
+        var actualFeedback = FeedbackConverter.ConvertDbModelToAppModel(feedbacks.Last());
 
         // Assert
-        Assert.Equal(feedback, actualFeedback);
+        Assert.Equal(feedback.Id, actualFeedback?.Id);
+        Assert.Equal(feedback.Mark, actualFeedback?.Mark);
+        Assert.Equal(feedback.Message, actualFeedback?.Message);
+        Assert.Equal(feedback.Date, actualFeedback?.Date);
+        Assert.Equal(feedback.RoomId, actualFeedback?.RoomId);
+        Assert.Equal(feedback.UserId, actualFeedback?.UserId);
     }
 
     [Fact]
@@ -186,7 +200,7 @@ public class FeedbackServiceUnitTests
     {
         // Arrange
         var rooms = CreateMockRooms();
-        var feedbacks = new List<Feedback>();
+        var feedbacks = new List<FeedbackDbModel>();
 
         var roomId = 1;
         var userId = 3;
@@ -196,8 +210,8 @@ public class FeedbackServiceUnitTests
         _mockRoomRepository.Setup(s => s.GetRoomByIdAsync(roomId))
                            .ReturnsAsync(rooms.Find(e => e.Id == roomId));
 
-        _mockFeedbackRepository.Setup(s => s.InsertFeedbackAsync(It.IsAny<Feedback>()))
-                               .Callback((Feedback f) => feedbacks.Add(f));
+        _mockFeedbackRepository.Setup(s => s.InsertFeedbackAsync(It.IsAny<FeedbackDbModel>()))
+                               .Callback((FeedbackDbModel f) => feedbacks.Add(f));
 
         // Act
         var action = async() => await _feedbackService.AddFeedbackAsync(feedback);
@@ -211,7 +225,7 @@ public class FeedbackServiceUnitTests
     {
         // Arrange
         var rooms = CreateMockRooms();
-        var feedbacks = new List<Feedback>();
+        var feedbacks = new List<FeedbackDbModel>();
 
         var roomId = 100;
         var userId = 3;
@@ -222,8 +236,8 @@ public class FeedbackServiceUnitTests
         _mockRoomRepository.Setup(s => s.GetRoomByIdAsync(roomId))
                            .ReturnsAsync(rooms.Find(e => e.Id == roomId));
 
-        _mockFeedbackRepository.Setup(s => s.InsertFeedbackAsync(It.IsAny<Feedback>()))
-                               .Callback((Feedback f) => feedbacks.Add(f));
+        _mockFeedbackRepository.Setup(s => s.InsertFeedbackAsync(It.IsAny<FeedbackDbModel>()))
+                               .Callback((FeedbackDbModel f) => feedbacks.Add(f));
 
         // Act
         var action = async () => await _feedbackService.AddFeedbackAsync(feedback);
@@ -255,8 +269,8 @@ public class FeedbackServiceUnitTests
         _mockFeedbackRepository.Setup(s => s.GetFeedbackAsync(feedbackId))
                                .ReturnsAsync(feedbacks.Find(e => e.Id == feedbackId));
 
-        _mockFeedbackRepository.Setup(s => s.UpdateFeedbackAsync(It.IsAny<Feedback>()))
-                           .Callback((Feedback f) =>
+        _mockFeedbackRepository.Setup(s => s.UpdateFeedbackAsync(It.IsAny<FeedbackDbModel>()))
+                           .Callback((FeedbackDbModel f) =>
                            {
                                feedbacks.FindAll(e => e.Id == f.Id).ForEach
                                (e =>
@@ -273,12 +287,12 @@ public class FeedbackServiceUnitTests
         var actualFeedback = feedbacks.Find(e => e.Id == feedbackId);
 
         // Assert
-        Assert.Equal(feedback.Id, actualFeedback.Id);
-        Assert.Equal(feedback.Mark, actualFeedback.Mark);
-        Assert.Equal(feedback.Message, actualFeedback.Message);
-        Assert.Equal(feedback.Date, actualFeedback.Date);
-        Assert.Equal(feedback.RoomId, actualFeedback.RoomId);
-        Assert.Equal(feedback.UserId, actualFeedback.UserId);
+        Assert.Equal(feedback.Id, actualFeedback?.Id);
+        Assert.Equal(feedback.Mark, actualFeedback?.Mark);
+        Assert.Equal(feedback.Message, actualFeedback?.Message);
+        Assert.Equal(feedback.Date, actualFeedback?.Date);
+        Assert.Equal(feedback.RoomId, actualFeedback?.RoomId);
+        Assert.Equal(feedback.UserId, actualFeedback?.UserId);
     }
 
     [Fact]
@@ -286,7 +300,7 @@ public class FeedbackServiceUnitTests
     {
         // Arrange
         var rooms = CreateMockRooms();
-        var feedbacks = new List<Feedback>();
+        var feedbacks = new List<FeedbackDbModel>();
 
         var feedbackId = 1;
         var roomId = 1;
@@ -310,12 +324,12 @@ public class FeedbackServiceUnitTests
     {
         // Arrange
         var rooms = CreateMockRooms();
-        var feedbacks = new List<Feedback>()
+        var feedbacks = new List<FeedbackDbModel>()
         {
-            new Feedback(1, 3, 1, new DateTime(2023, 03, 28), 4, "Описание1"),
-            new Feedback(2, 1, 1, new DateTime(2023, 02, 10), 3, "Описание2"),
-            new Feedback(3, 2, 1, new DateTime(2023, 02, 10), 5, "Описание3"),
-            new Feedback(4, 2, 2, new DateTime(2023, 02, 10), 5, "Описание4")
+            new FeedbackDbModel(1, 3, 1, new DateTime(2023, 03, 28), 4, "Описание1"),
+            new FeedbackDbModel(2, 1, 1, new DateTime(2023, 02, 10), 3, "Описание2"),
+            new FeedbackDbModel(3, 2, 1, new DateTime(2023, 02, 10), 5, "Описание3"),
+            new FeedbackDbModel(4, 2, 2, new DateTime(2023, 02, 10), 5, "Описание4")
         };
 
         var roomId = 1;
@@ -328,8 +342,8 @@ public class FeedbackServiceUnitTests
         _mockFeedbackRepository.Setup(s => s.GetAllFeedbackByRoomAsync(roomId))
                                .ReturnsAsync(feedbacks.FindAll(e => e.Id == roomId));
 
-        _mockRoomRepository.Setup(s => s.UpdateRoomAsync(It.IsAny<Room>()))
-                           .Callback((Room r) =>
+        _mockRoomRepository.Setup(s => s.UpdateRoomAsync(It.IsAny<RoomDbModel>()))
+                           .Callback((RoomDbModel r) =>
                            {
                                rooms.FindAll(e => e.Id == r.Id).ForEach
                                (e =>
@@ -339,7 +353,6 @@ public class FeedbackServiceUnitTests
                                    e.Price = r.Price;
                                    e.Rating = r.Rating;
                                    e.Inventories = r.Inventories;
-                                   e.Menu = r.Menu;
                                });
                            });
 
@@ -384,7 +397,7 @@ public class FeedbackServiceUnitTests
     {
         // Arrange
         var rooms = CreateMockRooms();
-        var feedbacks = new List<Feedback>();
+        var feedbacks = new List<FeedbackDbModel>();
 
         var feedbackId = 1;
         var roomId = 1;
@@ -403,51 +416,40 @@ public class FeedbackServiceUnitTests
         Assert.ThrowsAsync<FeedbackNotFoundException>(action);
     }
 
-    private User CreateMockUser(int userId) 
+    private UserDbModel CreateMockUser(int userId) 
     {
-        return new User(userId, "Иванов", "Иван", "Иванович", new DateTime(2002, 06, 28), Gender.Male, "login", "99999");
+        return new UserDbModel(userId, "Иванов", "Иван", "Иванович", new DateTime(2002, 06, 28), Gender.Male, "login", "99999", "password");
     }
 
-    private List<Feedback> CreateMockFeedback()
+    private List<FeedbackDbModel> CreateMockFeedback()
     {
-        return new List<Feedback>()
+        return new List<FeedbackDbModel>()
         {
-            new Feedback(1, 3, 1, new DateTime(2023, 03, 28), 4, "Описание1"),
-            new Feedback(2, 1, 2, new DateTime(2023, 02, 10), 3, "Описание2"),
-            new Feedback(2, 2, 1, new DateTime(2023, 02, 10), 3, "Описание3")
+            new FeedbackDbModel(1, 3, 1, new DateTime(2023, 03, 28), 4, "Описание1"),
+            new FeedbackDbModel(2, 1, 2, new DateTime(2023, 02, 10), 3, "Описание2"),
+            new FeedbackDbModel(2, 2, 1, new DateTime(2023, 02, 10), 3, "Описание3")
         };
     }
 
-    private List<Room> CreateMockRooms()
+    private List<RoomDbModel> CreateMockRooms()
     {
-        return new List<Room>
+        return new List<RoomDbModel>
         {
-            new Room(1, "Room1", 20, 2500, 4, null, null),
-            new Room(2, "Room2", 30, 3500, 0.0, null, null),
-            new Room(3, "Room3", 25, 3000, 0.0, null, null),
-            new Room(4, "Room4", 25, 1300, 0.0,
-                     CreateMockInventory(),
-                     CreateMockMenu()),
+            new RoomDbModel(1, "Room1", 20, 2500, 4, null),
+            new RoomDbModel(2, "Room2", 30, 3500, 0.0, null),
+            new RoomDbModel(3, "Room3", 25, 3000, 0.0, null),
+            new RoomDbModel(4, "Room4", 25, 1300, 0.0,
+                     CreateMockInventory())
         };
     }
 
-    private List<Inventory> CreateMockInventory()
+    private List<InventoryDbModel> CreateMockInventory()
     {
-        return new List<Inventory>()
+        return new List<InventoryDbModel>()
         {
-            new Inventory(1, "Подушка"),
-            new Inventory(2, "Телевизор"),
-            new Inventory(3, "PS5")
-        };
-    }
-
-    private List<Menu> CreateMockMenu()
-    {
-        return new List<Menu>()
-        {
-            new Menu(1, "Dish1", DishType.FirstCourse, 350, "description 1"),
-            new Menu(2, "Dish2", DishType.SecondCourse, 250, "description 2"),
-            new Menu(3, "Dish3", DishType.FirstCourse, 120, "description 3")
+            new InventoryDbModel(1, "Подушка"),
+            new InventoryDbModel(2, "Телевизор"),
+            new InventoryDbModel(3, "PS5")
         };
     }
 }

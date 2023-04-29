@@ -9,11 +9,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4C3678DD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "tests\UnitTests\UnitTests.csproj", "{79EDE27C-27B4-40BB-964F-B9FEDD080D22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{98ABADE8-5224-49DA-903A-C5956A2245A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{98ABADE8-5224-49DA-903A-C5956A2245A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{C51DAE4A-9C24-4573-B114-02E66282A09E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{C51DAE4A-9C24-4573-B114-02E66282A09E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BL", "BL\BL.csproj", "{08F9A8DB-D13B-4DC3-BEE5-0BD610CD8802}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL", "BL\BL.csproj", "{08F9A8DB-D13B-4DC3-BEE5-0BD610CD8802}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Converter", "Converter\Converter.csproj", "{C3E54CE1-F182-4EB1-AFC3-839632781D81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{08F9A8DB-D13B-4DC3-BEE5-0BD610CD8802}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08F9A8DB-D13B-4DC3-BEE5-0BD610CD8802}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08F9A8DB-D13B-4DC3-BEE5-0BD610CD8802}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3E54CE1-F182-4EB1-AFC3-839632781D81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3E54CE1-F182-4EB1-AFC3-839632781D81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3E54CE1-F182-4EB1-AFC3-839632781D81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3E54CE1-F182-4EB1-AFC3-839632781D81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
