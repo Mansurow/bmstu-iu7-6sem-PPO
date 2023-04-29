@@ -4,9 +4,9 @@ namespace Anticafe.DataAccess.IRepositories;
 
 public interface IMenuRepository
 {
-    Task<List<MenuDbModel>> GetAllDishes();
-    Task<MenuDbModel> GetDishById(int dishId);
-    Task InsertDish(MenuDbModel menu);
-    Task UpdateDish(MenuDbModel menu);
-    Task DeleteDish(int dishId);
+    Task<List<MenuDbModel>> GetAllDishesAsync();
+    Task<MenuDbModel> GetDishByIdAsync(int dishId);
+    Task InsertDishAsync(MenuDbModel menu);
+    Task UpdateDishAsync(MenuDbModel menu);
+    Task DeleteDishAsync(int dishId);
 }

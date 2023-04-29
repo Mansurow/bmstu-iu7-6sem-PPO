@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using DataAccess.DBModels;
+using Anticafe.DataAccess.DBModels;
 
-namespace DataAccess;
+namespace Anticafe.DataAccess;
 
 public partial class AppDbContext : DbContext
 {
@@ -12,19 +12,7 @@ public partial class AppDbContext : DbContext
     public DbSet<RoomDbModel> Rooms { get; set; }
     public DbSet<MenuDbModel> Menu { get; set; }
 
-    public AppDbContext()
-    {
-        // пересоздадим базу данных
-        // Database.EnsureDeleted();
-        // Database.EnsureCreated();
-    }
-
     public AppDbContext(DbContextOptions<AppDbContext> options): base(options) { }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=test;Username=postgres;Password=postgres");
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

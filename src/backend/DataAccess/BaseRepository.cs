@@ -1,4 +1,4 @@
-﻿namespace DataAccess;
+﻿namespace Anticafe.DataAccess;
 
 public class BaseRepository
 {
