@@ -1,4 +1,4 @@
-﻿using Anticafe.DataAccess;
+﻿using Anticafe.DataAccess.Exceptions;
 using Anticafe.DataAccess.DBModels;
 using Anticafe.DataAccess.IRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +25,7 @@ namespace Anticafe.DataAccess.Repositories
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user is null) 
             {
-                throw new Exception($"User not found with id: {userId}");
+                throw new UserNotFoundByIdException($"User not found with id: {userId}");
             }
             return user;
         }
@@ -35,7 +35,7 @@ namespace Anticafe.DataAccess.Repositories
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user is null)
             {
-                throw new Exception($"User not found by email: {email}");
+                throw new UserNotFoundByEmailException($"User not found by email: {email}");
             }
             return user;
         }
@@ -51,9 +51,10 @@ namespace Anticafe.DataAccess.Repositories
 
                 _context.Users.Add(createUser);
                 await _context.SaveChangesAsync();
-            } catch (Exception ex)
+            }
+            catch
             {
-                throw new Exception("User not create");
+                throw new UserCreateException("User not create");
             }
         }
 
@@ -64,9 +65,9 @@ namespace Anticafe.DataAccess.Repositories
                 _context.Users.Update(updateUser);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception($"User not update with id: {updateUser.Id}");
+                throw new UserUpdateException($"User not update with id: {updateUser.Id}");
             }
         }
 
@@ -74,18 +75,14 @@ namespace Anticafe.DataAccess.Repositories
         {
             try
             {
-                var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-                if (user is null)
-                {
-                    throw new Exception();
-                }
+                var user = await GetUserByIdAsync(userId);
 
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception($"User not delete with id: {userId}");
+                throw new UserDeleteException($"User not delete with id: {userId}");
             }
         }
     }

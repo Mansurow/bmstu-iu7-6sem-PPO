@@ -1,5 +1,6 @@
 ﻿using Anticafe.Common.Enums;
 using Anticafe.DataAccess.DBModels;
+using Anticafe.DataAccess.Exceptions;
 using Anticafe.DataAccess.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -54,7 +55,7 @@ public class BookingRepository: BaseRepository, IBookingRepository
         var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.Id == bookingId);
         if (booking is null)
         {
-            throw new Exception();
+            throw new BookingNotFoundException("Booking not found");
         }
 
         return booking; 
@@ -66,9 +67,9 @@ public class BookingRepository: BaseRepository, IBookingRepository
         {
             _context.Bookings.Add(createBooking);
             await _context.SaveChangesAsync();
-        } catch (Exception ex)
+        } catch
         {
-            throw new Exception("Booking not create");
+            throw new BookingCreateException("Booking not create");
         }
     }
 
@@ -86,9 +87,9 @@ public class BookingRepository: BaseRepository, IBookingRepository
             _context.Bookings.Update(updateBooking);
             await _context.SaveChangesAsync();
         }
-        catch (Exception ex)
+        catch
         {
-            throw new Exception("Booking not update");
+            throw new BookingUpdateException("Booking not update");
         }
     }
 
@@ -100,9 +101,9 @@ public class BookingRepository: BaseRepository, IBookingRepository
             _context.Bookings.Remove(booking);
             await _context.SaveChangesAsync();
         }
-        catch (Exception ex)
+        catch
         {
-            throw new Exception("Booking not update");
+            throw new BookingDeleteException("Booking not delete");
         }
     }
 }

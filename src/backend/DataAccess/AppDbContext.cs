@@ -14,10 +14,10 @@ public partial class AppDbContext : DbContext
 
     public AppDbContext(DbContextOptions<AppDbContext> options): base(options) { }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=anticafe;User Id=postgres;Password=postgres;");
-    }
+    }*/
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,5 +1,5 @@
-﻿using Anticafe.BL.Models;
-using Anticafe.DataAccess.DBModels;
+﻿using Anticafe.DataAccess.DBModels;
+using Anticafe.DataAccess.Exceptions;
 using Anticafe.DataAccess.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,7 +34,7 @@ public class FeedbackRepository: BaseRepository, IFeedbackRepository
         var feedback = await _context.Feedbacks.FirstOrDefaultAsync(f => f.Id == feedbackId);
         if (feedback is null) 
         {
-            throw new Exception("Feedback not found");
+            throw new FeedbackNotFoundException("Feedback not found");
         }
 
         return feedback;
@@ -46,9 +46,9 @@ public class FeedbackRepository: BaseRepository, IFeedbackRepository
         {
             _context.Feedbacks.Add(feedback);
             await _context.SaveChangesAsync();
-        } catch (Exception ex) 
+        } catch
         {
-            throw new Exception("Feedback not create");
+            throw new FeedbackCreateException("Feedback not create");
         }
     }
 
@@ -59,9 +59,9 @@ public class FeedbackRepository: BaseRepository, IFeedbackRepository
             _context.Feedbacks.Update(feedback);
             await _context.SaveChangesAsync();
         }
-        catch (Exception ex)
+        catch
         {
-            throw new Exception("Feedback not update");
+            throw new FeedbackUpdateException("Feedback not update");
         }
     }
 
@@ -73,9 +73,9 @@ public class FeedbackRepository: BaseRepository, IFeedbackRepository
             _context.Feedbacks.Remove(feedback);
             await _context.SaveChangesAsync();
         }
-        catch (Exception ex)
+        catch
         {
-            throw new Exception("Feedback not delete");
+            throw new FeedbackDeleteException("Feedback not delete");
         }
     }
 }

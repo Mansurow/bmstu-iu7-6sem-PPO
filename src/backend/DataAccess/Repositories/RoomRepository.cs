@@ -1,5 +1,5 @@
-﻿using Anticafe.BL.Models;
-using Anticafe.DataAccess.DBModels;
+﻿using Anticafe.DataAccess.DBModels;
+using Anticafe.DataAccess.Exceptions;
 using Anticafe.DataAccess.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,7 +23,7 @@ public class RoomRepository: BaseRepository, IRoomRepository
         var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Id == roomId);
         if (room is null) 
         {
-            throw new Exception("Room not found");
+            throw new RoomNotFoundException("Room not found");
         }
 
         return room;
@@ -34,7 +34,7 @@ public class RoomRepository: BaseRepository, IRoomRepository
         var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Name == roomName);
         if (room is null)
         {
-            throw new Exception("Room not found");
+            throw new RoomNotFoundException("Room not found");
         }
 
         return room;
@@ -47,9 +47,9 @@ public class RoomRepository: BaseRepository, IRoomRepository
             _context.Rooms.Add(createRoom);
             await _context.SaveChangesAsync();
         }
-        catch (Exception ex)
+        catch
         {
-            throw new Exception("Feedback not create");
+            throw new RoomCreateException("Feedback not create");
         }
     }
 
@@ -60,9 +60,9 @@ public class RoomRepository: BaseRepository, IRoomRepository
             _context.Rooms.Update(updateRoom);
             await _context.SaveChangesAsync();
         }
-        catch (Exception ex)
+        catch 
         {
-            throw new Exception("Feedback not create");
+            throw new RoomUpdateException("Feedback not create");
         }
     }
 
@@ -81,9 +81,9 @@ public class RoomRepository: BaseRepository, IRoomRepository
             _context.Rooms.Remove(room);
             await _context.SaveChangesAsync();
         }
-        catch (Exception ex)
+        catch
         {
-            throw new Exception("Feedback not create");
+            throw new RoomDeleteException("Feedback not create");
         }
     }
 }

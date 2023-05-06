@@ -1,5 +1,6 @@
 ﻿using Anticafe.DataAccess.DBModels;
 using Anticafe.DataAccess.IRepositories;
+using Anticafe.DataAccess.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Anticafe.DataAccess.Repositories;
@@ -23,7 +24,7 @@ public class MenuRepository : BaseRepository, IMenuRepository
         var dish = await _context.Menu.FirstOrDefaultAsync(m => m.Id == dishId);
         if (dish is null)
         {
-            throw new Exception($"Dish not found with id: {dishId}");
+            throw new DishNotFoundException($"Dish not found with id: {dishId}");
         }
 
         return dish;
@@ -35,9 +36,9 @@ public class MenuRepository : BaseRepository, IMenuRepository
         {
             _context.Menu.Add(menu);
             await _context.SaveChangesAsync();
-        } catch (Exception ex) 
+        } catch
         {
-            throw new Exception($"Dish not create");
+            throw new DishCreateException($"Dish not create");
         }
     }
 
@@ -48,9 +49,9 @@ public class MenuRepository : BaseRepository, IMenuRepository
             _context.Menu.Update(menu);
             await _context.SaveChangesAsync();
         }
-        catch (Exception ex)
+        catch
         {
-            throw new Exception($"Dish not update");
+            throw new DishUpdateException($"Dish not update");
         }
     }
 
@@ -58,17 +59,12 @@ public class MenuRepository : BaseRepository, IMenuRepository
     {
         try
         {
-            var menu = await _context.Menu.FirstOrDefaultAsync(m => m.Id == dishId);
-            if (menu is null) 
-            {
-                throw new Exception();
-            }
-
+            var menu = await GetDishByIdAsync(dishId);
             _context.Menu.Remove(menu);
         }
-        catch (Exception ex)
+        catch
         {
-            throw new Exception($"Dish not delete");
+            throw new DishDeleteException($"Dish not delete");
         }
     }
 }
