@@ -35,7 +35,7 @@ public class BookingRepository: BaseRepository, IBookingRepository
         return await _context.Bookings.Where(b => b.RoomId == roomId && b.UserId == userId).ToListAsync();
     }
 
-    public async Task<BookingDbModel> GetUserBookingByRoomAsync(int userId, int roomId, DateTime startTime, DateTime endTime)
+    public async Task<BookingDbModel> GetUserBookingByRoomForTimeRangeAsync(int userId, int roomId, DateTime startTime, DateTime endTime)
     {
         return await _context.Bookings.Where(b => b.RoomId == roomId
                                                && b.UserId == userId
