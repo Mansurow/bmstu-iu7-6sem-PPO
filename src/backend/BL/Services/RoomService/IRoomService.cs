@@ -7,7 +7,7 @@ public interface IRoomService
     Task<List<Room>> GetAllRoomsAsync();
     Task<Room> GetRoomByIdAsync(int roomId);
     Task AddRoomAsync(string name, int size, double price);
-    Task UpdateRoomAsync(Room createRoom);
+    Task UpdateRoomAsync(Room updateRoom);
     Task DeleteRoomAsync(int roomId);
     Task AddInventoryForRoomAsync(int roomId, Inventory inventory);
 }

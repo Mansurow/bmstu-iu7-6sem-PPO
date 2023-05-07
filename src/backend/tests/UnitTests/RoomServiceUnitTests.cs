@@ -7,7 +7,7 @@ using Anticafe.DataAccess.IRepositories;
 using Moq;
 using Xunit;
 
-namespace UnitTests.Service;
+namespace UnitTests.Services;
 
 public class RoomServiceUnitTests
 {
@@ -454,14 +454,4 @@ public class RoomServiceUnitTests
             new InventoryDbModel(3, "PS5")
         };
     }
-
-   /* private List<Menu> CreateMockMenu()
-    {
-        return new List<Menu>()
-        {
-            new Menu(1, "Dish1", DishType.FirstCourse, 350, "description 1"),
-            new Menu(2, "Dish2", DishType.SecondCourse, 250, "description 2"),
-            new Menu(3, "Dish3", DishType.FirstCourse, 120, "description 3")
-        };
-    }*/
 }

@@ -33,11 +33,7 @@ namespace Anticafe.BL.Sevices.BookingService
         {
             var bookings = (await _bookingRepository.GetBookingByUserAsync(userId))
                             .Select(b => BookingConverter.ConvertDbModelToAppModel(b)).ToList();
-            if (bookings is null)
-            {
-                new BookingNotFoundException($"Bookings not found for user with id: {userId}");
-            }
-
+     
             await UpdateNoActualBookings(bookings);
 
             return bookings;
@@ -46,7 +42,7 @@ namespace Anticafe.BL.Sevices.BookingService
         private async Task UpdateNoActualBookings(List<Booking> bookings) 
         {
             foreach (var b in bookings)
-                if (b.IsBookingExpired())
+                if (b.IsBookingExpired() && b.Status is not BookingStatus.NoActual)
                 {
                     b.ChangeStatus(BookingStatus.NoActual);
                     await _bookingRepository.UpdateNoActualBookingAsync(b.Id);
@@ -55,13 +51,8 @@ namespace Anticafe.BL.Sevices.BookingService
 
         public async Task<List<Booking>> GetBookingByRoomAsync(int roomId)
         {
-            var bookings = (await _bookingRepository.GetBookingByUserAsync(roomId))
+            var bookings = (await _bookingRepository.GetBookingByRoomAsync(roomId))
                 .Select(b => BookingConverter.ConvertDbModelToAppModel(b)).ToList();
-
-            if (bookings is null)
-            {
-                new BookingNotFoundException($"Bookings not found for room with id: {roomId}");
-            }
 
             await UpdateNoActualBookings(bookings);
 
@@ -74,7 +65,7 @@ namespace Anticafe.BL.Sevices.BookingService
                            .Select(b => BookingConverter.ConvertDbModelToAppModel(b)).ToList();
             if (bookings is null)
             {
-                new BookingNotFoundException($"Bookings not found for user with id: {userId} and room with id: {roomId}");
+                throw new BookingNotFoundException($"Bookings not found for user with id: {userId} and room with id: {roomId}");
             }
 
             await UpdateNoActualBookings(bookings);
@@ -87,7 +78,7 @@ namespace Anticafe.BL.Sevices.BookingService
             var booking = BookingConverter.ConvertDbModelToAppModel(await _bookingRepository.GetBookingByIdAsync(bookingId));
             if (booking is null)
             {
-                new BookingNotFoundException($"Bookings not found id: {bookingId}");
+                throw new BookingNotFoundException($"Bookings not found id: {bookingId}");
             }
 
             if (booking.IsBookingExpired())
@@ -105,20 +96,19 @@ namespace Anticafe.BL.Sevices.BookingService
             var startDateTime = DateTime.Parse(startTime, culture);
             var endDateTime = DateTime.Parse(EndTime, culture);
 
-            var userBooking = await _bookingRepository.GetUserBookingByRoomAsync(userId, roomId, startDateTime, endDateTime);
+            var userBooking = await _bookingRepository.GetUserBookingByRoomForTimeRangeAsync(userId, roomId, startDateTime, endDateTime);
             if (userBooking is not null)
             {
-                throw new BookingReversedException($"User with id: {userId} reversed since {userBooking.StartTime} to {userBooking.EndTime} for room with id: {roomId}.");
+                throw new BookingReversedException($"User with id: {userId} reversed since {startDateTime} to {endDateTime} for room with id: {roomId}.");
             }
 
             var bookings = await _bookingRepository.GetAllBookingByRoomForTimeRange(roomId, startDateTime, endDateTime);
-            if (bookings is not null) 
+            if (bookings.Count > 0) 
             {
-                throw new BookingReversedException($"All reversed since {bookings.First().StartTime} to {bookings.Last().EndTime} for room with id: {roomId}.");
+                throw new BookingReversedException($"All reversed since {startDateTime} to {endDateTime} for room with id: {roomId}.");
             } 
 
-            var list = await _bookingRepository.GetAllBookingAsync();
-            var booking = new Booking(list.Count() + 1, roomId, userId, amount, startDateTime, endDateTime, BookingStatus.TemporaryReserved);
+            var booking = new Booking(1, roomId, userId, amount, startDateTime, endDateTime, BookingStatus.Reserved);
             await _bookingRepository.InsertBookingAsync(BookingConverter.ConvertAppModelToDbModel(booking));
         }
 

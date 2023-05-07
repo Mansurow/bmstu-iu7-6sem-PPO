@@ -1,4 +1,5 @@
-﻿using Anticafe.BL.Models;
+﻿using Anticafe.BL.Exceptions;
+using Anticafe.BL.Models;
 using Anticafe.Common.Enums;
 using Anticafe.DataAccess.Converter;
 using Anticafe.DataAccess.IRepositories;
@@ -16,36 +17,46 @@ namespace Anticafe.BL.Services.MenuService
 
         public async Task<List<Menu>> GetAllDishesAsync() 
         {
-            return (await _menuRepository.GetAllDishes()).Select(m => MenuConverter.ConvertDbModelToAppModel(m)).ToList();
+            return (await _menuRepository.GetAllDishesAsync()).Select(m => MenuConverter.ConvertDbModelToAppModel(m)).ToList();
         }
 
         public async Task<Menu> GetDishByIdAsync(int dishId) 
         {
-            var dish = await _menuRepository.GetDishById(dishId);
+            var dish = await _menuRepository.GetDishByIdAsync(dishId);
             if (dish is null)
             {
-                throw new Exception();
+                throw new MenuNotFoundException($"Dish not found by id: {dishId}");
             }
 
             return MenuConverter.ConvertDbModelToAppModel(dish);
+        }
+
+        public async Task UpdateDishAsync(Menu updateDish) 
+        {
+            var dish = await _menuRepository.GetDishByIdAsync(updateDish.Id);
+            if (dish is null) 
+            {
+                throw new MenuNotFoundException($"Dish not found by id: {updateDish.Id}");
+            }
+            await _menuRepository.UpdateDishAsync(MenuConverter.ConvertAppModelToDbModel(updateDish));
         }
 
         public async Task AddDishAsync(string name, DishType type, double price, string description) 
         {
             var menu = await GetAllDishesAsync();
             var dish = new Menu(menu.Count() + 1, name, type, price, description);
-            await _menuRepository.InsertDish(MenuConverter.ConvertAppModelToDbModel(dish));
+            await _menuRepository.InsertDishAsync(MenuConverter.ConvertAppModelToDbModel(dish));
         }
 
         public async Task DeleteDishAsync(int dishId) 
         {
-            var dish = await _menuRepository.GetDishById(dishId);
+            var dish = await _menuRepository.GetDishByIdAsync(dishId);
             if (dish is null) 
             {
-                throw new Exception();
+                throw new MenuNotFoundException($"Dish not found by id: {dishId}");
             }
 
-            await _menuRepository.DeleteDish(dishId);
+            await _menuRepository.DeleteDishAsync(dishId);
         }
     }
 }
