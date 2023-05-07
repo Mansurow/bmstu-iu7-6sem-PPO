@@ -24,7 +24,7 @@ namespace Anticafe.BL.Sevices.OauthService
 
             user.CreateHash(password);
 
-            await _userRepository.AddUserAsync(UserConverter.ConvertAppModelToDbModel(user));
+            await _userRepository.InsertUserAsync(UserConverter.ConvertAppModelToDbModel(user));
         }
 
         public async Task<User> LogIn(string login, string password)
@@ -32,7 +32,7 @@ namespace Anticafe.BL.Sevices.OauthService
             var userDb = await _userRepository.GetUserByEmailAsync(login);
             if (userDb is null)
             {
-                throw new UserLoginNotFoundException($"User with login: {userDb.Email} not found.");
+                throw new UserLoginNotFoundException($"User with login: {login} not found.");
             }
 
             var user = UserConverter.ConvertDbModelToAppModel(userDb);

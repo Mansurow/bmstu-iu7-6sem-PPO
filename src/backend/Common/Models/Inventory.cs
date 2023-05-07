@@ -8,7 +8,7 @@ public class Inventory
     public string Name { get; set; }
     public ICollection<Room>? Rooms { get; set; }
 
-    public Inventory(int id, string name, ICollection<Room> rooms)
+    public Inventory(int id, string name, ICollection<Room>? rooms)
     {
         Id = id;
         Name = name;

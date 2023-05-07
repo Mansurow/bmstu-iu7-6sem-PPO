@@ -20,7 +20,7 @@ namespace Anticafe.BL.Sevices.UserService
             var user = await _userRepository.GetUserByIdAsync(userId);
             if (user is null)
             {
-                throw new UserNotFoundException($"Not found user with id: {user.Id}");
+                throw new UserNotFoundException($"Not found user with id: {userId}");
             }
 
             return UserConverter.ConvertDbModelToAppModel(user);
@@ -42,7 +42,7 @@ namespace Anticafe.BL.Sevices.UserService
             }
             else
             {
-                throw new UserNotFoundException($"Not found user with id: {user.Id}");
+                throw new UserNotFoundException($"Not found user with id: {userId}");
             }
         }
     }

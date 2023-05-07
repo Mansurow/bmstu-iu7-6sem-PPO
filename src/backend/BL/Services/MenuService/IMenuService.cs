@@ -8,6 +8,7 @@ namespace Anticafe.BL.Services.MenuService
         Task<List<Menu>> GetAllDishesAsync();
         Task<Menu> GetDishByIdAsync(int dishId);
         Task AddDishAsync(string name, DishType type, double price, string description);
+        Task UpdateDishAsync(Menu updateDish);
         Task DeleteDishAsync(int dishId);
     }
 }

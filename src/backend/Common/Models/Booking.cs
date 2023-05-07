@@ -30,6 +30,6 @@ public class Booking
 
     public bool IsBookingExpired()
     {
-        return EndTime >= DateTime.UtcNow;
+        return EndTime <= DateTime.UtcNow;
     }
 }

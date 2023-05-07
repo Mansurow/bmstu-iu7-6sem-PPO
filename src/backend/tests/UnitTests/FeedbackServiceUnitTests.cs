@@ -8,7 +8,7 @@ using Anticafe.DataAccess.IRepositories;
 using Moq;
 using Xunit;
 
-namespace UnitTests.Service;
+namespace UnitTests.Services;
 
 public class FeedbackServiceUnitTests
 {
