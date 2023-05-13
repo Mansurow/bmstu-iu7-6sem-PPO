@@ -9,9 +9,9 @@ public class MenuRepository : BaseRepository, IMenuRepository
 {
     private readonly AppDbContext _context;
 
-    public MenuRepository(AppDbContext context)
+    public MenuRepository(IDbContextFactory contextFactory)
     {
-        _context = context;
+        _context = contextFactory.getDbContext();
     }
 
     public async Task<List<MenuDbModel>> GetAllDishesAsync()

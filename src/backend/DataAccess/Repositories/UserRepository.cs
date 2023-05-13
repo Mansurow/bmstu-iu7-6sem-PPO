@@ -9,9 +9,9 @@ namespace Anticafe.DataAccess.Repositories
     {
         private readonly AppDbContext _context;
 
-        public UserRepository(AppDbContext context): base()
+        public UserRepository(IDbContextFactory contextFactory) : base()
         {
-            _context = context;
+            _context = contextFactory.getDbContext();
         }
 
         public async Task<List<UserDbModel>> GetAllUsersAsync()
@@ -33,10 +33,10 @@ namespace Anticafe.DataAccess.Repositories
         public async Task<UserDbModel> GetUserByEmailAsync(string email) 
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-            if (user is null)
+            /*if (user is null)
             {
                 throw new UserNotFoundByEmailException($"User not found by email: {email}");
-            }
+            }*/
             return user;
         }
 

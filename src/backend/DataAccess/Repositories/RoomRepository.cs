@@ -9,9 +9,9 @@ public class RoomRepository: BaseRepository, IRoomRepository
 {
     private readonly AppDbContext _context;
 
-    public RoomRepository(AppDbContext context): base()
+    public RoomRepository(IDbContextFactory contextFactory) : base()
     {
-        _context = context;
+        _context = contextFactory.getDbContext();
     }
     public async Task<List<RoomDbModel>> GetAllRoomAsync() 
     {
