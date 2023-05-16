@@ -32,11 +32,6 @@ public class RoomRepository: BaseRepository, IRoomRepository
     public async Task<RoomDbModel> GetRoomByNameAsync(string roomName) 
     {
         var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Name == roomName);
-        if (room is null)
-        {
-            throw new RoomNotFoundException("Room not found");
-        }
-
         return room;
     }
 
@@ -60,7 +55,7 @@ public class RoomRepository: BaseRepository, IRoomRepository
             _context.Rooms.Update(updateRoom);
             await _context.SaveChangesAsync();
         }
-        catch 
+        catch
         {
             throw new RoomUpdateException("Feedback not create");
         }
