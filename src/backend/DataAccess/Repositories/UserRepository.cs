@@ -2,6 +2,7 @@
 using Anticafe.DataAccess.DBModels;
 using Anticafe.DataAccess.IRepositories;
 using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.Mapping;
 
 namespace Anticafe.DataAccess.Repositories
 {
@@ -9,9 +10,9 @@ namespace Anticafe.DataAccess.Repositories
     {
         private readonly AppDbContext _context;
 
-        public UserRepository(AppDbContext context): base()
+        public UserRepository(IDbContextFactory contextFactory) : base()
         {
-            _context = context;
+            _context = contextFactory.getDbContext();
         }
 
         public async Task<List<UserDbModel>> GetAllUsersAsync()
@@ -33,10 +34,10 @@ namespace Anticafe.DataAccess.Repositories
         public async Task<UserDbModel> GetUserByEmailAsync(string email) 
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-            if (user is null)
+            /*if (user is null)
             {
                 throw new UserNotFoundByEmailException($"User not found by email: {email}");
-            }
+            }*/
             return user;
         }
 
@@ -62,7 +63,20 @@ namespace Anticafe.DataAccess.Repositories
         {
             try
             {
-                _context.Users.Update(updateUser);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == updateUser.Id);
+
+                if (user is not null)
+                {
+                    user.Name = updateUser.Name;
+                    user.Surname = updateUser.Surname;
+                    user.FirstName = updateUser.FirstName;
+                    user.Gender = updateUser.Gender;
+                    user.Birthday = updateUser.Birthday;
+                    user.Email = updateUser.Email;
+                    user.Role = updateUser.Role;
+                    user.Phone = updateUser.Phone;
+                }
+
                 await _context.SaveChangesAsync();
             }
             catch
