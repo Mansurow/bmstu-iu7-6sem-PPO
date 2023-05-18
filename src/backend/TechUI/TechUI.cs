@@ -257,7 +257,7 @@ public class TechUI
 
         try
         {
-             _userService.ChangeUserPermissionsAsync(id);
+             _userService.ChangeUserPermissionsAsync(id).Wait();
         } catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
@@ -365,7 +365,7 @@ public class TechUI
 
         try
         {
-            _bookingService.CreateBookingAsync(currentUser!.Id, roomId, amount, sTime, eTime);
+            _bookingService.CreateBookingAsync(currentUser!.Id, roomId, amount, sTime, eTime).Wait();
             Console.WriteLine("Зона забронирована.");
         } catch (Exception ex)
         {
@@ -419,7 +419,7 @@ public class TechUI
         }
     }
 
-    private async void UpdateRoom() 
+    private void UpdateRoom() 
     {
         Console.Write("Ввведите id зоны:");
         int id;
@@ -480,7 +480,7 @@ public class TechUI
 
             }
 
-            await _roomService.UpdateRoomAsync(room);
+            _roomService.UpdateRoomAsync(room).Wait();
             Console.WriteLine("Данные успешно обновлены.");
         } catch (Exception ex)
         {
@@ -500,7 +500,7 @@ public class TechUI
 
         try 
         {
-           _roomService.DeleteRoomAsync(id);
+           _roomService.DeleteRoomAsync(id).Wait();
         } catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
@@ -530,7 +530,7 @@ public class TechUI
 
         try
         {
-            _menuService.AddDishAsync(name, type, price, description);
+            _menuService.AddDishAsync(name, type, price, description).Wait();
             Console.WriteLine("Блюдо внесено в меню.");
         } catch (Exception ex)
         {
@@ -563,7 +563,7 @@ public class TechUI
                 Console.WriteLine($"0 - Готово");
                 Console.Write("Выбор: ");
                 
-                if (!int.TryParse(Console.ReadLine(), out choice))
+                if (int.TryParse(Console.ReadLine(), out choice))
                 {
                     if (choice == 1)
                     {
@@ -596,11 +596,8 @@ public class TechUI
                         dish.Price = price;
                     }
                 }
-
-
             }
-
-            _menuService.UpdateDishAsync(dish);
+            _menuService.UpdateDishAsync(dish).Wait();
             Console.WriteLine("Данные успешно обновлены.");
         }
         catch (Exception ex)
@@ -622,7 +619,7 @@ public class TechUI
 
         try 
         {
-            _menuService.DeleteDishAsync(id);
+            _menuService.DeleteDishAsync(id).Wait();
         } catch (Exception ex) 
         {
             Console.WriteLine(ex.Message);
@@ -652,7 +649,7 @@ public class TechUI
 
         try
         {
-            _feedbackService.AddFeedbackAsync(currentUser!.Id, roomId, rating, msg);
+            _feedbackService.AddFeedbackAsync(currentUser!.Id, roomId, rating, msg).Wait();
             Console.WriteLine("Отзыв оставел");
         } catch (Exception ex)
         {
@@ -672,7 +669,7 @@ public class TechUI
 
         try 
         {
-             _feedbackService.DeleteFeedbackAsync(id);
+             _feedbackService.DeleteFeedbackAsync(id).Wait();
             Console.WriteLine("Отзыв удален.");
         } catch (Exception ex)
         {
@@ -777,8 +774,8 @@ public class TechUI
             var dish = _menuService.GetDishByIdAsync(id).Result;
             Console.WriteLine($"Id: {dish.Id}");
             Console.WriteLine($"Название: {dish.Name}");
-            Console.WriteLine($"Цена: {dish.Price} кв.м.");
-            Console.WriteLine($"Описание: {dish.Description} Р.");
+            Console.WriteLine($"Цена: {dish.Price} р.");
+            Console.WriteLine($"Описание: {dish.Description}");
         } catch (Exception ex)
         {
             Console.WriteLine(ex.Message);

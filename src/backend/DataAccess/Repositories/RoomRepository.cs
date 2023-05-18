@@ -52,7 +52,17 @@ public class RoomRepository: BaseRepository, IRoomRepository
     {
         try
         {
-            _context.Rooms.Update(updateRoom);
+            // _context.Rooms.Update(updateRoom);
+            var room = await _context.Rooms.FirstOrDefaultAsync(u => u.Id == updateRoom.Id);
+            if (room is not null) 
+            {
+                room.Name = updateRoom.Name;
+                room.Size = updateRoom.Size;
+                room.Price = updateRoom.Price;
+                room.Rating = updateRoom.Rating;
+                room.Inventories = updateRoom.Inventories;
+            }
+
             await _context.SaveChangesAsync();
         }
         catch

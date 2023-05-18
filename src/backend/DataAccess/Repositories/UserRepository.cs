@@ -2,6 +2,7 @@
 using Anticafe.DataAccess.DBModels;
 using Anticafe.DataAccess.IRepositories;
 using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.Mapping;
 
 namespace Anticafe.DataAccess.Repositories
 {
@@ -62,7 +63,20 @@ namespace Anticafe.DataAccess.Repositories
         {
             try
             {
-                _context.Users.Update(updateUser);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == updateUser.Id);
+
+                if (user is not null)
+                {
+                    user.Name = updateUser.Name;
+                    user.Surname = updateUser.Surname;
+                    user.FirstName = updateUser.FirstName;
+                    user.Gender = updateUser.Gender;
+                    user.Birthday = updateUser.Birthday;
+                    user.Email = updateUser.Email;
+                    user.Role = updateUser.Role;
+                    user.Phone = updateUser.Phone;
+                }
+
                 await _context.SaveChangesAsync();
             }
             catch
