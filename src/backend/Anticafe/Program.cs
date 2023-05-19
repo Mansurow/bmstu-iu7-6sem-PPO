@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Anticafe.BL.Services.MenuService;
 using Anticafe.BL.Sevices.BookingService;
 using Anticafe.BL.Sevices.FeedbackService;
@@ -7,6 +8,7 @@ using Anticafe.BL.Sevices.UserService;
 using Anticafe.DataAccess;
 using Anticafe.DataAccess.IRepositories;
 using Anticafe.DataAccess.Repositories;
+using Microsoft.EntityFrameworkCore;
 using NLog.Web;
 
 var logger = NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
@@ -26,8 +28,8 @@ builder.Logging.SetMinimumLevel(LogLevel.Trace);
 builder.Host.UseNLog();
 
 // Add services to the container.
-builder.Services.AddControllers();
-
+builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+builder.Services.AddDbContext<AppDbContext>(option => option.UseNpgsql(builder.Configuration.GetSection("PostgreSQL").GetConnectionString("default")));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
