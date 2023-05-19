@@ -1,0 +1,14 @@
+version: '3.2'
+
+services:
+  backend: # rest api
+    build: .
+    container_name: 'backend'
+    image: 'anticafe/backend:lastest'
+    restart: always
+    volumes:
+      - ~/configs/appsettings.json:/app/appsettings.json
+      - ~/logs:/app/log
+    ports:
+      - 445:443
+      - 800:80  

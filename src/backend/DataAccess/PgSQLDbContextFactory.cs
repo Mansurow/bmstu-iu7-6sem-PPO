@@ -18,7 +18,7 @@ namespace Anticafe.DataAccess
             string curPerms = "default"; //_configuration["DbConnection"]!;
 
             var builder = new DbContextOptionsBuilder<AppDbContext>();
-            builder.UseNpgsql(_configuration.GetConnectionString(curPerms));
+            builder.UseNpgsql(_configuration.GetSection("PostgreSQL").GetConnectionString(curPerms));
             var _adminDbContext = new AppDbContext(builder.Options);
 
             return _adminDbContext;
