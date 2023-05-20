@@ -1,5 +1,6 @@
 ﻿using Anticafe.BL.Models;
 using Anticafe.DataAccess.DBModels;
+using Common.Models.DTO;
 
 namespace Anticafe.DataAccess.Converter
 {
@@ -24,6 +25,17 @@ namespace Anticafe.DataAccess.Converter
                                amountPeople: booking.AmountPeople,
                                startTime: booking.StartTime,
                                endTime: booking.EndTime,
+                               status: booking.Status);
+        }
+
+        public static BookingDto ConvertAppModelToDto(Booking booking)
+        {
+            return new BookingDto(id: booking.Id,
+                               roomId: booking.RoomId,
+                               userId: booking.UserId,
+                               amountPeople: booking.AmountPeople,
+                               startTime: booking.StartTime.ToString(),
+                               endTime: booking.EndTime.ToString(),
                                status: booking.Status);
         }
     }

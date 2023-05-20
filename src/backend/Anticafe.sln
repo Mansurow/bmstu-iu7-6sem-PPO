@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Converter", "Converter\Conv
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationalTests", "tests\IntegrationalTests\IntegrationalTests.csproj", "{AF14D51B-E07B-4418-93BF-207DDFA46852}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechUI", "TechUI\TechUI.csproj", "{685BC55C-F3B8-4F5F-BB86-62DEE2DA9E02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechUI", "TechUI\TechUI.csproj", "{685BC55C-F3B8-4F5F-BB86-62DEE2DA9E02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
