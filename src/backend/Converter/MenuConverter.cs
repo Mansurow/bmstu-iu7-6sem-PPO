@@ -32,4 +32,13 @@ public static class MenuConverter
                         price: menu.Price,
                         description: menu.Description);
     }
+
+    public static Menu ConvertDtoToAppModel(MenuDto menu)
+    {
+        return new Menu(id: menu.Id,
+                        name: menu.Name,
+                        type: menu.Type,
+                        price: menu.Price,
+                        description: menu.Description);
+    }
 }

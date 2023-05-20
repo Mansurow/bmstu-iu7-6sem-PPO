@@ -23,7 +23,7 @@ namespace Anticafe.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Room[]))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RoomDto[]))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -37,7 +37,7 @@ namespace Anticafe.Controllers
             {
                 var rooms = await _roomService.GetAllRoomsAsync();
                 _logger.LogInformation("Get all rooms information successfully.");
-                return Ok(rooms);
+                return Ok(rooms.Select(RoomConverter.ConvertAppModelToDto).ToList());
             }
             catch (Exception ex)
             {
@@ -47,7 +47,7 @@ namespace Anticafe.Controllers
         }
 
         [HttpGet("{roomId}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Room[]))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RoomDto))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -61,7 +61,7 @@ namespace Anticafe.Controllers
             {
                 var rooms = await _roomService.GetRoomByIdAsync(roomId);
                 _logger.LogInformation("Get room information successfully.");
-                return Ok(rooms);
+                return Ok(RoomConverter.ConvertAppModelToDto(rooms));
             }
             catch (RoomNotFoundException ex)
             {
@@ -84,7 +84,7 @@ namespace Anticafe.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-        public async Task<IActionResult> AddRoom([FromBody] Room room)
+        public async Task<IActionResult> AddRoom([FromBody] RoomDto room)
         {
             try
             {
@@ -113,11 +113,11 @@ namespace Anticafe.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-        public async Task<IActionResult> UpdateRoom([FromRoute] int roomId, [FromBody] Room room)
+        public async Task<IActionResult> UpdateRoom([FromRoute] int roomId, [FromBody] RoomDto roomDto)
         {
             try
             {
-                room.Id = roomId;
+                var room = RoomConverter.ConvertDtoToAppModel(roomDto);
                 await _roomService.UpdateRoomAsync(room);
                 _logger.LogInformation("Room successfully update.");
                 return Ok();
@@ -163,7 +163,7 @@ namespace Anticafe.Controllers
             }
         }
         
-        [HttpPut("{roomId}/inventory")]
+        [HttpPut("{roomId}/inventory/{name}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -172,10 +172,11 @@ namespace Anticafe.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-        public async Task<IActionResult> AddInventoryRoom([FromRoute] int roomId, [FromBody] Inventory inventory)
+        public async Task<IActionResult> AddInventoryRoom([FromRoute] int roomId, [FromRoute] string name)
         {
             try
             {
+                var inventory = new Inventory(0, name);
                 await _roomService.AddInventoryForRoomAsync(roomId, inventory);
                 _logger.LogInformation("Inventory add for room successfully.");
                 return Ok();

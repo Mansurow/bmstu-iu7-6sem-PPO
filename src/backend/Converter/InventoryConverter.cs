@@ -1,5 +1,6 @@
 ﻿using Anticafe.BL.Models;
 using Anticafe.DataAccess.DBModels;
+using Common.Models.DTO;
 
 namespace Anticafe.DataAccess.Converter
 {
@@ -17,6 +18,19 @@ namespace Anticafe.DataAccess.Converter
             return new InventoryDbModel(id: inventory.Id,
                             name: inventory.Name,
                             rooms: inventory.Rooms is null ? null : inventory.Rooms.Select(r => RoomConverter.ConvertAppModelToDbModel(r)).ToList());
+        }
+
+        public static InventoryDto ConvertAppModelToDto(Inventory inventory)
+        {
+            return new InventoryDto(id: inventory.Id,
+                            name: inventory.Name);
+        }
+
+        public static Inventory ConvertDtoToAppModel(InventoryDto inventory)
+        {
+            return new Inventory(id: inventory.Id,
+                            name: inventory.Name,
+                            rooms: new List<Room>());
         }
     }
 }
