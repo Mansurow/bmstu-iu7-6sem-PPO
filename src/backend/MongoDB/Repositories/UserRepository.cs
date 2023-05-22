@@ -12,7 +12,7 @@ public class UserRepository: BaseRepository, IUserRepository
 
     public UserRepository(IDbCollectionFactory collections)
     {
-        _userCollection = collections.getUserCollection();
+        _userCollection = collections.GetUserCollection();
     }
 
     public async Task<List<UserDbModel>> GetAllUsersAsync()
@@ -79,9 +79,7 @@ public class UserRepository: BaseRepository, IUserRepository
     {
         try
         {
-            var user = await GetUserByIdAsync(userId);
             var filter = Builders<UserDbModel>.Filter.Lt(u => u.Id, userId);
-
             await _userCollection.DeleteOneAsync(filter);
         }
         catch

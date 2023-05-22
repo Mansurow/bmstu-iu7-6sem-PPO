@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Anticafe.Common.Enums;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Anticafe.DataAccess.DBModels;
 
@@ -8,6 +9,7 @@ public class UserDbModel
 {
     [Key]
     [Column("id")]
+    [BsonId]
     public int Id { get; set; }
     [Column("surname", TypeName = "varchar(64)")]
     public string Surname { get; set; }

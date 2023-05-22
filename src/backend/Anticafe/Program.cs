@@ -8,6 +8,7 @@ using Anticafe.BL.Sevices.UserService;
 using Anticafe.DataAccess;
 using Anticafe.DataAccess.IRepositories;
 using Anticafe.PostgreSQL.Repositories;
+using Anticafe.MongoDB.Repositories;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using NLog.Web;
@@ -33,31 +34,46 @@ builder.Host.UseNLog();
 
 // Add services to the container.
 builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-// builder.Services.AddDbContext<PgSQLDbContext>(option => option.UseNpgsql(builder.Configuration.GetSection("PostgreSQL").GetConnectionString("default")));
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-/*var client = new MongoClient(builder.Configuration.GetSection("MongoDB").GetConnectionString("default"));
-builder.Services.AddSingleton<IMongoClient>(client);*/
+var db = builder.Configuration.GetSection("App").GetSection("UseDb").Value;
+
+if (db is not null && db == "Mongo")
+{
+    var client = new MongoClient(builder.Configuration.GetSection("MongoDB").GetConnectionString("default"));
+    builder.Services.AddSingleton<IMongoClient>(client);
+    builder.Services.AddSingleton<IDbCollectionFactory, MongoCollectionFactory>();
+
+    builder.Services.AddScoped<IUserRepository, Anticafe.MongoDB.Repositories.UserRepository>();
+    builder.Services.AddScoped<IBookingRepository, Anticafe.MongoDB.Repositories.BookingRepository>();
+    builder.Services.AddScoped<IFeedbackRepository, Anticafe.MongoDB.Repositories.FeedbackRepository>();
+    builder.Services.AddScoped<IRoomRepository, Anticafe.MongoDB.Repositories.RoomRepository>();
+    builder.Services.AddScoped<IMenuRepository, Anticafe.MongoDB.Repositories.MenuRepository>();
+} 
+else
+{
+    builder.Services.AddDbContext<PgSQLDbContext>(option => option.UseNpgsql(builder.Configuration.GetSection("PostgreSQL").GetConnectionString("default")));
+    builder.Services.AddSingleton<Anticafe.PostgreSQL.IDbContextFactory<PgSQLDbContext>, PgSQLDbContextFactory>();
+
+    builder.Services.AddScoped<IUserRepository, Anticafe.PostgreSQL.Repositories.UserRepository>();
+    builder.Services.AddScoped<IBookingRepository, Anticafe.PostgreSQL.Repositories.BookingRepository>();
+    builder.Services.AddScoped<IFeedbackRepository, Anticafe.PostgreSQL.Repositories.FeedbackRepository>();
+    builder.Services.AddScoped<IRoomRepository, Anticafe.PostgreSQL.Repositories.RoomRepository>();
+    builder.Services.AddScoped<IMenuRepository, Anticafe.PostgreSQL.Repositories.MenuRepository>();
+}
+
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
-builder.Services.AddSingleton<Anticafe.PostgreSQL.IDbContextFactory<PgSQLDbContext>, PgSQLDbContextFactory>();
-// builder.Services.AddSingleton<IDbCollectionFactory, MongoCollectionFactory>();
-
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-/*builder.Services.AddScoped<IBookingRepository, BookingRepository>();
-builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
-builder.Services.AddScoped<IRoomRepository, RoomRepository>();*/
-builder.Services.AddScoped<IMenuRepository, MenuRepository>();
-
 builder.Services.AddScoped<IOauthService, Oauthservice>();
 builder.Services.AddScoped<IUserService, UserService>();
-//builder.Services.AddScoped<IBookingService, BookingService>();
-//builder.Services.AddScoped<IFeedbackService, FeedbackService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
-// builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<IRoomService, RoomService>();
 
 var app = builder.Build();
 

@@ -12,7 +12,7 @@ public class MenuRepository: BaseRepository, IMenuRepository
 
     public MenuRepository(IDbCollectionFactory collections) 
     {
-        _menuCollection = collections.getMenuCollection();
+        _menuCollection = collections.GetMenuCollection();
     }
 
     public async Task<List<MenuDbModel>> GetAllDishesAsync()
