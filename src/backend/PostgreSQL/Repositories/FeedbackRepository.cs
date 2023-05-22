@@ -3,13 +3,13 @@ using Anticafe.DataAccess.Exceptions;
 using Anticafe.DataAccess.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Anticafe.DataAccess.Repositories;
+namespace Anticafe.PostgreSQL.Repositories;
 
 public class FeedbackRepository: BaseRepository, IFeedbackRepository
 {
-    private readonly AppDbContext _context;
+    private readonly PgSQLDbContext _context;
 
-    public FeedbackRepository(IDbContextFactory contextFactory) : base()
+    public FeedbackRepository(IDbContextFactory<PgSQLDbContext> contextFactory) : base()
     {
         _context = contextFactory.getDbContext();
     }

@@ -7,9 +7,12 @@ using Anticafe.BL.Sevices.RoomService;
 using Anticafe.BL.Sevices.UserService;
 using Anticafe.DataAccess;
 using Anticafe.DataAccess.IRepositories;
-using Anticafe.DataAccess.Repositories;
+using Anticafe.PostgreSQL.Repositories;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using NLog.Web;
+using Anticafe.MongoDB;
+using Anticafe.PostgreSQL;
 
 var logger = NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
 logger.Debug("init main");
@@ -27,29 +30,34 @@ builder.Host.ConfigureAppConfiguration((_, config) =>
 builder.Logging.SetMinimumLevel(LogLevel.Trace);
 builder.Host.UseNLog();
 
+
 // Add services to the container.
 builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-builder.Services.AddDbContext<AppDbContext>(option => option.UseNpgsql(builder.Configuration.GetSection("PostgreSQL").GetConnectionString("default")));
+// builder.Services.AddDbContext<PgSQLDbContext>(option => option.UseNpgsql(builder.Configuration.GetSection("PostgreSQL").GetConnectionString("default")));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+/*var client = new MongoClient(builder.Configuration.GetSection("MongoDB").GetConnectionString("default"));
+builder.Services.AddSingleton<IMongoClient>(client);*/
+
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
-builder.Services.AddSingleton<IDbContextFactory, PgSQLDbContextFactory>();
+builder.Services.AddSingleton<Anticafe.PostgreSQL.IDbContextFactory<PgSQLDbContext>, PgSQLDbContextFactory>();
+// builder.Services.AddSingleton<IDbCollectionFactory, MongoCollectionFactory>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+/*builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
-builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();*/
 builder.Services.AddScoped<IMenuRepository, MenuRepository>();
 
 builder.Services.AddScoped<IOauthService, Oauthservice>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IBookingService, BookingService>();
-builder.Services.AddScoped<IFeedbackService, FeedbackService>();
+//builder.Services.AddScoped<IBookingService, BookingService>();
+//builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
-builder.Services.AddScoped<IRoomService, RoomService>();
+// builder.Services.AddScoped<IRoomService, RoomService>();
 
 var app = builder.Build();
 
