@@ -1,22 +1,26 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Anticafe.Common.Enums;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Anticafe.DataAccess.DBModels;
 public class BookingDbModel
 {
     [Key]
     [Column("id")]
+    [BsonId]
     public int Id { get; set; }
 
     [ForeignKey("Room")]
     [Column("room_id")]
     public int RoomId { get; set; }
+    [BsonIgnore]
     public RoomDbModel? Room { get; set; }
 
     [ForeignKey("User")]
     [Column("user_id")]
     public int UserId { get; set; }
+    [BsonIgnore]
     public UserDbModel? User { get; set; }
 
     [Column("amount_of_people", TypeName = "integer")]

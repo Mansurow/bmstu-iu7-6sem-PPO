@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Anticafe.DataAccess.Repositories;
+namespace Anticafe.DataAccess.Exceptions;
 
 [Serializable]
 public class UserNotFoundByIdException : Exception

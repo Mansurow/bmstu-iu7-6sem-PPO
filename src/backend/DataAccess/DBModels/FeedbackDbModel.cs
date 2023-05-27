@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Anticafe.DataAccess.DBModels;
 public class FeedbackDbModel
 {
     [Key]
     [Column("id")]
+    [BsonId]
     public int Id { get; set; }
     [ForeignKey("User")]
     [Column("user_id")]
@@ -20,7 +22,9 @@ public class FeedbackDbModel
     [Column("message", TypeName = "text")]
     public string? Message { get; set; }
 
+    [BsonIgnore]
     public RoomDbModel? Room { get; set; }
+    [BsonIgnore]
     public UserDbModel? User { get; set; }
 
     public FeedbackDbModel(int id, int userId, int roomId, DateTime date, int mark, string? message)

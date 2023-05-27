@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Anticafe.DataAccess.DBModels;
 
@@ -7,6 +8,7 @@ public class RoomDbModel
 {
     [Key]
     [Column("id")]
+    [BsonId]
     public int Id { get; set; }
     [Column("name", TypeName = "varchar(64)")]
     public string Name { get; set; }

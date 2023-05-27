@@ -3,13 +3,13 @@ using Anticafe.DataAccess.Exceptions;
 using Anticafe.DataAccess.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Anticafe.DataAccess.Repositories;
+namespace Anticafe.PostgreSQL.Repositories;
 
 public class RoomRepository: BaseRepository, IRoomRepository
 {
-    private readonly AppDbContext _context;
+    private readonly PgSQLDbContext _context;
 
-    public RoomRepository(IDbContextFactory contextFactory) : base()
+    public RoomRepository(IDbContextFactory<PgSQLDbContext> contextFactory) : base()
     {
         _context = contextFactory.getDbContext();
     }

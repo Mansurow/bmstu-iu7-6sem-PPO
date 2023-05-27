@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 
-namespace Anticafe.DataAccess
+
+namespace Anticafe.PostgreSQL
 {
-    public class PgSQLDbContextFactory: IDbContextFactory
+    public class PgSQLDbContextFactory: IDbContextFactory<PgSQLDbContext>
     {
         private readonly IConfiguration _configuration;
 
@@ -13,13 +13,13 @@ namespace Anticafe.DataAccess
             _configuration = configuration;
         }
 
-        public AppDbContext getDbContext()
+        public PgSQLDbContext getDbContext()
         {
             string curPerms = "default"; //_configuration["DbConnection"]!;
 
-            var builder = new DbContextOptionsBuilder<AppDbContext>();
+            var builder = new DbContextOptionsBuilder<PgSQLDbContext>();
             builder.UseNpgsql(_configuration.GetSection("PostgreSQL").GetConnectionString(curPerms));
-            var _adminDbContext = new AppDbContext(builder.Options);
+            var _adminDbContext = new PgSQLDbContext(builder.Options);
 
             return _adminDbContext;
         }

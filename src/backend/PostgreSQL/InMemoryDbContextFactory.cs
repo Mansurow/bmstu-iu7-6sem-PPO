@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Anticafe.DataAccess;
+namespace Anticafe.PostgreSQL;
 
-public class InMemoryDbContextFactory: IDbContextFactory
+public class InMemoryDbContextFactory: IDbContextFactory<PgSQLDbContext>
 {
     private readonly string _dbName;
     public InMemoryDbContextFactory()
@@ -10,12 +10,12 @@ public class InMemoryDbContextFactory: IDbContextFactory
         _dbName = "AnticafeDbTest" + Guid.NewGuid().ToString();
     }
 
-    public AppDbContext getDbContext()
+    public PgSQLDbContext getDbContext()
     {
 
-        var builder = new DbContextOptionsBuilder<AppDbContext>();
+        var builder = new DbContextOptionsBuilder<PgSQLDbContext>();
         builder.UseInMemoryDatabase(_dbName);
-        var _adminDbContext = new AppDbContext(builder.Options);
+        var _adminDbContext = new PgSQLDbContext(builder.Options);
 
         return _adminDbContext;
     }
