@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import ResourseService from "../resourse.service";
 import { Room } from "../../models/room";
 
@@ -34,7 +34,7 @@ export default class RoomService {
 
     static async getAllRooms(): Promise<Room[]> {
         // return await axios.get(ResourseService.url + this.api);
-        return this.MockRooms
+        return this.MockRooms;
     }
 
     static async getRoomById(id: number): Promise<Room> {

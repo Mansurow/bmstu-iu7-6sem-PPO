@@ -1,16 +1,16 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import RoomList from './components/RoomList';
+import RoomList from './components/room/RoomList';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import Footer from './components/footer/Footer';
+import Navbar from './components/navbar/Navbar';
+import { UserType } from './models/enums/usertype.enum';
 
 function App() {
   return (
     <>
       <BrowserRouter>
-        <Header />
+        <Navbar role={UserType.User} isLogin={false} />
         <Routes>
           <Route path="/" element={<RoomList/>}/>
           <Route path="/home" element={<RoomList/>}/>

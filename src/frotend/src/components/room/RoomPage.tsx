@@ -1,6 +1,6 @@
 import React from "react";
-import { Room } from "../models/room";
-import { InventoryInfo } from "./InventoryInfo";
+import { Room } from "../../models/room";
+import { InventoryInfo } from "../InventoryInfo";
 
 interface RoomProps {
     room: Room
