@@ -1,19 +1,19 @@
 import { Room } from "../../models/room";
 import { RoomListProps } from "../../models/types";
-import { CREATE_ROOM, EDIT_ROOM, FETCH_ALL_ROOM } from "../constants/roomConstanst";
+import { CREATE_ROOM, EDIT_ROOM, FETCH_ALL_ROOM, FETCH_ROOM } from "../constants/roomConstanst";
 
-const initialClubState: { rooms: Room[] } = {
-    rooms: []
+const initialClubState: { rooms: Room[]} = {
+    rooms: [],
 };
 
-const clubReducer = (state = initialClubState, action: any): RoomListProps => {
+const roomReducer = (state = initialClubState, action: any): RoomListProps => {
     switch (action.type) {
         case FETCH_ALL_ROOM:
             return {
                 ...state,
                 rooms:action.payload.data,
                 error:null
-            }
+            }   
         case CREATE_ROOM:
             return {
                 ...state,
@@ -27,8 +27,8 @@ const clubReducer = (state = initialClubState, action: any): RoomListProps => {
                 error:null
             }
         default:
-            return <RoomListProps>state;
+            return <RoomListProps> state;
     }
 };
 
-export default clubReducer;
+export default roomReducer;
