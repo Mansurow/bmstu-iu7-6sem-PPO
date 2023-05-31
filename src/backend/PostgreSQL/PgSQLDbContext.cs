@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Anticafe.DataAccess.DBModels;
 
-namespace Anticafe.DataAccess;
+namespace Anticafe.PostgreSQL;
 
-public partial class AppDbContext : DbContext
+public partial class PgSQLDbContext : DbContext
 {
     public DbSet<UserDbModel> Users { get; set; }
     public DbSet<BookingDbModel> Bookings { get; set; }
@@ -12,12 +12,7 @@ public partial class AppDbContext : DbContext
     public DbSet<RoomDbModel> Rooms { get; set; }
     public DbSet<MenuDbModel> Menu { get; set; }
 
-    public AppDbContext(DbContextOptions<AppDbContext> options): base(options) { }
-
-    /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=anticafe;User Id=postgres;Password=postgres;");
-    }*/
+    public PgSQLDbContext(DbContextOptions<PgSQLDbContext> options): base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

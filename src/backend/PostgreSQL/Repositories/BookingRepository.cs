@@ -4,13 +4,13 @@ using Anticafe.DataAccess.Exceptions;
 using Anticafe.DataAccess.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Anticafe.DataAccess.Repositories;
+namespace Anticafe.PostgreSQL.Repositories;
 
 public class BookingRepository: BaseRepository, IBookingRepository
 {
-    private readonly AppDbContext _context;
+    private readonly PgSQLDbContext _context;
 
-    public BookingRepository(IDbContextFactory contextFactory): base()
+    public BookingRepository(IDbContextFactory<PgSQLDbContext> contextFactory): base()
     {
         _context = contextFactory.getDbContext();
     }

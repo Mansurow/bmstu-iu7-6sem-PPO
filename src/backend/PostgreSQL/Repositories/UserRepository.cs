@@ -4,13 +4,13 @@ using Anticafe.DataAccess.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.Mapping;
 
-namespace Anticafe.DataAccess.Repositories
+namespace Anticafe.PostgreSQL.Repositories
 {
     public class UserRepository: BaseRepository, IUserRepository
     {
-        private readonly AppDbContext _context;
+        private readonly PgSQLDbContext _context;
 
-        public UserRepository(IDbContextFactory contextFactory) : base()
+        public UserRepository(IDbContextFactory<PgSQLDbContext> contextFactory) : base()
         {
             _context = contextFactory.getDbContext();
         }

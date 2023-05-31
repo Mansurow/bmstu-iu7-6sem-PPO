@@ -3,13 +3,13 @@ using Anticafe.DataAccess.IRepositories;
 using Anticafe.DataAccess.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
-namespace Anticafe.DataAccess.Repositories;
+namespace Anticafe.PostgreSQL.Repositories;
 
 public class MenuRepository : BaseRepository, IMenuRepository
 {
-    private readonly AppDbContext _context;
+    private readonly PgSQLDbContext _context;
 
-    public MenuRepository(IDbContextFactory contextFactory)
+    public MenuRepository(IDbContextFactory<PgSQLDbContext> contextFactory)
     {
         _context = contextFactory.getDbContext();
     }
