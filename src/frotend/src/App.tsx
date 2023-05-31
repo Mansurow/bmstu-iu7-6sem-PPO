@@ -16,13 +16,15 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Navbar role={auth.role} isLogin={auth.isLogin} />
+        <Navbar role={UserType.User} isLogin={auth.isLogin} />
         <Routes>
           <Route path="/" element={<RoomList/>}/>
           <Route path="/home" element={<RoomList/>}/>
           <Route path="/rooms" element={<RoomList/>}/>
           <Route path="/rooms/:id" element={<RoomPage/>}/>
           <Route path="/signin" element={<SignIn/>}/>
+          <Route path='/menu'/>
+          <Route path='/rooms/bookings/'/>
         </Routes>
         <Footer />
       </BrowserRouter>

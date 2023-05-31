@@ -1,9 +1,10 @@
+import { UserType } from "../../models/enums/usertype.enum";
 import { LoginProps } from "../../models/types";
 import { SIGN_IN } from "../constants/authConstants";
 
 
 const initialLoginState : LoginProps =  {
-    role: undefined,
+    role: UserType.NoAuth,
     isLogin:false
 };
 
@@ -14,7 +15,7 @@ const authReducer = (state = initialLoginState, action: any) => {
             return {
                 ...state,
                 isLogin:action.payload.data.isLogin,
-                role:action.payload.data.data.user.role[0].permission
+                role:action.payload.data.role
             }
         default:
             return state;
