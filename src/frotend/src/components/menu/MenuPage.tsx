@@ -78,7 +78,7 @@ export const MenuPage: React.FC<LoginProps> = ({role, isLogin}) =>
                     {
                         isEditing ? 
                         <>
-                            <p>Название:</p><input type="text" value={editedName} onChange={(e) => setEditedName(e.target.value)} />
+                            <p>Название: <input type="text" value={editedName} onChange={(e) => setEditedName(e.target.value)} /></p>
                         </>
                         : 
                         <h1>"{dish?.name}"</h1>

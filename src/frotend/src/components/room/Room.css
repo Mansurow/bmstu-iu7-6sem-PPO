@@ -28,8 +28,11 @@
     padding-bottom: 5px;
 }
 
-.room-card .MuiTypography-root {
-    margin-bottom: 10px;
+.full__room__info input {
+    width: 50%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .button-group button{

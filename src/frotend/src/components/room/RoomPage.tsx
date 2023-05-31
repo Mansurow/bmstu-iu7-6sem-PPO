@@ -85,13 +85,15 @@ export const RoomPage: React.FC<LoginProps> = ({role, isLogin}) =>
                     {
                         isEditing ? 
                         <>
-                            <p>Название:</p><input type="text" value={editedName} onChange={(e) => setEditedName(e.target.value)} />
+                            <p>Название: <input type="text" value={editedName} onChange={(e) => setEditedName(e.target.value)} /></p>
                         </>
                         : 
                         <h1>"{room?.name}"</h1>
-                    }   
-                    {room?.inventories.length ? room?.inventories.map(inv => <InventoryInfo inventory={inv} key={inv.id}/>)
-                    : "Отсутсвует"}
+                    }  
+                    { !isEditing &&
+                        (room?.inventories.length ? room?.inventories.map(inv => <InventoryInfo inventory={inv} key={inv.id}/>)
+                        : "Отсутсвует")
+                    }
                     <p>Цена: {isEditing ? <input type="text" value={editedPrice} onChange={(e) => setEditedPrice(Number(e.target.value))} /> : room?.price} рублей</p>
                     <p>Площадь: {isEditing ? <input type="text" value={editedSize} onChange={(e) => setEditedSize(Number(e.target.value))} /> : room?.size} кв. метров</p>
                     {!isEditing && <p>Рейтинг: {room?.rating}/5</p>}
