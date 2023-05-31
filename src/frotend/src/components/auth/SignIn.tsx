@@ -16,7 +16,7 @@ const SignIn: React.FC<SignInProps> = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         dispatch.signIn({login, password})
-        navigate("/")
+        navigate('/')
     };
 
     return (

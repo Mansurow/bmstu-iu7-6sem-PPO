@@ -13,7 +13,15 @@ export default class UserService {
         return await axios.get(ResourseService.url + this.api + `/${user.login}&${user.password}`);
     }
 
-    static async SignUp(user: UserFormProps): Promise<User> {
-        return await axios.get(ResourseService.url + this.api + `/${user.login}&${user.password}`);
+    static async SignUp(user: User): Promise<User> {
+        return await axios.post(ResourseService.url + this.api, user);
+    }
+
+    static async GetAllUsers(): Promise<User[]> {
+        return await axios.get(ResourseService.url + this.api);
+    }
+
+    static async GetUserById(id: number): Promise<User> {
+        return await axios.get(ResourseService.url + this.api + `${id}`);
     }
 }

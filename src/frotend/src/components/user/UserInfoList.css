@@ -1,0 +1,25 @@
+.user-card {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    cursor: pointer;
+}
+
+.user-card:hover {
+    background-color: #e0e0e0;
+}
+
+.honor-button {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    margin-top: 16px;
+    cursor: pointer;
+}
+
+.honor-button:hover {
+    background-color: #f57c00;
+}

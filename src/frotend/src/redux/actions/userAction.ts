@@ -3,7 +3,7 @@ import { UserFormProps } from "../../models/types";
 import { User } from "../../models/user";
 import UserService from "../../services/http-service/user.service";
 import { SIGN_UP } from "../constants/authConstants";
-import { EDIT_USER } from "../constants/userConstants";
+import { EDIT_USER, FETCH_ALL_USER } from "../constants/userConstants";
 
 // Action Creators
 export const userAction = (updatedUser: User) => {
@@ -13,14 +13,16 @@ export const userAction = (updatedUser: User) => {
     };
 };
 
-export const createUser = (user: UserFormProps) => async (dispatch:Dispatch<any>) => {
+export const getAllUsers = () => async (dispatch:Dispatch<any>) => {
     try {
         // dispatch({type:START_LOADING})
 
-        const data = await UserService.SignUp(user);
-        dispatch({type:SIGN_UP, payload:data})
-        // dispatch(({type:END_LOADING}))
+        const data = await UserService.GetAllUsers();
+
+        dispatch({ type: FETCH_ALL_USER, payload: { data } });
+
     } catch (error) {
         console.log(error)
     }
 }
+
