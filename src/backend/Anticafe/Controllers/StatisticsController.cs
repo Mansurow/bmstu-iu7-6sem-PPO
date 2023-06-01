@@ -46,7 +46,7 @@ namespace Anticafe.Controllers
             }
         }
 
-        [HttpGet("/{roomId}")]
+        [HttpGet("{roomId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BookingStatisticsDto))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -59,6 +59,7 @@ namespace Anticafe.Controllers
         {
             try
             {
+                await _statisticsService.CalculateBookingStatisticsForRoomAsync(roomId);
                 var statistics = await _statisticsService.GetBookingStatisticsByRoomAsync(roomId);
                 _logger.LogInformation("Get all bookings statistics information successfully.");
                 return Ok(StatisticsConverter.ConvertAppModelToDto(statistics));

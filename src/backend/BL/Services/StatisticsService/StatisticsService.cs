@@ -53,13 +53,18 @@ public class StatisticsService: IStatisticsService
         var roomBookings = await _bookingRepository.GetBookingByRoomAsync(roomId);
         if (roomBookings.Count != 0)
         {
-            var timeDuration = roomBookings.Select(b => b.EndTime - b.StartTime);
+            var timeDuration = roomBookings.Select(b => (b.EndTime.TimeOfDay - b.StartTime.TimeOfDay)).ToList();
+            var parseTimeDuration = timeDuration.Select(t => t.Hours + t.Minutes / 60.0).ToList();
+            
 
             var allst = await GetBookingStatisticsAsync();
 
-            var statistics = new BookingStatisticsDbModel(allst.Count + 1, roomId, 0, 0, roomBookings.Count);
+            var statistics = new BookingStatisticsDbModel(allst.Count + 1, roomId, 
+                                 parseTimeDuration.Average(), 
+                                 parseTimeDuration.Max(), 
+                                 roomBookings.Count);
 
-            if (allst.First(b => b.Id == roomId) != null)
+            if (allst.FirstOrDefault(b => b.RoomId == roomId) != null)
             {
                 await _statisticsRepository.UpdateBookingStatisticsAsync(statistics);
             } else
