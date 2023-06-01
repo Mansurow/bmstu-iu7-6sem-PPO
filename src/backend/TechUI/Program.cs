@@ -5,9 +5,9 @@ using Anticafe.BL.Sevices.FeedbackService;
 using Anticafe.BL.Sevices.OauthService;
 using Anticafe.BL.Sevices.RoomService;
 using Anticafe.BL.Sevices.UserService;
-using Anticafe.DataAccess;
 using Anticafe.DataAccess.IRepositories;
-using Anticafe.DataAccess.Repositories;
+using Anticafe.PostgreSQL;
+using Anticafe.PostgreSQL.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,7 +23,7 @@ internal static class Program
 
         var builder = new HostBuilder().ConfigureServices((hostContext, services) =>
         {
-            services.AddSingleton<IDbContextFactory, PgSQLDbContextFactory>();
+            services.AddSingleton<IDbContextFactory<PgSQLDbContext>, PgSQLDbContextFactory>();
 
             services.AddSingleton(config);
 

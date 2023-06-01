@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\..\PostgreSQL\PostgreSQL.csproj" />
   </ItemGroup>
 
 </Project>

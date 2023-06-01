@@ -11,6 +11,7 @@ public partial class PgSQLDbContext : DbContext
     public DbSet<InventoryDbModel> Inventories { get; set; }
     public DbSet<RoomDbModel> Rooms { get; set; }
     public DbSet<MenuDbModel> Menu { get; set; }
+    public DbSet<BookingStatisticsDbModel> BookingStatistics { get; set; }
 
     public PgSQLDbContext(DbContextOptions<PgSQLDbContext> options): base(options) { }
 

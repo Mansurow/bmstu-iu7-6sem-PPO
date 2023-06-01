@@ -14,6 +14,7 @@ using MongoDB.Driver;
 using NLog.Web;
 using Anticafe.MongoDB;
 using Anticafe.PostgreSQL;
+using Anticafe.BL.Services.StatisticsService;
 
 var logger = NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
 logger.Debug("init main");
@@ -63,6 +64,7 @@ else
     builder.Services.AddScoped<IFeedbackRepository, Anticafe.PostgreSQL.Repositories.FeedbackRepository>();
     builder.Services.AddScoped<IRoomRepository, Anticafe.PostgreSQL.Repositories.RoomRepository>();
     builder.Services.AddScoped<IMenuRepository, Anticafe.PostgreSQL.Repositories.MenuRepository>();
+    builder.Services.AddScoped<IStatisticsRepository, Anticafe.PostgreSQL.Repositories.StatisticsRepository>();
 }
 
 
@@ -74,6 +76,7 @@ builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<IStatisticsService, StatisticsService>();
 
 var app = builder.Build();
 
