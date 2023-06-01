@@ -28,9 +28,6 @@ public class OauthServiceUnitTests
         var password = "password";
         var users = CreateMockUsers();
 
-        var expectedUser = new User(4, "Иванов", "Иван", "Иванович", new DateTime(2002, 03, 29), Gender.Male, login, "+92323232");
-        expectedUser.CreateHash(password);
-
         _mockUserRepository
             .Setup(s => s.GetUserByEmailAsync(login))
             .ReturnsAsync(users.Find(e => e.Email == login));
@@ -40,7 +37,7 @@ public class OauthServiceUnitTests
 
         // Act
 
-        await _oauthService.Registrate(expectedUser, password);
+        var expectedUser = await _oauthService.Registrate(login, password);
         var actualUser = UserConverter.ConvertDbModelToAppModel(users.Last());
 
         // Assert
@@ -73,8 +70,7 @@ public class OauthServiceUnitTests
 
         // Act
 
-        await _oauthService.Registrate(expectedUser, password);
-        var actualUser = UserConverter.ConvertDbModelToAppModel(users.Last());
+        var actualUser = await _oauthService.Registrate(login, password);
 
         // Assert
         Assert.Equal(expectedUser.Id, actualUser.Id);
@@ -103,7 +99,7 @@ public class OauthServiceUnitTests
 
         // Act
 
-        var action = async () => await _oauthService.Registrate(user, password);
+        var action = async () => await _oauthService.Registrate(login, password);
         var actualUser = users.Last();
 
         // Assert

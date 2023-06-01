@@ -1,8 +1,9 @@
 using Anticafe.Common.Enums;
-using Anticafe.DataAccess;
 using Anticafe.DataAccess.DBModels;
 using Anticafe.DataAccess.IRepositories;
-using Anticafe.DataAccess.Repositories;
+using Anticafe.PostgreSQL;
+using Anticafe.PostgreSQL.Repositories;
+
 using Xunit;
 
 namespace IntegrationalTests.DataAccess
@@ -10,12 +11,12 @@ namespace IntegrationalTests.DataAccess
     public class UserTests
     {
         private readonly IUserRepository _userRepository;
-        private readonly IDbContextFactory _dbContextFactory;
+        private readonly IDbContextFactory<PgSQLDbContext> _dbContextFactory;
 
         public UserTests()
         {
             _dbContextFactory = new InMemoryDbContextFactory();
-            _userRepository = new UserRepository(_dbContextFactory.getDbContext());
+            _userRepository = new UserRepository(_dbContextFactory);
         }
 
         [Fact]

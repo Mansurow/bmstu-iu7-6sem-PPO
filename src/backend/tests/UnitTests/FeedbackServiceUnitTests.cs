@@ -148,7 +148,7 @@ public class FeedbackServiceUnitTests
                                .Callback((FeedbackDbModel f) => feedbacks.Add(f));
 
         // Act
-        await _feedbackService.AddFeedbackAsync(feedback);
+        await _feedbackService.AddFeedbackAsync(userId, roomId, 5, "Описание 1");
         var actualFeedback = feedbacks.Last();
 
         // Assert
@@ -182,7 +182,7 @@ public class FeedbackServiceUnitTests
                                .Callback((FeedbackDbModel f) => feedbacks.Add(f));
 
         // Act
-        await _feedbackService.AddFeedbackAsync(feedback);
+        await _feedbackService.AddFeedbackAsync(userId, roomId, 5, "Описание 1");
 
         var actualFeedback = FeedbackConverter.ConvertDbModelToAppModel(feedbacks.Last());
 
@@ -214,7 +214,7 @@ public class FeedbackServiceUnitTests
                                .Callback((FeedbackDbModel f) => feedbacks.Add(f));
 
         // Act
-        var action = async() => await _feedbackService.AddFeedbackAsync(feedback);
+        var action = async() => await _feedbackService.AddFeedbackAsync(userId, roomId, 5, "Описание 1");
 
         // Assert
         Assert.ThrowsAsync<UserNotFoundException>(action);
@@ -240,7 +240,7 @@ public class FeedbackServiceUnitTests
                                .Callback((FeedbackDbModel f) => feedbacks.Add(f));
 
         // Act
-        var action = async () => await _feedbackService.AddFeedbackAsync(feedback);
+        var action = async () => await _feedbackService.AddFeedbackAsync(userId, roomId, 5, "Описание 1");
 
         // Assert
         Assert.ThrowsAsync<RoomNotFoundException>(action);
