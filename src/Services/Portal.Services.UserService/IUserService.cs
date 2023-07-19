@@ -1,6 +1,6 @@
 ﻿using Portal.Common.Models;
 
-namespace Portal.Sevices.UserService;
+namespace Portal.Services.UserService;
 
 public interface IUserService
 {

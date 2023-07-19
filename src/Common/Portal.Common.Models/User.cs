@@ -18,7 +18,7 @@ public class User
     public string? PasswordHash { get; set; }
     public Role Role { get; set; }
 
-    public User(Guid id, string lastName, string firstName, string middleName, DateTime birthday, Gender gender, string email, string phone, string? passwordHash, Role role = Role.User)
+    public User(Guid id, string lastName, string firstName, string middleName, DateTime birthday, Gender gender, string email, string phone, string? passwordHash = null, Role role = Role.User)
     {
         Id = id;
         LastName = lastName;

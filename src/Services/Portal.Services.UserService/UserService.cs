@@ -3,9 +3,9 @@ using Portal.Common.Models;
 using Portal.Common.Models.Enums;
 using Portal.Services.UserService.Exceptions;
 
-namespace Portal.Sevices.UserService;
+namespace Portal.Services.UserService;
 
-public class UserService: IUserService
+public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
 
@@ -14,7 +14,7 @@ public class UserService: IUserService
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
     }
 
-    public async Task<User> GetUserByIdAsync(Guid userId) 
+    public async Task<User> GetUserByIdAsync(Guid userId)
     {
         var user = await _userRepository.GetUserByIdAsync(userId);
         if (user is null)
@@ -25,12 +25,12 @@ public class UserService: IUserService
         return user;
     }
 
-    public async Task<List<User>> GetAllUsersAsync() 
+    public async Task<List<User>> GetAllUsersAsync()
     {
         return await _userRepository.GetAllUsersAsync();
     }
 
-    public async Task ChangeUserPermissionsAsync(Guid userId) 
+    public async Task ChangeUserPermissionsAsync(Guid userId)
     {
         var user = await GetUserByIdAsync(userId);
 
