@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4C3678DD-CE52-4ED2-883E-A85D63AF5CBF}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "tests\UnitTests\UnitTests.csproj", "{79EDE27C-27B4-40BB-964F-B9FEDD080D22}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portal", "Portal\Portal.csproj", "{6CB4B246-BAF9-4EB4-B023-B4A889F009A9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portal.Database.Models", "Database\Portal.Database.Models\Portal.Database.Models.csproj", "{017AED3F-D6DB-4E82-B353-8741FA7FE24C}"
@@ -29,16 +25,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portal.Services.BookingServ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portal.Services.FeedbackService", "Services\Portal.Services.FeedbackService\Portal.Services.FeedbackService.csproj", "{132DF200-F21C-4CEA-8012-C85601000FF4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{80A2BFE1-FACB-4D79-8A87-A967A4808E56}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Services", "Tests\UnitTests\UnitTests.Services\UnitTests.Services.csproj", "{DB34955A-1CA9-4E4E-ACD1-4F79A6D1A0EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{79EDE27C-27B4-40BB-964F-B9FEDD080D22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{79EDE27C-27B4-40BB-964F-B9FEDD080D22}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{79EDE27C-27B4-40BB-964F-B9FEDD080D22}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{79EDE27C-27B4-40BB-964F-B9FEDD080D22}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6CB4B246-BAF9-4EB4-B023-B4A889F009A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6CB4B246-BAF9-4EB4-B023-B4A889F009A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CB4B246-BAF9-4EB4-B023-B4A889F009A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -83,12 +79,16 @@ Global
 		{132DF200-F21C-4CEA-8012-C85601000FF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{132DF200-F21C-4CEA-8012-C85601000FF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{132DF200-F21C-4CEA-8012-C85601000FF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB34955A-1CA9-4E4E-ACD1-4F79A6D1A0EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB34955A-1CA9-4E4E-ACD1-4F79A6D1A0EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB34955A-1CA9-4E4E-ACD1-4F79A6D1A0EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB34955A-1CA9-4E4E-ACD1-4F79A6D1A0EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{79EDE27C-27B4-40BB-964F-B9FEDD080D22} = {4C3678DD-CE52-4ED2-883E-A85D63AF5CBF}
+		{DB34955A-1CA9-4E4E-ACD1-4F79A6D1A0EF} = {80A2BFE1-FACB-4D79-8A87-A967A4808E56}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2E71563E-2237-43E3-8A05-75F7F5F08539}
