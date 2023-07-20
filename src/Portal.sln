@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{80A2BFE1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Services", "Tests\UnitTests\UnitTests.Services\UnitTests.Services.csproj", "{DB34955A-1CA9-4E4E-ACD1-4F79A6D1A0EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portal.Services.PackageService", "Services\Portal.Services.PackageService\Portal.Services.PackageService.csproj", "{1647AA3B-83CA-41E6-931A-3BC2DD2F192E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{DB34955A-1CA9-4E4E-ACD1-4F79A6D1A0EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB34955A-1CA9-4E4E-ACD1-4F79A6D1A0EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB34955A-1CA9-4E4E-ACD1-4F79A6D1A0EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1647AA3B-83CA-41E6-931A-3BC2DD2F192E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1647AA3B-83CA-41E6-931A-3BC2DD2F192E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1647AA3B-83CA-41E6-931A-3BC2DD2F192E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1647AA3B-83CA-41E6-931A-3BC2DD2F192E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

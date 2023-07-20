@@ -4,11 +4,11 @@ namespace Portal.Services.FeedbackService
 {
     public interface IFeedbackService
     {
-        Task<List<Feedback>> GetAllFeedbackByRoomAsync(Guid ZoneId);
+        Task<List<Feedback>> GetAllFeedbackByZoneAsync(Guid zoneId);
         Task<List<Feedback>> GetAllFeedbackAsync();
-        Task AddFeedbackAsync(Feedback feedback);
+        Task AddFeedbackAsync(Guid zoneId, Guid userId, double mark, string description);
         Task UpdateFeedbackAsync(Feedback feedback);
         Task UpdateZoneRatingAsync(Guid zoneId);
-        Task DeleteFeedbackAsync(Guid feedbackId);
+        Task RemoveFeedbackAsync(Guid feedbackId);
     }
 }

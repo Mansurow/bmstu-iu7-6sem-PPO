@@ -1,8 +1,9 @@
 ﻿using Portal.Common.Models;
 using Portal.Database.Repositories.Interfaces;
 using Portal.Services.ZoneService.Exceptions;
+using Portal.Sevices.ZoneService;
 
-namespace Portal.Sevices.ZoneService;
+namespace Portal.Services.ZoneService;
 
 public class ZoneService: IZoneService
 {
@@ -58,6 +59,7 @@ public class ZoneService: IZoneService
         await _zoneRepository.UpdateZoneAsync(zone);
     }
 
+    // TODO: Доработать идею лобавления инвентаря)))
     public async Task AddInventoryForZoneAsync(Guid zoneId, Inventory inventory)
     {
         var zone = await GetZoneByIdAsync(zoneId);
@@ -67,6 +69,7 @@ public class ZoneService: IZoneService
         await UpdateZoneAsync(zone);
     }
 
+    // при удалении зоны инвентарь удалять надо???
     public async Task DeleteZoneAsync(Guid zoneId)
     {
         if (!_ZoneExists(zoneId).Result)
@@ -81,7 +84,7 @@ public class ZoneService: IZoneService
     {
         var zone = await _zoneRepository.GetZoneByIdAsync(zoneId);
 
-        if (zone != null)
+        if (zone is not null)
             return true;
 
         return false;

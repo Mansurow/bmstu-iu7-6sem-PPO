@@ -1,6 +1,5 @@
 ﻿using Portal.Common.Models;
 using Portal.Common.Models.Enums;
-using Portal.Converter;
 using Portal.Database.Repositories.Interfaces;
 using Portal.Services.BookingService.Exceptions;
 using System.Globalization;
@@ -36,45 +35,32 @@ namespace Portal.Services.BookingService
 
             return bookings;
         }
-
-        private async Task UpdateNoActualBookingsAsync(List<Booking> bookings)
+        
+        private async Task UpdateNoActualBookingsAsync(IEnumerable<Booking> bookings)
         {
-            foreach (var b in bookings)
-                if (b.IsBookingExpired() && b.Status is not BookingStatus.NoActual)
-                {
-                    b.ChangeStatus(BookingStatus.NoActual);
-                    await _bookingRepository.UpdateNoActualBookingAsync(b.Id);
-                }
-        }
-
-        public async Task<List<Booking>> GetBookingByRoomAsync(Guid zoneId)
-        {
-            var bookings = await _bookingRepository.GetBookingByRoomAsync(zoneId);
-
-            await UpdateNoActualBookingsAsync(bookings);
-
-            return bookings;
-        }
-
-        public async Task<List<Booking>> GetBookingByUserAndRoomAsync(Guid userId, Guid zoneId)
-        {
-            var bookings = await _bookingRepository.GetBookingByUserAndRoomAsync(userId, zoneId);
-            if (bookings is null)
+            foreach (var b in bookings.Where(b => b.IsBookingExpired() 
+                                                  && b.Status is not BookingStatus.NoActual))
             {
-                throw new BookingNotFoundException($"Bookings not found for user with id: {userId} and room with id: {zoneId}");
+                b.ChangeStatus(BookingStatus.NoActual);
+                await _bookingRepository.UpdateNoActualBookingAsync(b.Id);
             }
+        }
+        
+        public async Task<List<Booking>> GetBookingByZoneAsync(Guid zoneId)
+        {
+            var bookings = await _bookingRepository.GetBookingByZoneAsync(zoneId);
 
             await UpdateNoActualBookingsAsync(bookings);
 
             return bookings;
         }
-
+        
         public async Task<Booking> GetBookingByIdAsync(Guid bookingId)
         {
             var booking = await _bookingRepository.GetBookingByIdAsync(bookingId);
             if (booking is null)
             {
-                throw new BookingNotFoundException($"Bookings not found id: {bookingId}");
+                throw new BookingNotFoundException($"Bookings with id: {bookingId} not found");
             }
 
             if (booking.IsBookingExpired())
@@ -86,29 +72,79 @@ namespace Portal.Services.BookingService
             return booking;
         }
 
-        public async Task CreateBookingAsync(Guid userId, Guid zoneId, int amount, string date, string startTime, string EndTime)
+        public async Task<List<FreeTime>> GetReservedTimeAsync(Guid zoneId, DateOnly date)
+        {
+            var bookings = (await GetBookingByZoneAsync(zoneId))
+                .FindAll(e => e.Date == date).OrderBy(e => e.StartTime).ToList();
+            
+
+            var freeTimes = new List<FreeTime>();
+            var startTimeWork = new TimeOnly(8, 0);
+            var endTimeWork = new TimeOnly(23, 0);
+            for (var i = 0; i < bookings.Count; i++)
+            {
+                FreeTime addFreeTime;
+                if (i == 0)
+                {
+                    addFreeTime = startTimeWork < bookings[i].StartTime
+                        ? new FreeTime(startTimeWork, bookings[i].EndTime)
+                        : new FreeTime(bookings[i].EndTime, bookings[i + 1].StartTime);
+                }
+                else if (i == bookings.Count - 1)
+                {
+                    addFreeTime = new FreeTime(bookings[i].EndTime, endTimeWork);
+                }
+                else
+                {
+                    if (freeTimes.Count > 0 && freeTimes[^1].EndTime < bookings[i].StartTime)
+                    {
+                        addFreeTime = new FreeTime(freeTimes[^1].EndTime, bookings[i].StartTime);
+                    }
+                    else
+                    {
+                        addFreeTime = new FreeTime(bookings[i].EndTime, bookings[i + 1].StartTime);
+                    }
+                }
+                
+                if (addFreeTime.EndTime - addFreeTime.StartTime >= new TimeSpan(1, 0, 0))
+                    freeTimes.Add(addFreeTime);
+            }
+
+            return freeTimes;
+        }
+
+        public async Task CreateBookingAsync(Guid userId, Guid zoneId, Guid packageId, string date, string startTime, string endTime)
         {
             var culture = CultureInfo.CreateSpecificCulture("ru-RU");
             var dateRu = DateOnly.Parse(date, culture);
             var startTimeRu = TimeOnly.Parse(startTime, culture);
-            var endTimeRu = TimeOnly.Parse(EndTime, culture);
-
-            var userBooking = await _bookingRepository.GetUserBookingByZoneForTimeRangeAsync(userId, zoneId, dateRu, startTimeRu, startTimeRu);
-            if (userBooking is not null)
+            var endTimeRu = TimeOnly.Parse(endTime, culture);
+            
+            var booking = _bookingRepository.GetBookingByUserAndZoneAsync(userId, zoneId);
+            if (booking is not null)
             {
-                throw new BookingReversedException($"User with id: {userId} reversed since {startTimeRu} to {startTimeRu} on {dateRu} for room with id: {zoneId}.");
+                throw new BookingExistsException($"User with id: {userId} reversed for zone with id: {zoneId}");
             }
-
-            var bookings = await _bookingRepository.GetAllBookingByZoneForTimeRangeAsync(zoneId, dateRu, startTimeRu, endTimeRu);
-            if (bookings.Count > 0)
+                
+            if (!await IsFreeTimeAsync(dateRu, startTimeRu, endTimeRu))
             {
-                throw new BookingReversedException($"All reversed since {startTimeRu} to {startTimeRu} on {dateRu} for room with id: {zoneId}.");
+                throw new BookingReversedException($"Zone full or partial reversed on {dateRu} from {startTime} to {endTime}");
             }
-
-            var booking = new Booking(Guid.NewGuid(), zoneId, userId, amount, BookingStatus.Reserved, dateRu, startTimeRu, startTimeRu);
-            await _bookingRepository.InsertBookingAsync(booking);
+            
+            await _bookingRepository.InsertBookingAsync(
+                new Booking(Guid.NewGuid(), zoneId, userId, packageId, 
+                1, BookingStatus.TemporaryReserved, 
+                dateRu, startTimeRu, startTimeRu));
         }
-
+        
+        public async Task<bool> IsFreeTimeAsync(DateOnly date, TimeOnly startTime, TimeOnly endTime)
+        {
+            return (await _bookingRepository.GetAllBookingAsync())
+                .FindAll(b => b.Date == date && b.Status == BookingStatus.NoActual)
+                .All(b => (b.StartTime <= startTime && b.EndTime < startTime) 
+                                || (b.StartTime >= endTime && b.EndTime > startTime));
+        }
+        
         public async Task ChangeBookingStatusAsync(Guid bookingId, BookingStatus status)
         {
             var booking = await GetBookingByIdAsync(bookingId);
@@ -122,7 +158,7 @@ namespace Portal.Services.BookingService
             var booking = await _bookingRepository.GetBookingByIdAsync(updateBooking.Id);
             if (booking is null)
             {
-                throw new BookingNotFoundException($"Booking not found with id: {updateBooking.Id}");
+                throw new BookingNotFoundException($"Booking with id: {updateBooking.Id} not found");
             }
 
             if (booking.IsBookingExpired())
@@ -131,12 +167,12 @@ namespace Portal.Services.BookingService
             await _bookingRepository.UpdateBookingAsync(booking);
         }
 
-        public async Task DeleteBookingAsync(Guid bookingId)
+        public async Task RemoveBookingAsync(Guid bookingId)
         {
             var booking = await _bookingRepository.GetBookingByIdAsync(bookingId);
             if (booking is null)
             {
-                throw new BookingNotFoundException($"Booking not found with id: {bookingId}");
+                throw new BookingNotFoundException($"Booking with id: {bookingId} not found");
             }
 
             await _bookingRepository.DeleteBookingAsync(bookingId);

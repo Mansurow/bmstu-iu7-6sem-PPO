@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeCoverage" Version="17.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="Moq" Version="4.18.4" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -31,6 +32,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Database\Portal.Database.Repository\Portal.Database.Repositories.csproj" />
     <ProjectReference Include="..\..\..\Services\Portal.Services.BookingService\Portal.Services.BookingService.csproj" />
+    <ProjectReference Include="..\..\..\Services\Portal.Services.FeedbackService\Portal.Services.FeedbackService.csproj" />
+    <ProjectReference Include="..\..\..\Services\Portal.Services.MenuService\Portal.Services.MenuService.csproj" />
+    <ProjectReference Include="..\..\..\Services\Portal.Services.OauthService\Portal.Services.OauthService.csproj" />
     <ProjectReference Include="..\..\..\Services\Portal.Services.UserService\Portal.Services.UserService.csproj" />
   </ItemGroup>
 

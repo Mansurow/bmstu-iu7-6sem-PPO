@@ -70,7 +70,7 @@ public class UserSeviceUnitTests
     }
 
     [Fact]
-    public void GetUserByIdEmptyNotFoundTest()
+    public async void GetUserByIdEmptyNotFoundTest()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -83,7 +83,7 @@ public class UserSeviceUnitTests
         var action = async () => await _userSevice.GetUserByIdAsync(userId);
 
         // Assert
-        Assert.ThrowsAsync<UserNotFoundException>(action);
+        await Assert.ThrowsAsync<UserNotFoundException>(action);
     }
 
     [Fact]

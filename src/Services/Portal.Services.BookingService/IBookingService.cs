@@ -7,13 +7,21 @@ namespace Portal.Services.BookingService
     {
         Task<List<Booking>> GetAllBookingAsync();
         Task<List<Booking>> GetBookingByUserAsync(Guid userId);
-        Task<List<Booking>> GetBookingByRoomAsync(Guid roomId);
-        Task<List<Booking>> GetBookingByUserAndRoomAsync(Guid userId, Guid roomId);
+        Task<List<Booking>> GetBookingByZoneAsync(Guid zoneId);
+        Task<List<FreeTime>> GetReservedTimeAsync(Guid zoneId, DateOnly date);
         Task<Booking> GetBookingByIdAsync(Guid bookingId);
-        Task CreateBookingAsync(Guid userId, Guid roomId, int amount, string date, string startTime, string EndTime);
+        Task CreateBookingAsync(Guid userId, Guid zoneId, Guid packageId, string date, string startTime, string endTime);
         Task ChangeBookingStatusAsync(Guid bookingId, BookingStatus status);
         Task UpdateBookingAsync(Booking booking);
-        Task DeleteBookingAsync(Guid bookingId);
-
+        Task RemoveBookingAsync(Guid bookingId);
+        
+        /// <summary>
+        /// Определение свободного времени для бронирования зоны
+        /// </summary>
+        /// <param name="date">Дата брони</param>
+        /// <param name="startTime">Начало времени брони</param>
+        /// <param name="endTime">Конец времени брони</param>
+        /// <returns>Результат проверки</returns>
+        Task<bool> IsFreeTimeAsync(DateOnly date, TimeOnly startTime, TimeOnly endTime);
     }
 }

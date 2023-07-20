@@ -1,6 +1,6 @@
 ﻿using Portal.Common.Models;
 
-namespace Portal.Sevices.OauthService;
+namespace Portal.Services.OauthService;
 
 public interface IOauthService
 {

@@ -9,6 +9,6 @@ public interface IZoneRepository
     Task<Zone> GetZoneByNameAsync(string name);
     Task InsertZoneAsync(Zone zone);
     Task UpdateZoneAsync(Zone zone);
-    Task UpdateZoneRaitingAsync(Guid zoneId, double raiting);
+    Task UpdateZoneRatingAsync(Guid zoneId, double rating);
     Task DeleteZoneAsync(Guid zoneId);
 }

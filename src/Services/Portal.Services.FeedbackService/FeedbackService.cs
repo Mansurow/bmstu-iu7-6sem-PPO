@@ -1,6 +1,8 @@
 ﻿using Portal.Common.Models;
 using Portal.Database.Repositories.Interfaces;
 using Portal.Services.FeedbackService.Exceptions;
+using Portal.Services.UserService.Exceptions;
+using Portal.Services.ZoneService.Exceptions;
 
 namespace Portal.Services.FeedbackService;
 
@@ -24,12 +26,12 @@ public class FeedbackService : IFeedbackService
         return  _feedbackRepository.GetAllFeedbackAsync();
     }
 
-    public async Task<List<Feedback>> GetAllFeedbackByRoomAsync(Guid zoneId)
+    public async Task<List<Feedback>> GetAllFeedbackByZoneAsync(Guid zoneId)
     {
         var room = await _zoneRepository.GetZoneByIdAsync(zoneId);
         if (room is null)
         {
-            throw new Exception($"Room not found with id: {zoneId}");
+            throw new ZoneNotFoundException($"Zone not found with id: {zoneId}");
         }
 
         var feedbacks = await _feedbackRepository.GetAllFeedbackByZoneAsync(zoneId);
@@ -37,34 +39,33 @@ public class FeedbackService : IFeedbackService
         return feedbacks;
     }
 
-    public async Task AddFeedbackAsync(Feedback feedback)
+    public async Task AddFeedbackAsync(Guid zoneId, Guid userId, double mark, string description)
     {
-        var room = await _zoneRepository.GetZoneByIdAsync(feedback.RoomId);
-        if (room is null)
+        var zone = await _zoneRepository.GetZoneByIdAsync(zoneId);
+        if (zone is null)
         {
-            throw new Exception($"Room not found with id: {feedback.RoomId}");
+            throw new ZoneNotFoundException($"Zone not found with id: {zoneId}");
         }
 
-        var user = await _userRepository.GetUserByIdAsync(feedback.UserId);
+        var user = await _userRepository.GetUserByIdAsync(userId);
         if (user is null)
         {
-            throw new Exception($"User not found with id: {feedback.UserId}");
+            throw new UserNotFoundException($"User not found with id: {userId}");
         }
 
-        await _feedbackRepository.InsertFeedbackAsync(feedback);
+        await _feedbackRepository.InsertFeedbackAsync(new Feedback(Guid.NewGuid(), userId, zoneId, 
+            DateTime.UtcNow, mark, description));
     }
 
     public async Task UpdateZoneRatingAsync(Guid zoneId)
     {
         var allZoneFeedback = await _feedbackRepository.GetAllFeedbackByZoneAsync(zoneId);
 
-        var rating = 0.0;
-        foreach (var feedback in allZoneFeedback)
-            rating += feedback.Mark;
+        var rating = allZoneFeedback.Sum(feedback => feedback.Mark);
+        if (allZoneFeedback.Count > 0)
+            rating /= allZoneFeedback.Count;
 
-        rating /= allZoneFeedback.Count();
-
-        await _zoneRepository.UpdateZoneRaitingAsync(zoneId, rating);
+        await _zoneRepository.UpdateZoneRatingAsync(zoneId, rating);
     }
 
     public async Task UpdateFeedbackAsync(Feedback feedback)
@@ -78,7 +79,7 @@ public class FeedbackService : IFeedbackService
         await _feedbackRepository.UpdateFeedbackAsync(feedback);
     }
 
-    public async Task DeleteFeedbackAsync(Guid feedbackId)
+    public async Task RemoveFeedbackAsync(Guid feedbackId)
     {
         var feedback = await _feedbackRepository.GetFeedbackAsync(feedbackId);
         if (feedback is null)

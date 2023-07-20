@@ -1,15 +1,16 @@
-﻿using Portal.Database.Models;
-using Portal.Common.Models;
+﻿using Portal.Common.Models;
+using Portal.Database.Models;
 
-namespace Portal.Converter
+namespace Portal.Common.Converter
 {
     public static class BookingConverter
     {
         public static Booking ConvertDbModelToAppModel(BookingDbModel booking) 
         {
             return new Booking(id: booking.Id,
-                               roomId: booking.RoomId,
+                               zoneId: booking.ZoneId,
                                userId: booking.UserId,
+                               packageId: booking.PackageId,
                                amountPeople: booking.AmountPeople,
                                date: booking.Date,
                                startTime: booking.StartTime,
@@ -20,8 +21,9 @@ namespace Portal.Converter
         public static BookingDbModel ConvertAppModelToDbModel(Booking booking)
         {
             return new BookingDbModel(id: booking.Id,
-                               roomId: booking.RoomId,
+                               zoneId: booking.ZoneId,
                                userId: booking.UserId,
+                               packageId: booking.PackageId,
                                amountPeople: booking.AmountPeople,
                                date: booking.Date,
                                startTime: booking.StartTime,

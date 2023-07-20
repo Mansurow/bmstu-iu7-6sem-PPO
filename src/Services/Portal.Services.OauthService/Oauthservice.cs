@@ -1,5 +1,6 @@
 ﻿using Portal.Common.Models;
 using Portal.Database.Repositories.Interfaces;
+using Portal.Services.OauthService;
 using Portal.Services.OauthService.Exceptions;
 
 namespace Portal.Sevices.OauthService

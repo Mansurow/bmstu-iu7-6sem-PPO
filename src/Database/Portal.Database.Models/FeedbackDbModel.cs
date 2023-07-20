@@ -10,9 +10,9 @@ public class FeedbackDbModel
     [ForeignKey("User")]
     [Column("user_id")]
     public Guid UserId { get; set; }
-    [ForeignKey("Room")]
-    [Column("room_id")]
-    public Guid RoomId { get; set; }
+    [ForeignKey("Zone")]
+    [Column("zone_id")]
+    public Guid ZoneId { get; set; }
     [Column("date", TypeName = "varchar(64)")]
     public DateTime Date { get; set; }
     [Column("mark")]
@@ -20,14 +20,14 @@ public class FeedbackDbModel
     [Column("message", TypeName = "text")]
     public string? Message { get; set; }
 
-    public ZoneDbModel? Room { get; set; }
+    public ZoneDbModel? Zone { get; set; }
     public UserDbModel? User { get; set; }
 
-    public FeedbackDbModel(Guid id, Guid userId, Guid roomId, DateTime date, double mark, string? message)
+    public FeedbackDbModel(Guid id, Guid userId, Guid zoneId, DateTime date, double mark, string? message)
     {
         Id = id;
         UserId = userId;
-        RoomId = roomId;
+        ZoneId = zoneId;
         Date = date;
         Mark = mark;
         Message = message;

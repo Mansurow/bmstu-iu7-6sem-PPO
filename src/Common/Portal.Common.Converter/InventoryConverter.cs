@@ -1,7 +1,7 @@
-﻿using Portal.Database.Models;
-using Portal.Common.Models;
+﻿using Portal.Common.Models;
+using Portal.Database.Models;
 
-namespace Portal.Converter;
+namespace Portal.Common.Converter;
 
 public static class InventoryConverter
 {

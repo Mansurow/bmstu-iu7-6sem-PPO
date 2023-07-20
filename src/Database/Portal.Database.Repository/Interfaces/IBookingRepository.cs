@@ -6,13 +6,11 @@ public interface IBookingRepository
 {
     Task<List<Booking>> GetAllBookingAsync();
     Task<List<Booking>> GetBookingByUserAsync(Guid userId);
-    Task<List<Booking>> GetBookingByRoomAsync(Guid roomId);
-    Task<List<Booking>> GetBookingByUserAndRoomAsync(Guid userId, Guid roomId);
-    Task<Booking> GetUserBookingByZoneForTimeRangeAsync(Guid userId, Guid roomId, DateOnly date, TimeOnly startTime, TimeOnly endTime);
+    Task<List<Booking>> GetBookingByZoneAsync(Guid zoneId);
+    Task<List<Booking>> GetBookingByUserAndZoneAsync(Guid userId, Guid zoneId);
     Task<Booking> GetBookingByIdAsync(Guid bookingId);
-    Task<List<Booking>> GetAllBookingByZoneForTimeRangeAsync(Guid roomId, DateOnly date, TimeOnly startTime, TimeOnly endTime);
     Task InsertBookingAsync(Booking createBooking);
-    Task UpdateNoActualBookingAsync(Guid bookindId);
+    Task UpdateNoActualBookingAsync(Guid bookingId);
     Task UpdateBookingAsync(Booking updateBooking);
     Task DeleteBookingAsync(Guid bookingId);
 }
