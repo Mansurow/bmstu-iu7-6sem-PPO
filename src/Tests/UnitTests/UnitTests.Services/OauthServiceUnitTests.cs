@@ -77,11 +77,11 @@ public class OauthServiceUnitTests
     public async Task RegistrationExistsLoginTest()
     {
         // Arrange
-        var login = "ivanov@mail.ru";
+        var login = "login";
         var password = "password";
         var users = CreateMockUsers();
 
-        var user = CreateUser(Guid.NewGuid());
+        var user = users.First();
         user.CreateHash(password);
 
         _ = _mockUserRepository
@@ -121,7 +121,7 @@ public class OauthServiceUnitTests
     public async Task LogInNotFoundUserTest()
     {
         // Arrange
-        var login = "login";
+        var login = "login123";
         var password = "password";
         var users = CreateMockUsers();
 
@@ -134,14 +134,14 @@ public class OauthServiceUnitTests
         async Task<User> Action() => await _oauthService.LogIn(login, password);
 
         // Assert
-        await Assert.ThrowsAsync<IncorrectPasswordException>(Action);
+        await Assert.ThrowsAsync<UserLoginNotFoundException>(Action);
     }
 
     [Fact]
     public async Task LogInOkTest()
     {
         // Arrange
-        var login = "ivanov@mail.ru";
+        var login = "login";
         var password = "password";
         var users = CreateMockUsers();
 
@@ -166,6 +166,7 @@ public class OauthServiceUnitTests
     {
         return new List<User>()
         {
+            new User(Guid.NewGuid(), "Иванов", "Иван", "Иванович",  new DateTime(2002, 03, 17), Gender.Male, "login", "+7899999999", "$2a$11$2RL0J3feilWw6859UcNwY.dighT4cPxG/she0Omtu36eVtamkV.8y"),
             new User(Guid.NewGuid(), "Иванов", "Иван", "Иванович",  new DateTime(2002, 03, 17), Gender.Male, "ivanov@mail.ru", "+7899999999", "$2a$11$2RL0J3feilWw6859UcNwY.dighT4cPxG/she0Omtu36eVtamkV.8y"),
             new User(Guid.NewGuid(), "Петров", "Петр", "Петрович",  new DateTime(2003, 05, 18), Gender.Male, "petrov@mail.ru", "+7899909999", "$2a$11$2RL0J3feilWw6859UcNwY.dighT4cPxG/she0Omtu36eVtamkV.8y"),
             new User(Guid.NewGuid(), "Cударь", "Елена", "Александровна",  new DateTime(1999, 09, 18), Gender.Female, "sudar@mail.ru", "+781211111", "$2a$11$2RL0J3feilWw6859UcNwY.dighT4cPxG/she0Omtu36eVtamkV.8y")

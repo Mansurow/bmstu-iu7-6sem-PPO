@@ -73,6 +73,19 @@ public class Booking
 
     public bool IsBookingExpired()
     {
-        return EndTime <= TimeOnly.FromDateTime(DateTime.UtcNow);
+        return Date == DateOnly.FromDateTime(DateTime.UtcNow) 
+               && EndTime <= TimeOnly.FromDateTime(DateTime.UtcNow);
+    }
+
+    public bool IsSuitableStatus(BookingStatus status)
+    {
+        return status >= Status;
+    }
+
+    public bool IsChangeDateTime(Booking booking)
+    {
+        return Date != booking.Date 
+               || StartTime != booking.StartTime
+               || EndTime != booking.EndTime;
     }
 }
