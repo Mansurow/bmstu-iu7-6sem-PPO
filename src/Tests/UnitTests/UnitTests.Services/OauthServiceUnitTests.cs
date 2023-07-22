@@ -57,9 +57,9 @@ public class OauthServiceUnitTests
         var expectedUser = CreateUser(Guid.NewGuid());
         expectedUser.CreateHash(password);
 
-        _mockUserRepository
-            .Setup(s => s.GetUserByEmailAsync(login))
-            .ReturnsAsync(users.Find(e => e.Email == login)!);
+        // _mockUserRepository
+        //     .Setup(s => s.GetUserByEmailAsync(login))
+        //     .ReturnsAsync(users.FirstOrDefault(e => e.Email == login));
 
         _mockUserRepository.Setup(s => s.InsertUserAsync(It.IsAny<User>()))
                            .Callback((User u) => users.Add(u));
@@ -86,7 +86,7 @@ public class OauthServiceUnitTests
 
         _ = _mockUserRepository
             .Setup(s => s.GetUserByEmailAsync(login))
-            .ReturnsAsync(users.Find(e => e.Email == login)!);
+            .ReturnsAsync(users.First(e => e.Email == login));
 
         // Act
 
@@ -108,7 +108,7 @@ public class OauthServiceUnitTests
         var expectedUser = users[0];
         _mockUserRepository
             .Setup(s => s.GetUserByEmailAsync(login))
-            .ReturnsAsync(users.Find(e => e.Email == login)!);
+            .ReturnsAsync(users.First(e => e.Email == login));
 
         // Act
         async Task<User> Action() => await _oauthService.LogIn(login, password);

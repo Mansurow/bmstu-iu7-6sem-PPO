@@ -8,18 +8,18 @@ using Portal.Common.Models.Enums;
 
 namespace UnitTests.Services;
 
-public class UserSeviceUnitTests
+public class UserServiceUnitTests
 {
-    private readonly IUserService _userSevice;
+    private readonly IUserService _userService;
     private readonly Mock<IUserRepository> _mockUserRepository = new();
 
-    public UserSeviceUnitTests()
+    public UserServiceUnitTests()
     {
-        _userSevice = new UserService(_mockUserRepository.Object);
+        _userService = new UserService(_mockUserRepository.Object);
     }
 
     [Fact]
-    public async void GetAllUserTest()
+    public async Task GetAllUserTest()
     {
         // Arrange
         var users = CreateMockUsers();
@@ -28,14 +28,14 @@ public class UserSeviceUnitTests
                            .ReturnsAsync(users);
 
         // Act
-        var actualUsers = await _userSevice.GetAllUsersAsync();
+        var actualUsers = await _userService.GetAllUsersAsync();
 
         // Assert
         Assert.Equal(users.Count, actualUsers.Count);
     }
 
     [Fact]
-    public async void GetAllUserEmptyTest()
+    public async Task GetAllUserEmptyTest()
     {
         // Arrange
         var users = CreatEmptyMockUser();
@@ -44,14 +44,14 @@ public class UserSeviceUnitTests
                            .ReturnsAsync(users);
 
         // Act
-        var actualUsers = await _userSevice.GetAllUsersAsync();
+        var actualUsers = await _userService.GetAllUsersAsync();
 
         // Assert
         Assert.Equal(users, actualUsers);
     }
 
     [Fact]
-    public async void GetUserByIdTest()
+    public async Task GetUserByIdTest()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -63,31 +63,31 @@ public class UserSeviceUnitTests
                            .ReturnsAsync(users.Find(e => e.Id == userId)!);
 
         // Act
-        var actualUser = await _userSevice.GetUserByIdAsync(userId);
+        var actualUser = await _userService.GetUserByIdAsync(userId);
 
         // Assert
         Assert.Equal(expectedUser, actualUser);
     }
 
     [Fact]
-    public async void GetUserByIdEmptyNotFoundTest()
+    public async Task GetUserByIdEmptyNotFoundTest()
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var users = CreatEmptyMockUser();
+        // var users = CreatEmptyMockUser();
 
-        _mockUserRepository.Setup(s => s.GetUserByIdAsync(userId))
-                           .ReturnsAsync(users.Find(e => e.Id == userId)!);
+        // _mockUserRepository.Setup(s => s.GetUserByIdAsync(userId))
+        //                    .ReturnsAsync(users.FirstOrDefault(e => e.Id == userId));
 
         // Act
-        var action = async () => await _userSevice.GetUserByIdAsync(userId);
+        async Task<User> Action() => await _userService.GetUserByIdAsync(userId);
 
         // Assert
-        await Assert.ThrowsAsync<UserNotFoundException>(action);
+        await Assert.ThrowsAsync<UserNotFoundException>(Action);
     }
 
     [Fact]
-    public void GetUserByIdNotFoundTest()
+    public async Task GetUserByIdNotFoundTest()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -97,14 +97,14 @@ public class UserSeviceUnitTests
                            .ReturnsAsync(users.Find(e => e.Id == userId)!);
 
         // Act
-        var action = async () => await _userSevice.GetUserByIdAsync(userId);
+        async Task<User> Action() => await _userService.GetUserByIdAsync(userId);
 
         // Assert
-        Assert.ThrowsAsync<UserNotFoundException>(action);
+        await Assert.ThrowsAsync<UserNotFoundException>(Action);
     }
 
     [Fact]
-    public async void ChangePermissionTest()
+    public async Task ChangePermissionTest()
     {
         // Arrange
         var users = CreateMockUsers();
@@ -117,7 +117,7 @@ public class UserSeviceUnitTests
                            .ReturnsAsync(users.Find(e => e.Id == userId)!);
 
         // Act
-        await _userSevice.ChangeUserPermissionsAsync(userId);
+        await _userService.ChangeUserPermissionsAsync(userId);
         var actualUser = users.Find(e => e.Id == userId);
 
         // Assert
@@ -125,7 +125,7 @@ public class UserSeviceUnitTests
     }
 
     [Fact]
-    public async void ChangePermissionNotFoundUserTest()
+    public async Task ChangePermissionNotFoundUserTest()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -135,14 +135,14 @@ public class UserSeviceUnitTests
                            .ReturnsAsync(users.Find(e => e.Id == userId)!);
 
         // Act
-        var action = async () => await _userSevice.ChangeUserPermissionsAsync(userId);
+        var action = async () => await _userService.ChangeUserPermissionsAsync(userId);
 
         // Assert
         await Assert.ThrowsAsync<UserNotFoundException>(action);
     }
 
     [Fact]
-    public async void ChangePermissionEmptyUserTest()
+    public async Task ChangePermissionEmptyUserTest()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -152,10 +152,10 @@ public class UserSeviceUnitTests
                            .ReturnsAsync(users.Find(e => e.Id == userId)!);
 
         // Act
-        var action = async () => await _userSevice.ChangeUserPermissionsAsync(userId);
+        async Task Action() => await _userService.ChangeUserPermissionsAsync(userId);
 
         // Assert
-        await Assert.ThrowsAsync<UserNotFoundException>(action);
+        await Assert.ThrowsAsync<UserNotFoundException>(Action);
     }
 
     private List<User> CreatEmptyMockUser()

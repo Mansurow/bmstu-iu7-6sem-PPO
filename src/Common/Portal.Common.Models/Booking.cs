@@ -66,22 +66,40 @@ public class Booking
         EndTime = endTime;
     }
 
+    /// <summary>
+    /// Изменить статус 
+    /// </summary>
+    /// <param name="status">Новый статус</param>
     public void ChangeStatus(BookingStatus status)
     {
         Status = status;
     }
 
+    /// <summary>
+    /// Проверка на актуальность брони
+    /// </summary>
+    /// <returns>Значение о акутальности брони</returns>
     public bool IsBookingExpired()
     {
         return Date == DateOnly.FromDateTime(DateTime.UtcNow) 
                && EndTime <= TimeOnly.FromDateTime(DateTime.UtcNow);
     }
 
+    /// <summary>
+    /// Проверка на смену статуса на подходящий статус
+    /// </summary>
+    /// <param name="status">новый статус</param>
+    /// <returns>Значние о правильной смене статуса</returns>
     public bool IsSuitableStatus(BookingStatus status)
     {
         return status >= Status;
     }
 
+    /// <summary>
+    /// Изменились ли даты и время брони
+    /// </summary>
+    /// <param name="booking">Обновленные данные</param>
+    /// <returns>Значение о смене даты и время</returns>
     public bool IsChangeDateTime(Booking booking)
     {
         return Date != booking.Date 

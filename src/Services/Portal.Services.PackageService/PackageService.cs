@@ -5,6 +5,9 @@ using Portal.Services.PackageService.Exceptions;
 
 namespace Portal.Services.PackageService;
 
+/// <summary>
+/// Сервис управления пакетами
+/// </summary>
 public class PackageService: IPackageService
 {
     private readonly IPackageRepository _packageRepository;
@@ -30,12 +33,14 @@ public class PackageService: IPackageService
         return package;
     }
 
-    public async Task AddPackageAsync(string name, PackageType type, double price,
+    public async Task<Guid> AddPackageAsync(string name, PackageType type, double price,
         int rentalTime, string description)
     {
         var package = new Package(Guid.NewGuid(), name, type, price, rentalTime, description);
 
         await _packageRepository.InsertPackageAsync(package);
+
+        return package.Id;
     }
 
     public async Task UpdatePackageAsync(Package package)
