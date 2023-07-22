@@ -112,7 +112,7 @@ namespace Portal.Services.BookingService
             return freeTimes.OrderBy(f => f.StartTime).ToList();
         }
 
-        public async Task CreateBookingAsync(Guid userId, Guid zoneId, Guid packageId, string date, string startTime, string endTime)
+        public async Task<Guid> AddBookingAsync(Guid userId, Guid zoneId, Guid packageId, string date, string startTime, string endTime)
         {
             var culture = CultureInfo.CreateSpecificCulture("ru-RU");
             var dateRu = DateOnly.Parse(date, culture);
@@ -143,18 +143,19 @@ namespace Portal.Services.BookingService
                 throw new BookingReversedException($"Zone full or partial reversed on {dateRu} from {startTime} to {endTime}");
             }
             
-            await _bookingRepository.InsertBookingAsync(
-                new Booking(Guid.NewGuid(), zoneId, userId, packageId, 
-                10, BookingStatus.TemporaryReserved, 
-                dateRu, startTimeRu, endTimeRu));
+            var newBooking = new Booking(Guid.NewGuid(), zoneId, userId, packageId,
+                zone.Limit, BookingStatus.TemporaryReserved,
+                dateRu, startTimeRu, endTimeRu);
+            await _bookingRepository.InsertBookingAsync(newBooking);
+
+            return newBooking.Id;
         }
         
         public async Task<bool> IsFreeTimeAsync(DateOnly date, TimeOnly startTime, TimeOnly endTime)
         {
             var bookings =  (await _bookingRepository.GetAllBookingAsync())
                 .FindAll(b => b.Date == date);
-
-
+            
             return bookings.Count != 0 
                    && bookings.All(b => (b.StartTime < startTime && b.EndTime <= startTime) 
                                         || (b.StartTime >= endTime && b.EndTime > startTime));

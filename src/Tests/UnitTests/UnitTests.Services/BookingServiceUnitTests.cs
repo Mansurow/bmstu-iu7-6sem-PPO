@@ -220,14 +220,14 @@ public class BookingServiceUnitTests
             .Callback((Booking b) => bookings.Add(b));
         
         // Act
-        await _bookingService.CreateBookingAsync(expectedBooking.UserId, expectedBooking.ZoneId, expectedBooking.PackageId,
+        var expectedId = await _bookingService.AddBookingAsync(expectedBooking.UserId, expectedBooking.ZoneId, expectedBooking.PackageId,
             expectedBooking.Date.ToString(), expectedBooking.StartTime.ToString(), expectedBooking.EndTime.ToString());
         var actualCount = bookings.Count;
         var actualBooking = bookings.Last();
         
         // Asserts
         Assert.Equal(expectedCount, actualCount);
-        Assert.NotEqual(Guid.Empty, actualBooking.Id);
+        Assert.Equal(expectedId, actualBooking.Id);
         Assert.Equal(expectedBooking.UserId,  actualBooking.UserId);
         Assert.Equal(expectedBooking.ZoneId,  actualBooking.ZoneId);
         Assert.Equal(expectedBooking.PackageId,  actualBooking.PackageId);
@@ -276,7 +276,7 @@ public class BookingServiceUnitTests
             .Callback((Booking b) => bookings.Add(b));
         
         // Act
-        async Task Action() => await _bookingService.CreateBookingAsync(expectedBooking.UserId, expectedBooking.ZoneId, expectedBooking.PackageId, expectedBooking.Date.ToString(), expectedBooking.StartTime.ToString(), expectedBooking.EndTime.ToString());
+        async Task<Guid> Action() => await _bookingService.AddBookingAsync(expectedBooking.UserId, expectedBooking.ZoneId, expectedBooking.PackageId, expectedBooking.Date.ToString(), expectedBooking.StartTime.ToString(), expectedBooking.EndTime.ToString());
 
         // Asserts
         await Assert.ThrowsAsync<BookingReversedException>(Action);
@@ -317,7 +317,7 @@ public class BookingServiceUnitTests
             .Callback((Booking b) => bookings.Add(b));
         
         // Act
-        async Task Action() => await _bookingService.CreateBookingAsync(expectedBooking.UserId, expectedBooking.ZoneId, expectedBooking.PackageId, expectedBooking.Date.ToString(), expectedBooking.StartTime.ToString(), expectedBooking.EndTime.ToString());
+        async Task<Guid> Action() => await _bookingService.AddBookingAsync(expectedBooking.UserId, expectedBooking.ZoneId, expectedBooking.PackageId, expectedBooking.Date.ToString(), expectedBooking.StartTime.ToString(), expectedBooking.EndTime.ToString());
 
         // Asserts
         await Assert.ThrowsAsync<BookingExistsException>(Action);
@@ -355,7 +355,7 @@ public class BookingServiceUnitTests
             .Callback((Booking b) => bookings.Add(b));
         
         // Act
-        async Task Action() => await _bookingService.CreateBookingAsync(expectedBooking.UserId, expectedBooking.ZoneId, expectedBooking.PackageId, expectedBooking.Date.ToString(), expectedBooking.StartTime.ToString(), expectedBooking.EndTime.ToString());
+        async Task<Guid> Action() => await _bookingService.AddBookingAsync(expectedBooking.UserId, expectedBooking.ZoneId, expectedBooking.PackageId, expectedBooking.Date.ToString(), expectedBooking.StartTime.ToString(), expectedBooking.EndTime.ToString());
 
         // Asserts
         await Assert.ThrowsAsync<ZoneNotFoundException>(Action);
@@ -393,7 +393,7 @@ public class BookingServiceUnitTests
             .Callback((Booking b) => bookings.Add(b));
         
         // Act
-        async Task Action() => await _bookingService.CreateBookingAsync(expectedBooking.UserId, expectedBooking.ZoneId, expectedBooking.PackageId, expectedBooking.Date.ToString(), expectedBooking.StartTime.ToString(), expectedBooking.EndTime.ToString());
+        async Task<Guid> Action() => await _bookingService.AddBookingAsync(expectedBooking.UserId, expectedBooking.ZoneId, expectedBooking.PackageId, expectedBooking.Date.ToString(), expectedBooking.StartTime.ToString(), expectedBooking.EndTime.ToString());
 
         // Asserts
         await Assert.ThrowsAsync<PackageNotFoundException>(Action);

@@ -52,7 +52,7 @@ namespace Portal.Services.BookingService
         /// <param name="date">Дата брони</param>
         /// <param name="startTime">Время брони (начало)</param>
         /// <param name="endTime">Время брони (конец)</param>
-        Task CreateBookingAsync(Guid userId, Guid zoneId, Guid packageId, string date, string startTime, string endTime);
+        Task<Guid> AddBookingAsync(Guid userId, Guid zoneId, Guid packageId, string date, string startTime, string endTime);
         
         /// <summary>
         /// Изменить статус брони

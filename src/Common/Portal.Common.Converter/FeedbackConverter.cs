@@ -9,10 +9,10 @@ namespace Portal.Common.Converter;
 public static class FeedbackConverter
 {
     /// <summary>
-    /// Конвертировать из модели базы данных в модель бизнес логики приложения
+    /// Преобразовать из модели базы данных в модель бизнес логики приложения
     /// </summary>
     /// <param name="feedback">Модель базы данных</param>
-    /// <returns>Возвращается модель бизнес логики</returns>
+    /// <returns>Модель бизнес логики</returns>
     public static Feedback ConvertDbModelToAppModel(FeedbackDbModel feedback) 
     {
         return new Feedback(id: feedback.Id,
@@ -24,10 +24,10 @@ public static class FeedbackConverter
     }
 
     /// <summary>
-    /// Конвертировать из модели бизнес логики в модели базы данных приложения
+    /// Преобразовать из модели бизнес логики в модели базы данных приложения
     /// </summary>
     /// <param name="feedback">Модель бизнес логики</param>
-    /// <returns>Возвращается модель базы данных </returns>
+    /// <returns>Модель базы данных </returns>
     public static FeedbackDbModel ConvertAppModelToDbModel(Feedback feedback)
     {
         return new FeedbackDbModel(id: feedback.Id,

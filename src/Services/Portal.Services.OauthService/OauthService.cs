@@ -1,17 +1,19 @@
 ﻿using Portal.Common.Models;
 using Portal.Database.Repositories.Interfaces;
-using Portal.Services.OauthService;
 using Portal.Services.OauthService.Exceptions;
 
-namespace Portal.Sevices.OauthService
+namespace Portal.Services.OauthService
 {
-    public class Oauthservice: IOauthService
+    /// <summary>
+    /// Сервис авторизации
+    /// </summary>
+    public class OauthService: IOauthService
     {
         private readonly IUserRepository _userRepository;
 
-        public Oauthservice(IUserRepository userRepository)
+        public OauthService(IUserRepository userRepository)
         {
-            _userRepository = userRepository;
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
         public async Task Registrate(User user, string password) 

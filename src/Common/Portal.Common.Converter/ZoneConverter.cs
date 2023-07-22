@@ -1,11 +1,18 @@
 ﻿using Portal.Common.Models;
-using Portal.Converter;
 using Portal.Database.Models;
 
 namespace Portal.Common.Converter
 {
+    /// <summary>
+    /// Конвертатор модели Zone
+    /// </summary>
     public static class ZoneConverter
     {
+        /// <summary>
+        /// Преобразовать из модели базы данных в модель бизнес логики приложения
+        /// </summary>
+        /// <param name="zone">Модель базы данных</param>
+        /// <returns>Модель бизнес логики</returns>
         public static Zone ConvertDbModelToAppModel(ZoneDbModel zone) 
         {
             return new Zone(id: zone.Id,

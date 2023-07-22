@@ -6,6 +6,9 @@ using Portal.Services.ZoneService.Exceptions;
 
 namespace Portal.Services.FeedbackService;
 
+/// <summary>
+/// Сервис отзывов
+/// </summary>
 public class FeedbackService : IFeedbackService
 {
     private readonly IFeedbackRepository _feedbackRepository;
@@ -39,7 +42,7 @@ public class FeedbackService : IFeedbackService
         return feedbacks;
     }
 
-    public async Task AddFeedbackAsync(Guid zoneId, Guid userId, double mark, string description)
+    public async Task<Guid> AddFeedbackAsync(Guid zoneId, Guid userId, double mark, string description)
     {
         var zone = await _zoneRepository.GetZoneByIdAsync(zoneId);
         if (zone is null)
@@ -53,8 +56,11 @@ public class FeedbackService : IFeedbackService
             throw new UserNotFoundException($"User not found with id: {userId}");
         }
 
-        await _feedbackRepository.InsertFeedbackAsync(new Feedback(Guid.NewGuid(), userId, zoneId, 
-            DateTime.UtcNow, mark, description));
+        var feedback = new Feedback(Guid.NewGuid(), userId, zoneId,
+            DateTime.UtcNow, mark, description);
+        await _feedbackRepository.InsertFeedbackAsync(feedback);
+
+        return feedback.Id;
     }
 
     public async Task UpdateZoneRatingAsync(Guid zoneId)
@@ -89,6 +95,4 @@ public class FeedbackService : IFeedbackService
 
         await _feedbackRepository.DeleteFeedbackAsync(feedbackId);
     }
-
-
 }

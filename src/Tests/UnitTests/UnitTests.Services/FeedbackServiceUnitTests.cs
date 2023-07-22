@@ -315,7 +315,7 @@ public class FeedbackServiceUnitTests
     }
     
     [Fact]
-    public async void UpdateRoomRatingOkTest()
+    public async Task UpdateRoomRatingOkTest()
     {
         // Arrange
         var users = CreateMockUsers();
@@ -354,7 +354,7 @@ public class FeedbackServiceUnitTests
     }
     
     [Fact]
-    public async void DeleteFeedbackOkTest()
+    public async Task RemoveFeedbackOkTest()
     {
         // Arrange
         var users = CreateMockUsers();
@@ -379,7 +379,7 @@ public class FeedbackServiceUnitTests
     }
     
     [Fact]
-    public void DeleteFeedbackEmptyTest()
+    public async Task RemoveFeedbackEmptyTest()
     {
         // Arrange
         // var users = CreateMockUsers();
@@ -389,10 +389,10 @@ public class FeedbackServiceUnitTests
         var feedbackId = Guid.NewGuid();
         
         // Act
-        var action = async () => await _feedbackService.RemoveFeedbackAsync(feedbackId);
-    
+        async Task Action() => await _feedbackService.RemoveFeedbackAsync(feedbackId);
+
         // Assert
-        Assert.ThrowsAsync<FeedbackNotFoundException>(action);
+        await Assert.ThrowsAsync<FeedbackNotFoundException>(Action);
     }
     
     private List<Feedback> CreateMockFeedback(List<Zone> zones, List<User> users)

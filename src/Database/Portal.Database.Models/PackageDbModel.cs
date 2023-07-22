@@ -4,23 +4,56 @@ using Portal.Common.Models.Enums;
 
 namespace Portal.Database.Models;
 
+/// <summary>
+/// Модель базы данных пакет
+/// </summary>
 public class PackageDbModel
 {
+    /// <summary>
+    /// Идентификатор пакета
+    /// </summary>
     [Key]
     [Column("id")]
     public Guid Id { get; set; }
+    
+    /// <summary>
+    /// Название пакета
+    /// </summary>
     [Column("name", TypeName = "varchar(64)")]
     public string Name { get; set; }
+    
+    /// <summary>
+    /// Тип пакета
+    /// </summary>
     [Column("type")]
     public PackageType Type { get; set; }
+    
+    /// <summary>
+    /// Цена пакета
+    /// </summary>
     [Column("price")]
     public double Price { get; set; }
+    
+    /// <summary>
+    /// Общее время проведения по пакету
+    /// </summary>
     [Column("rental_time")]
     public int RentalTime { get; set; }
+    
+    /// <summary>
+    /// Описание пакета
+    /// </summary>
     [Column("description", TypeName = "text")]
     public string Description { get; set; }
 
+    /// <summary>
+    /// Зоны, которые входят в пакет
+    /// </summary>
     public ICollection<ZoneDbModel> Zones { get; set; }
+    
+    /// <summary>
+    /// Меню блюд пакета
+    /// </summary>
     public ICollection<DishDbModel> Dishes { get; set; }
 
     public PackageDbModel(Guid id, string name, PackageType type, double price, int rentalTime,

@@ -3,7 +3,7 @@
 namespace Portal.Database.Repositories.Interfaces;
 
 /// <summary>
-/// Репозитория броней зон
+/// Интерфейс репозитория броней зон
 /// </summary>
 public interface IBookingRepository
 {

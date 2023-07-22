@@ -3,8 +3,16 @@ using Portal.Database.Models;
 
 namespace Portal.Common.Converter;
 
+/// <summary>
+/// Конвертатор модели Dish
+/// </summary>
 public static class UserConverter
 {
+    /// <summary>
+    /// Преобразовать из модели базы данных в модель бизнес логики приложения
+    /// </summary>
+    /// <param name="user">Модель базы данных</param>
+    /// <returns>Модель бизнес логики</returns>
     public static User ConvertDbModelToAppModel(UserDbModel user) 
     {
         return new User(id: user.Id,
@@ -19,6 +27,11 @@ public static class UserConverter
             role: user.Role);
     }
 
+    /// <summary>
+    /// Преобразовать из модели бизнес логики в модели базы данных приложения
+    /// </summary>
+    /// <param name="user">Модель бизнес логики</param>
+    /// <returns>Модель базы данных </returns>
     public static UserDbModel ConvertAppModelToDbModel(User user)
     {
         return new UserDbModel(id: user.Id,

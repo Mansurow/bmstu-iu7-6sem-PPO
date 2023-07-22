@@ -4,7 +4,6 @@ using Portal.Common.Models.Enums;
 using Portal.Database.Repositories.Interfaces;
 using Portal.Services.OauthService;
 using Portal.Services.OauthService.Exceptions;
-using Portal.Sevices.OauthService;
 using Xunit;
 
 namespace UnitTests.Services;
@@ -16,7 +15,7 @@ public class OauthServiceUnitTests
 
     public OauthServiceUnitTests()
     {
-        _oauthService = new Oauthservice(_mockUserRepository.Object);
+        _oauthService = new OauthService(_mockUserRepository.Object);
     }
 
     [Fact]

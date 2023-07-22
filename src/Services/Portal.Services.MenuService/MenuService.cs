@@ -5,13 +5,16 @@ using Portal.Common.Models.Enums;
 
 namespace Portal.Services.MenuService;
 
+/// <summary>
+/// Сервис меню блюд
+/// </summary>
 public class MenuService: IMenuService
 {
     private readonly IMenuRepository _menuRepository;
 
     public MenuService(IMenuRepository menuRepository)
     {
-        _menuRepository = menuRepository;
+        _menuRepository = menuRepository ?? throw new ArgumentNullException(nameof(menuRepository));
     }
 
     public Task<List<Dish>> GetAllDishesAsync() 
@@ -40,13 +43,16 @@ public class MenuService: IMenuService
         await _menuRepository.UpdateDishAsync(updateDish);
     }
 
-    public async Task AddDishAsync(string name, DishType type, double price, string description) 
+    public async Task<Guid> AddDishAsync(string name, DishType type, double price, string description) 
     {
         var dish = new Dish(Guid.NewGuid(), name, type, price, description);
+        
         await _menuRepository.InsertDishAsync(dish);
+
+        return dish.Id;
     }
 
-    public async Task DeleteDishAsync(Guid dishId) 
+    public async Task RemoveDishAsync(Guid dishId) 
     {
         var dish = await _menuRepository.GetDishByIdAsync(dishId);
         if (dish is null) 

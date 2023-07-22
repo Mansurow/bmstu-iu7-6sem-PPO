@@ -5,6 +5,9 @@ using Portal.Services.UserService.Exceptions;
 
 namespace Portal.Services.UserService;
 
+/// <summary>
+/// Сервис пользователя
+/// </summary>
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
@@ -25,9 +28,9 @@ public class UserService : IUserService
         return user;
     }
 
-    public async Task<List<User>> GetAllUsersAsync()
+    public Task<List<User>> GetAllUsersAsync()
     {
-        return await _userRepository.GetAllUsersAsync();
+        return _userRepository.GetAllUsersAsync();
     }
 
     public async Task ChangeUserPermissionsAsync(Guid userId)

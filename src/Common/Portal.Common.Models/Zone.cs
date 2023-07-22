@@ -118,4 +118,12 @@ public class Zone
     {
         Inventories.Add(inventory);
     }
+    
+    /// <summary>
+    /// Добавить пакет
+    /// </summary>
+    public void AddPackage(Package package)
+    {
+        Packages.Add(package);
+    }
 }

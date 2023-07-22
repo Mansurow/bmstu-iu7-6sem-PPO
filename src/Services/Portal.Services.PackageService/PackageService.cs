@@ -14,7 +14,7 @@ public class PackageService: IPackageService
 
     public PackageService(IPackageRepository packageRepository)
     {
-        _packageRepository = packageRepository;
+        _packageRepository = packageRepository ?? throw new ArgumentNullException(nameof(packageRepository));
     }
 
     public Task<List<Package>> GetPackagesAsync()

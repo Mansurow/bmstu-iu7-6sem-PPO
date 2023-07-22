@@ -3,8 +3,16 @@ using Portal.Database.Models;
 
 namespace Portal.Common.Converter
 {
+    /// <summary>
+    /// Конвертатор модели Booking
+    /// </summary>
     public static class BookingConverter
     {
+        /// <summary>
+        /// Преобразовать из модели базы данных в модель бизнес логики приложения
+        /// </summary>
+        /// <param name="booking">Модель базы данных</param>
+        /// <returns>Модель бизнес логики</returns>
         public static Booking ConvertDbModelToAppModel(BookingDbModel booking) 
         {
             return new Booking(id: booking.Id,
@@ -18,6 +26,11 @@ namespace Portal.Common.Converter
                                status: booking.Status);
         }
 
+        /// <summary>
+        /// Преобразовать из модели бизнес логики в модели базы данных приложения
+        /// </summary>
+        /// <param name="booking">Модель бизнес логики</param>
+        /// <returns>Модель базы данных </returns>
         public static BookingDbModel ConvertAppModelToDbModel(Booking booking)
         {
             return new BookingDbModel(id: booking.Id,
