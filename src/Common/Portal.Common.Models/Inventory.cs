@@ -11,6 +11,11 @@ public class Inventory
     public Guid Id { get; set; }
     
     /// <summary>
+    /// Идентификатор зоны
+    /// </summary>
+    public Guid ZoneId { get; set; }
+    
+    /// <summary>
     /// Название инветаря
     /// </summary>
     public string Name { get; set; }
@@ -25,9 +30,10 @@ public class Inventory
     /// </summary>
     public DateOnly YearOfProduction { get; set; }
 
-    public Inventory(Guid id, string name, string description, DateOnly yearOfProduction)
+    public Inventory(Guid id, Guid zoneId, string name, string description, DateOnly yearOfProduction)
     {
         Id = id;
+        ZoneId = zoneId;
         Name = name;
         Description = description;
         YearOfProduction = yearOfProduction;

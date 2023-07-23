@@ -14,7 +14,7 @@ public interface IInventoryService
     Task<List<Inventory>> GetAllInventoriesAsync();
 
     /// <summary>
-    /// Получить инчентаря
+    /// Получить инвентарь
     /// </summary>
     /// <param name="inventoryId">Идентификатор инвентаря</param>
     /// <returns>Данные инвентаря</returns>
@@ -23,11 +23,12 @@ public interface IInventoryService
     /// <summary>
     /// Добавить инвентарь
     /// </summary>
+    /// <param name="zoneId">Идентификатор зоны</param>
     /// <param name="name">Название</param>
     /// <param name="yearOfProduction">Год выпуска или производства</param>
     /// <param name="description">Описание инветаря</param>
     /// <returns>Идентификатор нового инветаря</returns>
-    Task<Guid> AddInventoryAsync(string name, DateOnly yearOfProduction, string description);
+    Task<Guid> AddInventoryAsync(Guid zoneId, string name, DateOnly yearOfProduction, string description);
 
     /// <summary>
     /// Обновить инвентарь

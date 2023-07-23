@@ -93,13 +93,13 @@ public class FeedbackServiceUnitTests
         var feedbacks = CreateEmptyMockFeedbacks();
         var zoneId = zones.First().Id;
 
-        var expectedFeedbacks = feedbacks.FindAll(e => e.ZoneId == zoneId);
+        var expectedFeedbacks = feedbacks.Where(e => e.ZoneId == zoneId).ToList();
 
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid id) => zones.Find(e => e.Id == id)!);
 
         _mockFeedbackRepository.Setup(s => s.GetAllFeedbackByZoneAsync(It.IsAny<Guid>()))
-                               .ReturnsAsync((Guid id) => feedbacks.FindAll(e => e.ZoneId == id));
+                               .ReturnsAsync((Guid id) => feedbacks.Where(e => e.ZoneId == id).ToList());
         // Act
         var actualFeedbacks = await _feedbackService.GetAllFeedbackByZoneAsync(zoneId);
 
@@ -205,19 +205,23 @@ public class FeedbackServiceUnitTests
         var zoneId = zones.First().Id;
         var userId = Guid.NewGuid();
         var feedbackId = Guid.NewGuid();
-    
+        var expectedCount = feedbacks.Count;
+        
         var feedback = new Feedback(feedbackId, userId, zoneId, DateTime.UtcNow, 5, "Описание 1");
     
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(zoneId))
                            .ReturnsAsync(zones.Find(e => e.Id == zoneId)!);
     
-        _mockFeedbackRepository.Setup(s => s.InsertFeedbackAsync(It.IsAny<Feedback>()))
-                               .Callback((Feedback f) => feedbacks.Add(f));
+        // _mockFeedbackRepository.Setup(s => s.InsertFeedbackAsync(It.IsAny<Feedback>()))
+        //                        .Callback((Feedback f) => feedbacks.Add(f));
     
         // Act
-        async Task Action() => await _feedbackService.AddFeedbackAsync(feedback.ZoneId, feedback.UserId, feedback.Mark, feedback.Message!);
-
+        async Task<Guid> Action() => await _feedbackService.AddFeedbackAsync(feedback.ZoneId, feedback.UserId, 
+            feedback.Mark, feedback.Message!);
+        var actualCount = feedbacks.Count;
+        
         // Assert
+        Assert.Equal(expectedCount, actualCount);
         await Assert.ThrowsAsync<UserNotFoundException>(Action);
     }
     
@@ -232,19 +236,23 @@ public class FeedbackServiceUnitTests
         var zoneId = Guid.NewGuid();
         var userId = users.First().Id;
         var feedbackId = Guid.NewGuid();
+        var expectedCount = feedbacks.Count;
     
         var feedback = new Feedback(feedbackId, userId, zoneId, DateTime.UtcNow, 5, "Описание 1");
     
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(zoneId))
                            .ReturnsAsync(zones.Find(e => e.Id == zoneId)!);
     
-        _mockFeedbackRepository.Setup(s => s.InsertFeedbackAsync(It.IsAny<Feedback>()))
-                               .Callback((Feedback f) => feedbacks.Add(f));
+        // _mockFeedbackRepository.Setup(s => s.InsertFeedbackAsync(It.IsAny<Feedback>()))
+        //                        .Callback((Feedback f) => feedbacks.Add(f));
     
         // Act
-        async Task Action() => await _feedbackService.AddFeedbackAsync(feedback.ZoneId, feedback.UserId, feedback.Mark, feedback.Message!);
-
+        async Task<Guid> Action() => await _feedbackService.AddFeedbackAsync(feedback.ZoneId, feedback.UserId, 
+            feedback.Mark, feedback.Message!);
+        var actualCount = feedbacks.Count;
+        
         // Assert
+        Assert.Equal(expectedCount, actualCount);
         await Assert.ThrowsAsync<ZoneNotFoundException>(Action);
     }
     
@@ -417,7 +425,8 @@ public class FeedbackServiceUnitTests
             new Zone(Guid.NewGuid(), "Zone1", "address1", 10, 6, 2500, 4),
             new Zone(Guid.NewGuid(), "Zone2", "address2", 30, 6, 3500, 0.0),
             new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 3000, 0.0),
-            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 3000, 0.0, CreateMockInventory())
+            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 3000, 0.0, 
+                CreateMockInventory(Guid.NewGuid()))
         };
     }
 
@@ -431,13 +440,13 @@ public class FeedbackServiceUnitTests
         };
     }
     
-    private List<Inventory> CreateMockInventory()
+    private List<Inventory> CreateMockInventory(Guid zoneId)
     {
         return new List<Inventory>()
         {
-            new Inventory(Guid.NewGuid(), "Экран", "Просмотреть любимый фильм на экране диагональю 5 метров (можно принести свой фильм на флешке)", new DateOnly(2023, 03, 28)),
-            new Inventory(Guid.NewGuid(), "X-box/Playstation", "Поиграть на игровой приставке X-box/Playstation с сенсором движения kinect",  new DateOnly(2015, 10, 02)),
-            new Inventory(Guid.NewGuid(), "Just Dance", "Потанцевать с игрой Just Dance", new DateOnly(2002, 9, 10))
+            new Inventory(Guid.NewGuid(), zoneId, "Экран", "Просмотреть любимый фильм на экране диагональю 5 метров (можно принести свой фильм на флешке)", new DateOnly(2023, 03, 28)),
+            new Inventory(Guid.NewGuid(), zoneId, "X-box/Playstation", "Поиграть на игровой приставке X-box/Playstation с сенсором движения kinect",  new DateOnly(2015, 10, 02)),
+            new Inventory(Guid.NewGuid(), zoneId, "Just Dance", "Потанцевать с игрой Just Dance", new DateOnly(2002, 9, 10))
         };
     }
 }

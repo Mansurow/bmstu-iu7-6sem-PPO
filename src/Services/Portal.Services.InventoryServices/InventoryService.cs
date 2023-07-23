@@ -29,9 +29,9 @@ public class InventoryService: IInventoryService
         return inventory;
     }
 
-    public async Task<Guid> AddInventoryAsync(string name, DateOnly yearOfProduction, string description)
+    public async Task<Guid> AddInventoryAsync(Guid zoneId, string name, DateOnly yearOfProduction, string description)
     {
-        var inventory = new Inventory(Guid.NewGuid(), name, description, yearOfProduction);
+        var inventory = new Inventory(Guid.NewGuid(), zoneId, name, description, yearOfProduction);
 
         await _inventoryRepository.InsertInventoryAsync(inventory);
         

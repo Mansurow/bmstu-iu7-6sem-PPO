@@ -39,33 +39,25 @@ public interface IZoneService
     Task UpdateZoneAsync(Zone zone);
     
     /// <summary>
-    /// Удалить 
+    /// Удалить зоны
     /// </summary>
-    /// <param name="zoneId"></param>
+    /// <param name="zoneId">Идентификатор зоны</param>
     /// <returns></returns>
     Task RemoveZoneAsync(Guid zoneId);
     
     /// <summary>
-    /// 
+    /// Добавить инвентарь
     /// </summary>
-    /// <param name="zoneId"></param>
-    /// <param name="inventory"></param>
+    /// <param name="zoneId">Идентификатор зоны</param>
+    /// <param name="inventory">Данные инвентаря</param>
     /// <returns></returns>
-    Task AddInventoryForZoneAsync(Guid zoneId, Inventory inventory);
-    
+    Task AddInventoryAsync(Guid zoneId, Inventory inventory);
+
     /// <summary>
-    /// 
+    /// Добавить пакет
     /// </summary>
-    /// <param name="zoneId"></param>
-    /// <param name="inventoryId"></param>
+    /// <param name="zoneId">Идентификатор зоны</param>
+    /// <param name="packageId">Идентификатор пакета</param>
     /// <returns></returns>
-    Task AddInventoryForZoneAsync(Guid zoneId, Guid inventoryId);
-    
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="zoneId"></param>
-    /// <param name="packageId"></param>
-    /// <returns></returns>
-    Task AddPackageForZoneAsync(Guid zoneId, Guid packageId);
+    Task AddPackageAsync(Guid zoneId, Guid packageId);
 }

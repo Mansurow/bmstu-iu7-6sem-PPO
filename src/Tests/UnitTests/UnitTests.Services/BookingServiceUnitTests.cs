@@ -252,7 +252,8 @@ public class BookingServiceUnitTests
         var users = CreateMockUsers();
         var zones = CreateMockZones(packages);
         var bookings = CreateMockBooking(users, zones, packages);
-
+        var expectedCount = bookings.Count;
+        
         var expectedBooking = new Booking(Guid.NewGuid(), zones.Last().Id, users.First().Id, 
             packages.First().Id, zones.Last().Limit, BookingStatus.TemporaryReserved, 
             DateOnly.FromDateTime(DateTime.UtcNow), 
@@ -272,13 +273,15 @@ public class BookingServiceUnitTests
             .ReturnsAsync((Guid userId, Guid zoneId) =>
                 bookings.FindAll(b => b.UserId == userId && b.ZoneId == zoneId));
         
-        _mockBookingRepository.Setup(s => s.InsertBookingAsync(It.IsAny<Booking>()))
-            .Callback((Booking b) => bookings.Add(b));
+        // _mockBookingRepository.Setup(s => s.InsertBookingAsync(It.IsAny<Booking>()))
+        //     .Callback((Booking b) => bookings.Add(b));
         
         // Act
         async Task<Guid> Action() => await _bookingService.AddBookingAsync(expectedBooking.UserId, expectedBooking.ZoneId, expectedBooking.PackageId, expectedBooking.Date.ToString(), expectedBooking.StartTime.ToString(), expectedBooking.EndTime.ToString());
-
+        var actualCount = bookings.Count;
+        
         // Asserts
+        Assert.Equal(expectedCount, actualCount);
         await Assert.ThrowsAsync<BookingReversedException>(Action);
     }
     
@@ -293,7 +296,8 @@ public class BookingServiceUnitTests
         var users = CreateMockUsers();
         var zones = CreateMockZones(packages);
         var bookings = CreateMockBooking(users, zones, packages);
-
+        var expectedCount = bookings.Count;
+        
         var expectedBooking = new Booking(Guid.NewGuid(), zones.First().Id, users.First().Id, 
             packages.First().Id, zones.First().Limit, BookingStatus.TemporaryReserved, 
             DateOnly.FromDateTime(DateTime.UtcNow), 
@@ -313,13 +317,17 @@ public class BookingServiceUnitTests
             .ReturnsAsync((Guid userId, Guid zoneId) =>
                 bookings.FindAll(b => b.UserId == userId && b.ZoneId == zoneId));
         
-        _mockBookingRepository.Setup(s => s.InsertBookingAsync(It.IsAny<Booking>()))
-            .Callback((Booking b) => bookings.Add(b));
+        // _mockBookingRepository.Setup(s => s.InsertBookingAsync(It.IsAny<Booking>()))
+        //     .Callback((Booking b) => bookings.Add(b));
         
         // Act
-        async Task<Guid> Action() => await _bookingService.AddBookingAsync(expectedBooking.UserId, expectedBooking.ZoneId, expectedBooking.PackageId, expectedBooking.Date.ToString(), expectedBooking.StartTime.ToString(), expectedBooking.EndTime.ToString());
-
+        async Task<Guid> Action() => await _bookingService.AddBookingAsync(expectedBooking.UserId, 
+            expectedBooking.ZoneId, expectedBooking.PackageId, expectedBooking.Date.ToString(), 
+            expectedBooking.StartTime.ToString(), expectedBooking.EndTime.ToString());
+        var actualCount = bookings.Count;
+        
         // Asserts
+        Assert.Equal(expectedCount, actualCount);
         await Assert.ThrowsAsync<BookingExistsException>(Action);
     }
     

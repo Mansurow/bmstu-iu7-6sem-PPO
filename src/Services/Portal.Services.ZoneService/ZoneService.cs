@@ -45,7 +45,7 @@ public class ZoneService: IZoneService
         var zone = await _zoneRepository.GetZoneByNameAsync(name);
         if (zone is not null)
         {
-            throw new ZoneNameExistException($"This name \"{name}\" of room exists.");
+            throw new ZoneNameExistException($"This name \"{name}\" of zone exists.");
         }
 
         var newZone = new Zone(Guid.NewGuid(), name, address, size, limit, price, 0.0);
@@ -70,31 +70,16 @@ public class ZoneService: IZoneService
         await _zoneRepository.UpdateZoneAsync(updateZone);
     }
     
-    public async Task AddInventoryForZoneAsync(Guid zoneId, Inventory inventory)
+    public async Task AddInventoryAsync(Guid zoneId, Inventory inventory)
     {
         var zone = await GetZoneByIdAsync(zoneId);
 
         zone.AddInventory(inventory);
 
-        await UpdateZoneAsync(zone);
-    }
-
-    public async Task AddInventoryForZoneAsync(Guid zoneId, Guid inventoryId)
-    {
-        var zone = await GetZoneByIdAsync(zoneId);
-        var inventory = await _inventoryRepository.GetInventoryByIdAsync(inventoryId);
-
-        if (inventory is null)
-        {
-            throw new InventoryNotFoundException($"Inventory with id: {inventoryId} not found");
-        }
-        
-        zone.AddInventory(inventory);
-
-        await UpdateZoneAsync(zone);
+        await _zoneRepository.UpdateZoneAsync(zone);
     }
     
-    public async Task AddPackageForZoneAsync(Guid zoneId, Guid packageId)
+    public async Task AddPackageAsync(Guid zoneId, Guid packageId)
     {
         var zone = await GetZoneByIdAsync(zoneId);
         var package = await _packageRepository.GetPackageByIdAsync(packageId);
@@ -103,10 +88,16 @@ public class ZoneService: IZoneService
         {
             throw new PackageNotFoundException($"Package with id: {packageId} not found");
         }
+
+        var zonePackage = zone.Packages.FirstOrDefault(p => p.Id == packageId);
+        if (zonePackage is not null)
+        {
+            throw new ZonePackageExistsException($"Package with id: {packageId} for zone with id: {zoneId} already exists");
+        }
         
         zone.AddPackage(package);
 
-        await UpdateZoneAsync(zone);
+        await _zoneRepository.UpdateZoneAsync(zone);
     }
     
     public async Task RemoveZoneAsync(Guid zoneId)

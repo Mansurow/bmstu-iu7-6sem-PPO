@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Portal.Common.Models;
 
 namespace Portal.Database.Models;
 
@@ -15,6 +16,18 @@ public class InventoryDbModel
     [Column("id")]
     public Guid Id { get; set; }
 
+    /// <summary>
+    /// Идентификатор зоны
+    /// </summary>
+    [ForeignKey("Zone")]
+    [Column("zone_id")]
+    public Guid ZoneId { get; set; }
+    
+    /// <summary>
+    /// Зоны
+    /// </summary>
+    public Zone? Zone { get; set; }
+    
     /// <summary>
     /// Название инвентаря
     /// </summary>
@@ -33,9 +46,10 @@ public class InventoryDbModel
     [Column("year_of_production")]
     public DateOnly YearOfProduction { get; set; }
 
-    public InventoryDbModel(Guid id, string name, string description, DateOnly yearOfProduction)
+    public InventoryDbModel(Guid id, Guid zoneId, string name, string description, DateOnly yearOfProduction)
     {
         Id = id;
+        ZoneId = zoneId;
         Name = name;
         Description = description;
         YearOfProduction = yearOfProduction;
