@@ -1,5 +1,5 @@
-using Anticafe.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using Portal.Database.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = new ConfigurationBuilder()
@@ -9,7 +9,7 @@ var config = new ConfigurationBuilder()
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<AppDbContext>(option => option.UseNpgsql(config.GetConnectionString("default")));
+builder.Services.AddDbContext<PortalDbContext>(option => option.UseNpgsql(config.GetConnectionString("default")));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

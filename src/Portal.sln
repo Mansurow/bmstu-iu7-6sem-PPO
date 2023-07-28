@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portal.Services.PackageServ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portal.Services.InventoryServices", "Services\Portal.Services.InventoryServices\Portal.Services.InventoryServices.csproj", "{D3C79195-0014-42A2-9BA0-40AB661CDE38}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portal.Database.Context", "Database\Portal.Database.Context\Portal.Database.Context.csproj", "{3F52226F-219B-48FB-8701-54220EA3AC59}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,10 @@ Global
 		{D3C79195-0014-42A2-9BA0-40AB661CDE38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3C79195-0014-42A2-9BA0-40AB661CDE38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3C79195-0014-42A2-9BA0-40AB661CDE38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F52226F-219B-48FB-8701-54220EA3AC59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F52226F-219B-48FB-8701-54220EA3AC59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F52226F-219B-48FB-8701-54220EA3AC59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F52226F-219B-48FB-8701-54220EA3AC59}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,14 +13,15 @@ public static class FeedbackConverter
     /// </summary>
     /// <param name="feedback">Модель базы данных</param>
     /// <returns>Модель бизнес логики</returns>
-    public static Feedback ConvertDbModelToAppModel(FeedbackDbModel feedback) 
+    public static Feedback? ConvertDbModelToAppModel(FeedbackDbModel? feedback) 
     {
-        return new Feedback(id: feedback.Id,
-                            userId: feedback.UserId,
-                            zoneId: feedback.ZoneId,
-                            date: feedback.Date,
-                            mark: feedback.Mark,
-                            message: feedback.Message);
+        return feedback is null ? null :
+            new Feedback(id: feedback.Id,
+            userId: feedback.UserId,
+            zoneId: feedback.ZoneId,
+            date: feedback.Date,
+            mark: feedback.Mark,
+            message: feedback.Message);
     }
 
     /// <summary>
@@ -31,10 +32,10 @@ public static class FeedbackConverter
     public static FeedbackDbModel ConvertAppModelToDbModel(Feedback feedback)
     {
         return new FeedbackDbModel(id: feedback.Id,
-                            userId: feedback.UserId,
-                            zoneId: feedback.ZoneId,
-                            date: feedback.Date,
-                            mark: feedback.Mark,
-                            message: feedback.Message);
+        userId: feedback.UserId,
+        zoneId: feedback.ZoneId,
+        date: feedback.Date,
+        mark: feedback.Mark,
+        message: feedback.Message);
     }
 }

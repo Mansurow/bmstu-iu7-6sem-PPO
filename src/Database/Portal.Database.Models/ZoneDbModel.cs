@@ -61,6 +61,19 @@ public class ZoneDbModel
     /// </summary>
     public ICollection<PackageDbModel> Packages { get; set; }
 
+    public ZoneDbModel(Guid id, string name, string address, double size, int limit, double price, double rating)
+    {
+        Id = id;
+        Name = name;
+        Address = address;
+        Size = size;
+        Limit = limit;
+        Price = price;
+        Rating = rating;
+        Inventories = new List<InventoryDbModel>();
+        Packages = new List<PackageDbModel>();
+    }
+
     public ZoneDbModel(Guid id, string name, string address, double size, int limit, double price, double rating, 
         ICollection<InventoryDbModel> inventories)
     {

@@ -21,12 +21,7 @@ public class InventoryService: IInventoryService
     public async Task<Inventory> GetInventoryByIdAsync(Guid inventoryId)
     {
         var inventory = await _inventoryRepository.GetInventoryByIdAsync(inventoryId);
-        if (inventory is null)
-        {
-            throw new InventoryNotFoundException($"Inventory with id: {inventoryId} not found");
-        }
-
-        return inventory;
+        return inventory is null ? throw new InventoryNotFoundException($"Inventory with id: {inventoryId} not found") : inventory;
     }
 
     public async Task<Guid> AddInventoryAsync(Guid zoneId, string name, DateOnly yearOfProduction, string description)

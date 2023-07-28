@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\..\Common\Portal.Common.Models\Portal.Common.Models.csproj" />
   </ItemGroup>
 
 </Project>

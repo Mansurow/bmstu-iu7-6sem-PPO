@@ -13,9 +13,10 @@ namespace Portal.Common.Converter
         /// </summary>
         /// <param name="booking">Модель базы данных</param>
         /// <returns>Модель бизнес логики</returns>
-        public static Booking ConvertDbModelToAppModel(BookingDbModel booking) 
+        public static Booking? ConvertDbModelToAppModel(BookingDbModel? booking) 
         {
-            return new Booking(id: booking.Id,
+            return booking is null ? null :
+                new Booking(id: booking.Id,
                                zoneId: booking.ZoneId,
                                userId: booking.UserId,
                                packageId: booking.PackageId,

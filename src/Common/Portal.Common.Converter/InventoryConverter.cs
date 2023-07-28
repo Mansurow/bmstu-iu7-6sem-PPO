@@ -13,13 +13,14 @@ public static class InventoryConverter
     /// </summary>
     /// <param name="inventory">Модель базы данных</param>
     /// <returns>Модель бизнес логики</returns>
-    public static Inventory ConvertDbModelToAppModel(InventoryDbModel inventory)
+    public static Inventory? ConvertDbModelToAppModel(InventoryDbModel? inventory)
     {
-        return new Inventory(id: inventory.Id,
-                        zoneId: inventory.ZoneId,    
-                        name: inventory.Name,
-                        description: inventory.Description,
-                        yearOfProduction: inventory.YearOfProduction);
+        return inventory is null ? null :
+            new Inventory(id: inventory.Id,
+            zoneId: inventory.ZoneId,    
+            name: inventory.Name,
+            description: inventory.Description,
+            yearOfProduction: inventory.YearOfProduction);
     }
 
     /// <summary>
@@ -30,9 +31,9 @@ public static class InventoryConverter
     public static InventoryDbModel ConvertAppModelToDbModel(Inventory inventory)
     {
         return new InventoryDbModel(id: inventory.Id,
-                        zoneId: inventory.ZoneId,
-                        name: inventory.Name,
-                        description: inventory.Description,
-                        yearOfProduction: inventory.YearOfProduction);
+        zoneId: inventory.ZoneId,
+        name: inventory.Name,
+        description: inventory.Description,
+        yearOfProduction: inventory.YearOfProduction);
     }
 }
