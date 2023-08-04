@@ -25,7 +25,7 @@ public class PackageRepository: BaseRepository, IPackageRepository
 
     public async Task<Package> GetPackageByIdAsync(Guid packageId)
     {
-        var package = await _context.Packages.FirstOrDefaultAsync(p => p.Id == packageId);
+        var package = await _context.Packages.FirstAsync(p => p.Id == packageId);
 
         return PackageConverter.ConvertDbModelToAppModel(package);
     }

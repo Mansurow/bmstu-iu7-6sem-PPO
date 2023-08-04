@@ -20,13 +20,13 @@ public class InventoryRepository: BaseRepository, IInventoryRepository
     public Task<List<Inventory>> GetAllInventoryAsync()
     {
         return _context.Inventories
-            .Select(i => InventoryConverter.ConvertDbModelToAppModel(i)!)
+            .Select(i => InventoryConverter.ConvertDbModelToAppModel(i))
             .ToListAsync();
     }
 
     public async Task<Inventory> GetInventoryByIdAsync(Guid inventoryId)
     {
-        var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.Id == inventoryId);
+        var inventory = await _context.Inventories.FirstAsync(i => i.Id == inventoryId);
 
         return InventoryConverter.ConvertDbModelToAppModel(inventory);
     }

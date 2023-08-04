@@ -13,10 +13,9 @@ namespace Portal.Common.Converter
         /// </summary>
         /// <param name="zone">Модель базы данных</param>
         /// <returns>Модель бизнес логики</returns>
-        public static Zone? ConvertDbModelToAppModel(ZoneDbModel? zone) 
+        public static Zone ConvertDbModelToAppModel(ZoneDbModel zone) 
         {
-            return zone is null ? null :
-                new Zone(id: zone.Id,
+            return new Zone(id: zone.Id,
                 name: zone.Name,
                 address: zone.Address,
                 size: zone.Size,

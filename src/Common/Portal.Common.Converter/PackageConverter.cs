@@ -13,10 +13,9 @@ public static class PackageConverter
     /// </summary>
     /// <param name="package">Модель базы данных</param>
     /// <returns>Модель бизнес логики</returns>
-    public static Package? ConvertDbModelToAppModel(PackageDbModel? package)
+    public static Package ConvertDbModelToAppModel(PackageDbModel package)
     {
-        return package is null ? null :
-            new Package(id: package.Id,
+        return new Package(id: package.Id,
             name: package.Name,
             type: package.Type,
             price: package.Price,

@@ -19,13 +19,13 @@ public class ZoneRepository: BaseRepository, IZoneRepository
     public Task<List<Zone>> GetAllZonesAsync()
     {
         return _context.Zones
-            .Select(z => ZoneConverter.ConvertDbModelToAppModel(z)!)
+            .Select(z => ZoneConverter.ConvertDbModelToAppModel(z))
             .ToListAsync();
     }
 
     public async Task<Zone> GetZoneByIdAsync(Guid zoneId)
     {
-        var zone = await _context.Zones.FirstOrDefaultAsync(z => z.Id == zoneId);
+        var zone = await _context.Zones.FirstAsync(z => z.Id == zoneId);
 
         return ZoneConverter.ConvertDbModelToAppModel(zone);
     }
@@ -33,7 +33,7 @@ public class ZoneRepository: BaseRepository, IZoneRepository
     public async Task<Zone> GetZoneByNameAsync(string name)
     {
         var zone = await _context.Zones
-            .FirstOrDefaultAsync(z => String.Equals(z.Name, name, StringComparison.CurrentCultureIgnoreCase));
+            .FirstAsync(z => String.Equals(z.Name, name, StringComparison.CurrentCultureIgnoreCase));
 
         return ZoneConverter.ConvertDbModelToAppModel(zone);
     }

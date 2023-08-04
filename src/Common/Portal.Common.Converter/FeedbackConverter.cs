@@ -13,10 +13,9 @@ public static class FeedbackConverter
     /// </summary>
     /// <param name="feedback">Модель базы данных</param>
     /// <returns>Модель бизнес логики</returns>
-    public static Feedback? ConvertDbModelToAppModel(FeedbackDbModel? feedback) 
+    public static Feedback ConvertDbModelToAppModel(FeedbackDbModel feedback) 
     {
-        return feedback is null ? null :
-            new Feedback(id: feedback.Id,
+        return new Feedback(id: feedback.Id,
             userId: feedback.UserId,
             zoneId: feedback.ZoneId,
             date: feedback.Date,

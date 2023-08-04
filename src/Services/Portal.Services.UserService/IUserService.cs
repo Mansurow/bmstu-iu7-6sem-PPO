@@ -1,4 +1,5 @@
 ﻿using Portal.Common.Models;
+using Portal.Common.Models.Enums;
 
 namespace Portal.Services.UserService;
 
@@ -24,6 +25,7 @@ public interface IUserService
     /// Изменить права доступа
     /// </summary>
     /// <param name="userId">Идентификатор пользователя</param>
+    /// <param name="permissions">Новые права доступа</param>
     /// <returns></returns>
-    Task ChangeUserPermissionsAsync(Guid userId);
+    Task ChangeUserPermissionsAsync(Guid userId, Role permissions);
 }

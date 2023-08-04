@@ -13,10 +13,9 @@ public static class InventoryConverter
     /// </summary>
     /// <param name="inventory">Модель базы данных</param>
     /// <returns>Модель бизнес логики</returns>
-    public static Inventory? ConvertDbModelToAppModel(InventoryDbModel? inventory)
+    public static Inventory ConvertDbModelToAppModel(InventoryDbModel inventory)
     {
-        return inventory is null ? null :
-            new Inventory(id: inventory.Id,
+        return new Inventory(id: inventory.Id,
             zoneId: inventory.ZoneId,    
             name: inventory.Name,
             description: inventory.Description,

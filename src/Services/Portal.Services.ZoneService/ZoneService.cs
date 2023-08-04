@@ -31,13 +31,16 @@ public class ZoneService: IZoneService
 
     public async Task<Zone> GetZoneByIdAsync(Guid zoneId)
     {
-        var zone = await _zoneRepository.GetZoneByIdAsync(zoneId);
-        if (zone is null) 
+        try
         {
-            throw new ZoneNotFoundException($"Zone with id: {zoneId} not found");
+            var zone = await _zoneRepository.GetZoneByIdAsync(zoneId);
+            
+            return zone;
         }
-
-        return zone;
+        catch (Exception)
+        {
+            throw new ZoneNotFoundException($"Zone not found with id: {zoneId}");
+        }
     }
 
     public async Task<Guid> AddZoneAsync(string name, string address, double size, int limit, double price)
@@ -56,13 +59,8 @@ public class ZoneService: IZoneService
 
     public async Task UpdateZoneAsync(Zone updateZone)
     {
-        if (!await _ZoneExists(updateZone.Id))
-        {
-            throw new ZoneNotFoundException($"Zone with id: {updateZone.Id} not found");
-        }
-
-        var zone = await _zoneRepository.GetZoneByNameAsync(updateZone.Name);
-        if (zone is not null)
+        var zone = await GetZoneByIdAsync(updateZone.Id);
+        if (zone.Name == updateZone.Name)
         {
             throw new ZoneNameExistException($"This name \"{zone.Name}\" of zone exists.");
         }
@@ -74,9 +72,16 @@ public class ZoneService: IZoneService
     {
         var zone = await GetZoneByIdAsync(zoneId);
 
-        zone.AddInventory(inventory);
-
-        await _zoneRepository.UpdateZoneAsync(zone);
+        try
+        {
+            zone.AddInventory(inventory);
+            await _zoneRepository.UpdateZoneAsync(zone);
+        }
+        catch (Exception)
+        {
+            throw new ZoneUpdateException($"Zone was not updated: {zoneId}");
+        }
+        
     }
     
     public async Task AddPackageAsync(Guid zoneId, Guid packageId)
@@ -94,29 +99,30 @@ public class ZoneService: IZoneService
         {
             throw new ZonePackageExistsException($"Package with id: {packageId} for zone with id: {zoneId} already exists");
         }
-        
-        zone.AddPackage(package);
 
-        await _zoneRepository.UpdateZoneAsync(zone);
+        try
+        {
+            zone.AddPackage(package);
+            await _zoneRepository.UpdateZoneAsync(zone);
+        }
+        catch (Exception e)
+        {
+            throw new ZoneUpdateException($"Zone was not updated: {zoneId}");
+        }
+        
     }
     
     public async Task RemoveZoneAsync(Guid zoneId)
     {
-        if (!_ZoneExists(zoneId).Result)
+        var zone = await GetZoneByIdAsync(zoneId);
+        try
         {
-            throw new ZoneNotFoundException($"Zone with id: {zoneId} not found");
+            await _zoneRepository.DeleteZoneAsync(zoneId);
         }
-
-        await _zoneRepository.DeleteZoneAsync(zoneId);
-    }
-
-    private async Task<Boolean> _ZoneExists(Guid zoneId) 
-    {
-        var zone = await _zoneRepository.GetZoneByIdAsync(zoneId);
-
-        if (zone is null)
-            return false;
+        catch (Exception)
+        {
+            throw new ZoneDeleteException($"Zone was not updated: {zoneId}");
+        }
         
-        return true;
     }
 }

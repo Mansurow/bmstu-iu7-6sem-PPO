@@ -117,7 +117,7 @@ public class UserServiceUnitTests
                            .ReturnsAsync(users.Find(e => e.Id == userId)!);
 
         // Act
-        await _userService.ChangeUserPermissionsAsync(userId);
+        await _userService.ChangeUserPermissionsAsync(userId, Role.Administrator);
         var actualUser = users.Find(e => e.Id == userId);
 
         // Assert
@@ -135,7 +135,7 @@ public class UserServiceUnitTests
                            .ReturnsAsync(users.Find(e => e.Id == userId)!);
 
         // Act
-        var action = async () => await _userService.ChangeUserPermissionsAsync(userId);
+        var action = async () => await _userService.ChangeUserPermissionsAsync(userId, Role.Administrator);
 
         // Assert
         await Assert.ThrowsAsync<UserNotFoundException>(action);
@@ -152,7 +152,7 @@ public class UserServiceUnitTests
                            .ReturnsAsync(users.Find(e => e.Id == userId)!);
 
         // Act
-        async Task Action() => await _userService.ChangeUserPermissionsAsync(userId);
+        async Task Action() => await _userService.ChangeUserPermissionsAsync(userId, Role.Administrator);
 
         // Assert
         await Assert.ThrowsAsync<UserNotFoundException>(Action);

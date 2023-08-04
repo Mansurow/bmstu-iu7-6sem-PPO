@@ -40,4 +40,19 @@ public class Dish
         Price = price;
         Description = description;
     }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        
+        var other = (Dish) obj;
+        return Id == other.Id
+               && Name == other.Name
+               && Type == other.Type
+               && Math.Abs(Price - other.Price) < 1e-8
+               && Description == other.Description;
+    }
 }

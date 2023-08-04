@@ -29,11 +29,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{80A2BFE1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Services", "Tests\UnitTests\UnitTests.Services\UnitTests.Services.csproj", "{DB34955A-1CA9-4E4E-ACD1-4F79A6D1A0EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portal.Services.PackageService", "Services\Portal.Services.PackageService\Portal.Services.PackageService.csproj", "{1647AA3B-83CA-41E6-931A-3BC2DD2F192E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portal.Services.PackageService", "Services\Portal.Services.PackageService\Portal.Services.PackageService.csproj", "{1647AA3B-83CA-41E6-931A-3BC2DD2F192E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portal.Services.InventoryServices", "Services\Portal.Services.InventoryServices\Portal.Services.InventoryServices.csproj", "{D3C79195-0014-42A2-9BA0-40AB661CDE38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portal.Services.InventoryServices", "Services\Portal.Services.InventoryServices\Portal.Services.InventoryServices.csproj", "{D3C79195-0014-42A2-9BA0-40AB661CDE38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portal.Database.Context", "Database\Portal.Database.Context\Portal.Database.Context.csproj", "{3F52226F-219B-48FB-8701-54220EA3AC59}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Portal.Database.Context", "Database\Portal.Database.Context\Portal.Database.Context.csproj", "{3F52226F-219B-48FB-8701-54220EA3AC59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationalTests.Services", "Tests\IntegrationalTests.Services\IntegrationalTests.Services.csproj", "{F50703FA-DDF5-4EF2-B44B-81DA6D63B48D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,12 +103,17 @@ Global
 		{3F52226F-219B-48FB-8701-54220EA3AC59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F52226F-219B-48FB-8701-54220EA3AC59}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F52226F-219B-48FB-8701-54220EA3AC59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F50703FA-DDF5-4EF2-B44B-81DA6D63B48D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F50703FA-DDF5-4EF2-B44B-81DA6D63B48D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F50703FA-DDF5-4EF2-B44B-81DA6D63B48D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F50703FA-DDF5-4EF2-B44B-81DA6D63B48D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{DB34955A-1CA9-4E4E-ACD1-4F79A6D1A0EF} = {80A2BFE1-FACB-4D79-8A87-A967A4808E56}
+		{F50703FA-DDF5-4EF2-B44B-81DA6D63B48D} = {80A2BFE1-FACB-4D79-8A87-A967A4808E56}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2E71563E-2237-43E3-8A05-75F7F5F08539}

@@ -13,10 +13,9 @@ public static class MenuConverter
     /// </summary>
     /// <param name="dish">Модель базы данных</param>
     /// <returns>Модель бизнес логики</returns>
-    public static Dish? ConvertDbModelToAppModel(DishDbModel? dish) 
+    public static Dish ConvertDbModelToAppModel(DishDbModel dish) 
     {
-        return dish is null ? null:
-            new Dish(id: dish.Id,
+        return new Dish(id: dish.Id,
                         name: dish.Name,
                         type: dish.Type,
                         price: dish.Price,

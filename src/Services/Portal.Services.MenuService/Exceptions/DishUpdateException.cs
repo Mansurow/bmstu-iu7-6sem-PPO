@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Anticafe.DataAccess.Exceptions;
+namespace Portal.Services.MenuService.Exceptions;
 
 [Serializable]
 public class DishUpdateException : Exception

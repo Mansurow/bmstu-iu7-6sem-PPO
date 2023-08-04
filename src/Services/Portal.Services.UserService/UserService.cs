@@ -16,35 +16,37 @@ public class UserService : IUserService
     {
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
     }
-
-    public async Task<User> GetUserByIdAsync(Guid userId)
-    {
-        var user = await _userRepository.GetUserByIdAsync(userId);
-        if (user is null)
-        {
-            throw new UserNotFoundException($"Not found user with id: {userId}");
-        }
-
-        return user;
-    }
-
+    
     public Task<List<User>> GetAllUsersAsync()
     {
         return _userRepository.GetAllUsersAsync();
     }
 
-    public async Task ChangeUserPermissionsAsync(Guid userId)
+    public async Task<User> GetUserByIdAsync(Guid userId)
+    {
+        try
+        {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            
+            return user;
+        }
+        catch (Exception)
+        {
+            throw new UserNotFoundException($"User not found with id: {userId}");
+        }
+    }
+    
+    public async Task ChangeUserPermissionsAsync(Guid userId, Role permissions)
     {
         var user = await GetUserByIdAsync(userId);
-
-        if (user is not null)
+        try
         {
-            user.ChangePermission(Role.Administrator);
+            user.ChangePermission(permissions);
             await _userRepository.UpdateUserAsync(user);
         }
-        else
+        catch (Exception)
         {
-            throw new UserNotFoundException($"Not found user with id: {userId}");
+            throw new UserUpdateException($"User's {userId} permissions have not been changed");
         }
     }
 }

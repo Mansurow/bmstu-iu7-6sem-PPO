@@ -13,10 +13,9 @@ public static class UserConverter
     /// </summary>
     /// <param name="user">Модель базы данных</param>
     /// <returns>Модель бизнес логики</returns>
-    public static User? ConvertDbModelToAppModel(UserDbModel? user) 
+    public static User ConvertDbModelToAppModel(UserDbModel user) 
     {
-        return user is null ? null :
-            new User(id: user.Id,
+        return new User(id: user.Id,
             firstName: user.FirstName,
             middleName: user.MiddleName,
             lastName: user.LastName,

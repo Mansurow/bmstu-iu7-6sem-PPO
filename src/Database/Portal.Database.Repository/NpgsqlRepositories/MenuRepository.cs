@@ -21,10 +21,11 @@ public class MenuRepository: BaseRepository, IMenuRepository
         return _context.Menu.Select(d => MenuConverter.ConvertDbModelToAppModel(d)!)
             .ToListAsync();
     }
+    
 
     public async Task<Dish> GetDishByIdAsync(Guid dishId)
     {
-        var dish = await _context.Menu.FirstOrDefaultAsync(d => d.Id == dishId);
+        var dish = await _context.Menu.FirstAsync(d => d.Id == dishId);
 
         return MenuConverter.ConvertDbModelToAppModel(dish);
     }
@@ -39,9 +40,13 @@ public class MenuRepository: BaseRepository, IMenuRepository
 
     public async Task UpdateDishAsync(Dish dish)
     {
-        var dishDb = MenuConverter.ConvertAppModelToDbModel(dish);
-
-        _context.Menu.Update(dishDb);
+        var updatedDish = await _context.Menu.FirstAsync(d => d.Id == dish.Id);
+        updatedDish.Name = dish.Name;
+        updatedDish.Type = dish.Type;
+        updatedDish.Price = dish.Price;
+        updatedDish.Description = dish.Description;
+        // updatedDish.Packages = dish.Packages;
+            
         await _context.SaveChangesAsync();
     }
 

@@ -20,7 +20,7 @@ public class FeedbackRepository: BaseRepository, IFeedbackRepository
     {
         return _context.Feedbacks
             .Where(f => f.ZoneId == zoneId)
-            .Select(f => FeedbackConverter.ConvertDbModelToAppModel(f)!)
+            .Select(f => FeedbackConverter.ConvertDbModelToAppModel(f))
             .ToListAsync();
     }
 
@@ -28,20 +28,20 @@ public class FeedbackRepository: BaseRepository, IFeedbackRepository
     {
         return _context.Feedbacks
             .Where(f => f.UserId == userId)
-            .Select(f => FeedbackConverter.ConvertDbModelToAppModel(f)!)
+            .Select(f => FeedbackConverter.ConvertDbModelToAppModel(f))
             .ToListAsync();
     }
 
     public Task<List<Feedback>> GetAllFeedbackAsync()
     {
         return _context.Feedbacks
-            .Select(f => FeedbackConverter.ConvertDbModelToAppModel(f)!)
+            .Select(f => FeedbackConverter.ConvertDbModelToAppModel(f))
             .ToListAsync();
     }
 
     public async Task<Feedback> GetFeedbackAsync(Guid feedbackId)
     {
-        var feedback = await _context.Feedbacks.FirstOrDefaultAsync(f => f.Id == feedbackId);
+        var feedback = await _context.Feedbacks.FirstAsync(f => f.Id == feedbackId);
 
         return FeedbackConverter.ConvertDbModelToAppModel(feedback);
     }

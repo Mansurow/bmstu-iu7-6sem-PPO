@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Anticafe.DataAccess.Exceptions;
+namespace Portal.Services.UserService.Exceptions;
 
 [Serializable]
 public class UserCreateException : Exception

@@ -1,4 +1,4 @@
-﻿namespace Portal.Database.Models;
+﻿namespace Portal.Database.Repositories;
 
 public class BaseRepository
 {
