@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 
 namespace Anticafe.DataAccess
 {
@@ -15,7 +14,7 @@ namespace Anticafe.DataAccess
 
         public AppDbContext getDbContext()
         {
-            string curPerms = "default"; //_configuration["DbConnection"]!;
+            string curPerms = _configuration["DbConnection"];
 
             var builder = new DbContextOptionsBuilder<AppDbContext>();
             builder.UseNpgsql(_configuration.GetConnectionString(curPerms));

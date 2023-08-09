@@ -17,9 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL", "BL\BL.csproj", "{08F9
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Converter", "Converter\Converter.csproj", "{C3E54CE1-F182-4EB1-AFC3-839632781D81}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationalTests", "tests\IntegrationalTests\IntegrationalTests.csproj", "{AF14D51B-E07B-4418-93BF-207DDFA46852}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechUI", "TechUI\TechUI.csproj", "{685BC55C-F3B8-4F5F-BB86-62DEE2DA9E02}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationalTests", "tests\IntegrationalTests\IntegrationalTests.csproj", "{AF14D51B-E07B-4418-93BF-207DDFA46852}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,10 +53,6 @@ Global
 		{AF14D51B-E07B-4418-93BF-207DDFA46852}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF14D51B-E07B-4418-93BF-207DDFA46852}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF14D51B-E07B-4418-93BF-207DDFA46852}.Release|Any CPU.Build.0 = Release|Any CPU
-		{685BC55C-F3B8-4F5F-BB86-62DEE2DA9E02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{685BC55C-F3B8-4F5F-BB86-62DEE2DA9E02}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{685BC55C-F3B8-4F5F-BB86-62DEE2DA9E02}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{685BC55C-F3B8-4F5F-BB86-62DEE2DA9E02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

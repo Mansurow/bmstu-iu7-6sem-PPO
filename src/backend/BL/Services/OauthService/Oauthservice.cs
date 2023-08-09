@@ -1,6 +1,5 @@
 ﻿using Anticafe.BL.Exceptions;
 using Anticafe.BL.Models;
-using Anticafe.Common.Enums;
 using Anticafe.DataAccess.Converter;
 using Anticafe.DataAccess.IRepositories;
 
@@ -15,20 +14,17 @@ namespace Anticafe.BL.Sevices.OauthService
             _userRepository = userRepository;
         }
 
-        public async Task<User> Registrate(string login, string password) 
+        public async Task Registrate(User user, string password) 
         {
-            var userModel = await _userRepository.GetUserByEmailAsync(login);
+            var userModel = await _userRepository.GetUserByEmailAsync(user.Email);
             if (userModel is not null)
             {
-                throw new UserLoginAlreadyExistsException($"User with login: {login} already exists.");
+                throw new UserLoginAlreadyExistsException($"User with login: {user.Email} already exists.");
             }
 
-            var user = new User(1, "", "", "", DateTime.MinValue, Gender.Unknown, login, "", UserRole.User);
             user.CreateHash(password);
 
             await _userRepository.InsertUserAsync(UserConverter.ConvertAppModelToDbModel(user));
-
-            return user;
         }
 
         public async Task<User> LogIn(string login, string password)

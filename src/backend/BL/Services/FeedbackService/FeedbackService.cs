@@ -39,21 +39,20 @@ public class FeedbackService: IFeedbackService
         return feedbacks.Select(f => FeedbackConverter.ConvertDbModelToAppModel(f)).ToList();
     }
 
-    public async Task AddFeedbackAsync(int userId, int roomId, int rating, string? msg) 
+    public async Task AddFeedbackAsync(Feedback feedback) 
     {
-        var room = await _roomRepository.GetRoomByIdAsync(roomId);
+        var room = await _roomRepository.GetRoomByIdAsync(feedback.RoomId);
         if (room is null)
         {
-            throw new RoomNotFoundException($"Room not found with id: {roomId}");
+            throw new RoomNotFoundException($"Room not found with id: {feedback.RoomId}");
         }  
 
-        var user = await _userRepository.GetUserByIdAsync(userId);
+        var user = await _userRepository.GetUserByIdAsync(feedback.UserId);
         if (user is null)
         {
-            throw new UserNotFoundException($"User not found with id: {userId}");
+            throw new UserNotFoundException($"User not found with id: {feedback.UserId}");
         }
 
-        var feedback = new Feedback(1, userId, roomId, DateTime.UtcNow, rating, msg);
         await _feedbackRepository.InsertFeedbackAsync(FeedbackConverter.ConvertAppModelToDbModel(feedback));
     }
 

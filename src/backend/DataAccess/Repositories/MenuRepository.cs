@@ -9,9 +9,9 @@ public class MenuRepository : BaseRepository, IMenuRepository
 {
     private readonly AppDbContext _context;
 
-    public MenuRepository(IDbContextFactory contextFactory)
+    public MenuRepository(AppDbContext context)
     {
-        _context = contextFactory.getDbContext();
+        _context = context;
     }
 
     public async Task<List<MenuDbModel>> GetAllDishesAsync()
@@ -46,16 +46,7 @@ public class MenuRepository : BaseRepository, IMenuRepository
     {
         try 
         {
-            // _context.Menu.Update(menu);
-            var dish = await _context.Menu.FirstOrDefaultAsync(d => d.Id == menu.Id);
-            if (dish is not null) 
-            {
-                dish.Name = menu.Name;
-                dish.Type = menu.Type;
-                dish.Price = menu.Price;
-                dish.Description = menu.Description;
-            }
-
+            _context.Menu.Update(menu);
             await _context.SaveChangesAsync();
         }
         catch

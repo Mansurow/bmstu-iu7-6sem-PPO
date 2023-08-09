@@ -10,9 +10,9 @@ public class BookingRepository: BaseRepository, IBookingRepository
 {
     private readonly AppDbContext _context;
 
-    public BookingRepository(IDbContextFactory contextFactory): base()
+    public BookingRepository(AppDbContext context): base()
     {
-        _context = contextFactory.getDbContext();
+        _context = context;
     }
 
     public async Task<List<BookingDbModel>> GetAllBookingAsync() 

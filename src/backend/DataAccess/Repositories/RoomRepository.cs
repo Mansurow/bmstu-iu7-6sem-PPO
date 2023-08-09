@@ -9,9 +9,9 @@ public class RoomRepository: BaseRepository, IRoomRepository
 {
     private readonly AppDbContext _context;
 
-    public RoomRepository(IDbContextFactory contextFactory) : base()
+    public RoomRepository(AppDbContext context): base()
     {
-        _context = contextFactory.getDbContext();
+        _context = context;
     }
     public async Task<List<RoomDbModel>> GetAllRoomAsync() 
     {
@@ -32,6 +32,11 @@ public class RoomRepository: BaseRepository, IRoomRepository
     public async Task<RoomDbModel> GetRoomByNameAsync(string roomName) 
     {
         var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Name == roomName);
+        if (room is null)
+        {
+            throw new RoomNotFoundException("Room not found");
+        }
+
         return room;
     }
 
@@ -52,20 +57,10 @@ public class RoomRepository: BaseRepository, IRoomRepository
     {
         try
         {
-            // _context.Rooms.Update(updateRoom);
-            var room = await _context.Rooms.FirstOrDefaultAsync(u => u.Id == updateRoom.Id);
-            if (room is not null) 
-            {
-                room.Name = updateRoom.Name;
-                room.Size = updateRoom.Size;
-                room.Price = updateRoom.Price;
-                room.Rating = updateRoom.Rating;
-                room.Inventories = updateRoom.Inventories;
-            }
-
+            _context.Rooms.Update(updateRoom);
             await _context.SaveChangesAsync();
         }
-        catch
+        catch 
         {
             throw new RoomUpdateException("Feedback not create");
         }

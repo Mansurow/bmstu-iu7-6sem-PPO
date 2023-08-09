@@ -9,9 +9,9 @@ public class FeedbackRepository: BaseRepository, IFeedbackRepository
 {
     private readonly AppDbContext _context;
 
-    public FeedbackRepository(IDbContextFactory contextFactory) : base()
+    public FeedbackRepository(AppDbContext context): base()
     {
-        _context = contextFactory.getDbContext();
+        _context = context;
     }
 
     public async Task<List<FeedbackDbModel>> GetAllFeedbackByRoomAsync(int roomId) 

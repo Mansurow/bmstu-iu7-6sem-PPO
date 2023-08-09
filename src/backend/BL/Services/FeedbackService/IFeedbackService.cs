@@ -6,7 +6,7 @@ namespace Anticafe.BL.Sevices.FeedbackService
     {
         Task<List<Feedback>> GetAllFeedbackByRoomAsync(int roomId);
         Task<List<Feedback>> GetAllFeedbackAsync();
-        Task AddFeedbackAsync(int userId, int roomId, int rating, string? msg);
+        Task AddFeedbackAsync(Feedback feedback);
         Task UpdateFeedbackAsync(Feedback feedback);
         Task UpdateRoomRatingAsync(int roomId);
         Task DeleteFeedbackAsync(int feedbackId);
