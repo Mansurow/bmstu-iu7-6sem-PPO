@@ -1,4 +1,5 @@
-﻿using Portal.Database.Repositories.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using Portal.Database.Repositories.Interfaces;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
 using Portal.Services.UserService.Exceptions;
@@ -16,35 +17,41 @@ public class UserService : IUserService
     {
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
     }
-
-    public async Task<User> GetUserByIdAsync(Guid userId)
-    {
-        var user = await _userRepository.GetUserByIdAsync(userId);
-        if (user is null)
-        {
-            throw new UserNotFoundException($"Not found user with id: {userId}");
-        }
-
-        return user;
-    }
-
+    
     public Task<List<User>> GetAllUsersAsync()
     {
         return _userRepository.GetAllUsersAsync();
     }
 
-    public async Task ChangeUserPermissionsAsync(Guid userId)
+    public async Task<User> GetUserByIdAsync(Guid userId)
     {
-        var user = await GetUserByIdAsync(userId);
-
-        if (user is not null)
+        try
         {
-            user.ChangePermission(Role.Administrator);
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            
+            return user;
+        }
+        catch (InvalidOperationException)
+        {
+            throw new UserNotFoundException($"User with id: {userId} not found");
+        }
+    }
+    
+    public async Task ChangeUserPermissionsAsync(Guid userId, Role permissions)
+    {
+        try
+        {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            user.ChangePermission(permissions);
             await _userRepository.UpdateUserAsync(user);
         }
-        else
+        catch (InvalidOperationException)
         {
-            throw new UserNotFoundException($"Not found user with id: {userId}");
+            throw new UserNotFoundException($"User with id: {userId} not found");
+        }
+        catch (DbUpdateException)
+        {
+            throw new UserUpdateException($"User's {userId} permissions have not been changed");
         }
     }
 }

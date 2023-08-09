@@ -16,11 +16,11 @@ public static class FeedbackConverter
     public static Feedback ConvertDbModelToAppModel(FeedbackDbModel feedback) 
     {
         return new Feedback(id: feedback.Id,
-                            userId: feedback.UserId,
-                            zoneId: feedback.ZoneId,
-                            date: feedback.Date,
-                            mark: feedback.Mark,
-                            message: feedback.Message);
+            userId: feedback.UserId,
+            zoneId: feedback.ZoneId,
+            date: feedback.Date,
+            mark: feedback.Mark,
+            message: feedback.Message);
     }
 
     /// <summary>
@@ -31,10 +31,10 @@ public static class FeedbackConverter
     public static FeedbackDbModel ConvertAppModelToDbModel(Feedback feedback)
     {
         return new FeedbackDbModel(id: feedback.Id,
-                            userId: feedback.UserId,
-                            zoneId: feedback.ZoneId,
-                            date: feedback.Date,
-                            mark: feedback.Mark,
-                            message: feedback.Message);
+        userId: feedback.UserId,
+        zoneId: feedback.ZoneId,
+        date: feedback.Date,
+        mark: feedback.Mark,
+        message: feedback.Message);
     }
 }

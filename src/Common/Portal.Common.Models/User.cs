@@ -96,4 +96,24 @@ public class User
     {
         return BCrypt.Net.BCrypt.Verify(password, PasswordHash);
     }
+    
+    public override bool Equals(object? obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        
+        var other = (User) obj;
+        return Id == other.Id
+               && LastName == other.LastName
+               && FirstName == other.FirstName
+               && LastName == other.LastName
+               && Birthday == other.Birthday
+               && Gender == other.Gender
+               && Email == other.Email
+               && Phone == other.Phone
+               && PasswordHash == other.PasswordHash
+               && Role == other.Role;
+    }
 }

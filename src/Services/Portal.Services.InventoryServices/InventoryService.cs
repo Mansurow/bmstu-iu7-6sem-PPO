@@ -1,4 +1,5 @@
-﻿using Portal.Common.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Portal.Common.Models;
 using Portal.Database.Repositories.Interfaces;
 using Portal.Services.InventoryServices.Exceptions;
 
@@ -20,43 +21,63 @@ public class InventoryService: IInventoryService
 
     public async Task<Inventory> GetInventoryByIdAsync(Guid inventoryId)
     {
-        var inventory = await _inventoryRepository.GetInventoryByIdAsync(inventoryId);
-        if (inventory is null)
+        try
+        {
+            var inventory = await _inventoryRepository.GetInventoryByIdAsync(inventoryId);
+
+            return inventory;
+        }
+        catch (InvalidOperationException)
         {
             throw new InventoryNotFoundException($"Inventory with id: {inventoryId} not found");
         }
-
-        return inventory;
     }
 
     public async Task<Guid> AddInventoryAsync(Guid zoneId, string name, DateOnly yearOfProduction, string description)
     {
-        var inventory = new Inventory(Guid.NewGuid(), zoneId, name, description, yearOfProduction);
+        try
+        {
+            var inventory = new Inventory(Guid.NewGuid(), zoneId, name, description, yearOfProduction);
 
-        await _inventoryRepository.InsertInventoryAsync(inventory);
-        
-        return inventory.Id;
+            await _inventoryRepository.InsertInventoryAsync(inventory);
+
+            return inventory.Id;
+        }
+        catch (DbUpdateException)
+        {
+            throw new InventoryCreateException("Inventory has not been created");
+        }
     }
 
     public async Task UpdateInventoryAsync(Inventory updateInventory)
     {
-        var inventory = await _inventoryRepository.GetInventoryByIdAsync(updateInventory.Id);
-        if (inventory is null)
+        try
+        {
+            await _inventoryRepository.UpdateInventoryAsync(updateInventory);
+        }
+        catch (InvalidOperationException)
         {
             throw new InventoryNotFoundException($"Inventory with id: {updateInventory.Id} not found");
         }
-
-        await _inventoryRepository.UpdateInventoryAsync(updateInventory);
+        catch (DbUpdateException)
+        {
+            throw new InventoryUpdateException($"Inventory with id: {updateInventory.Id} has not been updated");
+        }
     }
 
     public async Task RemoveInventoryAsync(Guid inventoryId)
     {
-        var inventory = await _inventoryRepository.GetInventoryByIdAsync(inventoryId);
-        if (inventory is null)
+        try
+        {
+            await _inventoryRepository.DeleteInventoryAsync(inventoryId);
+        }
+        catch (InvalidOperationException)
         {
             throw new InventoryNotFoundException($"Inventory with id: {inventoryId} not found");
         }
-
-        await _inventoryRepository.DeleteInventoryAsync(inventoryId);
+        catch (DbUpdateException)
+        {
+            throw new InventoryRemoveException($"Inventory with id: {inventoryId} has not been removed");
+        }
     }
 }

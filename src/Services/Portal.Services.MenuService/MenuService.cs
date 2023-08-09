@@ -3,6 +3,7 @@ using Portal.Common.Models;
 using Portal.Services.MenuService.Exceptions;
 using Portal.Common.Models.Enums;
 
+
 namespace Portal.Services.MenuService;
 
 /// <summary>
@@ -24,42 +25,62 @@ public class MenuService: IMenuService
 
     public async Task<Dish> GetDishByIdAsync(Guid dishId) 
     {
-        var dish = await _menuRepository.GetDishByIdAsync(dishId);
-        if (dish is null)
+        try
         {
-            throw new MenuNotFoundException($"Dish not found by id: {dishId}");
+            var dish = await _menuRepository.GetDishByIdAsync(dishId);
+            
+            return dish;
         }
-
-        return dish;
+        catch (Exception e)
+        {
+            throw new DishNotFoundException($"Dish not found by id: {dishId}");
+        }
     }
 
-    public async Task UpdateDishAsync(Dish updateDish) 
+    public async Task UpdateDishAsync(Dish updateDish)
     {
-        var dish = await _menuRepository.GetDishByIdAsync(updateDish.Id);
-        if (dish is null) 
+
+        try
         {
-            throw new MenuNotFoundException($"Dish not found by id: {updateDish.Id}");
+            var dish = await _menuRepository.GetDishByIdAsync(updateDish.Id);
+            await _menuRepository.UpdateDishAsync(updateDish);
         }
-        await _menuRepository.UpdateDishAsync(updateDish);
+        catch (InvalidOperationException)
+        {
+            throw new DishNotFoundException($"Dish not found by id: {updateDish.Id}");
+        }
+        catch (Exception)
+        {
+            throw new DishUpdateException($"Dish was not updated: {updateDish.Id}");
+        }
     }
 
     public async Task<Guid> AddDishAsync(string name, DishType type, double price, string description) 
     {
-        var dish = new Dish(Guid.NewGuid(), name, type, price, description);
-        
-        await _menuRepository.InsertDishAsync(dish);
+        try
+        {
+            var dish = new Dish(Guid.NewGuid(), name, type, price, description);
 
-        return dish.Id;
+            await _menuRepository.InsertDishAsync(dish);
+
+            return dish.Id;
+        }
+        catch (Exception)
+        {
+            throw new DishCreateException($"Dish was not created");
+        }
     }
 
-    public async Task RemoveDishAsync(Guid dishId) 
+    public async Task RemoveDishAsync(Guid dishId)
     {
-        var dish = await _menuRepository.GetDishByIdAsync(dishId);
-        if (dish is null) 
+        await GetDishByIdAsync(dishId);
+        try
         {
-            throw new MenuNotFoundException($"Dish not found by id: {dishId}");
+            await _menuRepository.DeleteDishAsync(dishId);
         }
-
-        await _menuRepository.DeleteDishAsync(dishId);
+        catch (Exception)
+        {
+            throw new DishDeleteException("The dish has not been removed");
+        }
     }
 }

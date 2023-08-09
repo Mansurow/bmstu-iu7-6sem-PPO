@@ -3,6 +3,7 @@ using Portal.Common.Models.Enums;
 using Portal.Database.Repositories.Interfaces;
 using Portal.Services.BookingService.Exceptions;
 using System.Globalization;
+using Microsoft.EntityFrameworkCore;
 using Portal.Services.PackageService.Exceptions;
 using Portal.Services.ZoneService.Exceptions;
 
@@ -28,20 +29,34 @@ namespace Portal.Services.BookingService
 
         public async Task<List<Booking>> GetAllBookingAsync()
         {
-            var bookings = await _bookingRepository.GetAllBookingAsync();
+            try
+            {
+                var bookings = await _bookingRepository.GetAllBookingAsync();
 
-            await UpdateNoActualBookingsAsync(bookings);
+                await UpdateNoActualBookingsAsync(bookings);
 
-            return bookings;
+                return bookings;
+            }
+            catch (Exception)
+            {
+                throw new BookingUpdateException("No actual bookings were not updated");
+            }
         }
 
         public async Task<List<Booking>> GetBookingByUserAsync(Guid userId)
         {
-            var bookings = await _bookingRepository.GetBookingByUserAsync(userId);
+            try
+            {
+                var bookings = await _bookingRepository.GetBookingByUserAsync(userId);
 
-            await UpdateNoActualBookingsAsync(bookings);
+                await UpdateNoActualBookingsAsync(bookings);
 
-            return bookings;
+                return bookings;
+            }
+            catch (Exception)
+            {
+                throw new BookingUpdateException("No actual bookings were not updated");
+            }
         }
         
         private async Task UpdateNoActualBookingsAsync(IEnumerable<Booking> bookings)
@@ -56,28 +71,43 @@ namespace Portal.Services.BookingService
         
         public async Task<List<Booking>> GetBookingByZoneAsync(Guid zoneId)
         {
-            var bookings = await _bookingRepository.GetBookingByZoneAsync(zoneId);
+            try
+            {
+                var bookings = await _bookingRepository.GetBookingByZoneAsync(zoneId);
 
-            await UpdateNoActualBookingsAsync(bookings);
+                await UpdateNoActualBookingsAsync(bookings);
 
-            return bookings;
+                return bookings;
+            }
+            catch (Exception)
+            {
+                throw new BookingUpdateException("No actual bookings were not updated");
+            }
+            
         }
         
         public async Task<Booking> GetBookingByIdAsync(Guid bookingId)
         {
-            var booking = await _bookingRepository.GetBookingByIdAsync(bookingId);
-            if (booking is null)
+            try
+            {
+                var booking = await _bookingRepository.GetBookingByIdAsync(bookingId);
+                
+                if (booking.IsBookingExpired())
+                {
+                    booking.ChangeStatus(BookingStatus.NoActual);
+                    await _bookingRepository.UpdateNoActualBookingAsync(booking.Id);
+                }
+                
+                return booking;
+            }
+            catch (InvalidOperationException)
             {
                 throw new BookingNotFoundException($"Bookings with id: {bookingId} not found");
             }
-
-            if (booking.IsBookingExpired())
+            catch (DbUpdateException)
             {
-                booking.ChangeStatus(BookingStatus.NoActual);
-                await _bookingRepository.UpdateNoActualBookingAsync(booking.Id);
+                throw new BookingUpdateException("No actual bookings were not updated");
             }
-
-            return booking;
         }
 
         public async Task<List<FreeTime>> GetFreeTimeAsync(Guid zoneId, DateOnly date)
@@ -114,41 +144,52 @@ namespace Portal.Services.BookingService
 
         public async Task<Guid> AddBookingAsync(Guid userId, Guid zoneId, Guid packageId, string date, string startTime, string endTime)
         {
-            var culture = CultureInfo.CreateSpecificCulture("ru-RU");
-            var dateRu = DateOnly.Parse(date, culture);
-            var startTimeRu = TimeOnly.Parse(startTime, culture);
-            var endTimeRu = TimeOnly.Parse(endTime, culture);
-            
-            var zone = await _zoneRepository.GetZoneByIdAsync(zoneId);
-            if (zone is null)
+            try
+            {
+                var culture = CultureInfo.CreateSpecificCulture("ru-RU");
+                var dateRu = DateOnly.Parse(date, culture);
+                var startTimeRu = TimeOnly.Parse(startTime, culture);
+                var endTimeRu = TimeOnly.Parse(endTime, culture);
+                
+                var zone = await _zoneRepository.GetZoneByIdAsync(zoneId);
+
+                try
+                {
+                    await _packageRepository.GetPackageByIdAsync(packageId);
+                }
+                catch (Exception)
+                {
+                    throw new PackageNotFoundException($"Package with id: {zoneId} not found");
+                }
+                
+                var booking = (await _bookingRepository.GetBookingByUserAndZoneAsync(userId, zoneId))
+                    .FirstOrDefault(b => b.Date == dateRu);
+                if (booking is not null)
+                {
+                    throw new BookingExistsException($"User with id: {userId} reversed for zone with id: {zoneId}");
+                }
+
+                if (!await IsFreeTimeAsync(dateRu, startTimeRu, endTimeRu))
+                {
+                    throw new BookingReversedException(
+                        $"Zone full or partial reversed on {dateRu} from {startTime} to {endTime}");
+                }
+
+                var newBooking = new Booking(Guid.NewGuid(), zoneId, userId, packageId,
+                    zone.Limit, BookingStatus.TemporaryReserved,
+                    dateRu, startTimeRu, endTimeRu);
+                await _bookingRepository.InsertBookingAsync(newBooking);
+
+                return newBooking.Id;
+            }
+            catch (InvalidOperationException)
             {
                 throw new ZoneNotFoundException($"Zone with id: {zoneId} not found");
             }
-            
-            var package = await  _packageRepository.GetPackageByIdAsync(packageId);
-            if (package is null)
+            catch (DbUpdateException)
             {
-                throw new PackageNotFoundException($"Package with id: {zoneId} not found");
+                throw new BookingCreateException("Booking has bot been created");
             }
-            
-            var booking = (await _bookingRepository.GetBookingByUserAndZoneAsync(userId, zoneId))
-                .FirstOrDefault(b => b.Date == dateRu);
-            if (booking is not null)
-            {
-                throw new BookingExistsException($"User with id: {userId} reversed for zone with id: {zoneId}");
-            }
-                
-            if (!await IsFreeTimeAsync(dateRu, startTimeRu, endTimeRu))
-            {
-                throw new BookingReversedException($"Zone full or partial reversed on {dateRu} from {startTime} to {endTime}");
-            }
-            
-            var newBooking = new Booking(Guid.NewGuid(), zoneId, userId, packageId,
-                zone.Limit, BookingStatus.TemporaryReserved,
-                dateRu, startTimeRu, endTimeRu);
-            await _bookingRepository.InsertBookingAsync(newBooking);
-
-            return newBooking.Id;
         }
         
         public async Task<bool> IsFreeTimeAsync(DateOnly date, TimeOnly startTime, TimeOnly endTime)
@@ -163,51 +204,73 @@ namespace Portal.Services.BookingService
         
         public async Task ChangeBookingStatusAsync(Guid bookingId, BookingStatus status)
         {
-            var booking = await GetBookingByIdAsync(bookingId);
-
-            if (!booking.IsSuitableStatus(status))
+            try
             {
-                throw new BookingNotSuitableStatusException($"Changing for booking with id: {bookingId} for user: {booking.UserId} isn't suitable for next step");
+                var booking =  await _bookingRepository.GetBookingByIdAsync(bookingId);;
+
+                if (!booking.IsSuitableStatus(status))
+                {
+                    throw new BookingNotSuitableStatusException(
+                        $"Changing for booking with id: {bookingId} for user: {booking.UserId} isn't suitable for next step");
+                }
+
+                booking.ChangeStatus(status);
+                await _bookingRepository.UpdateBookingAsync(booking);
             }
-            
-            booking.ChangeStatus(status);
-            await UpdateBookingAsync(booking);
+            catch (InvalidOperationException)
+            {
+                throw new BookingNotFoundException($"Booking with id: {bookingId} not found");
+            }
+            catch (DbUpdateException)
+            {
+                throw new BookingUpdateException($"No actual booking: {bookingId} was not updated");
+            }
         }
 
         public async Task UpdateBookingAsync(Booking updateBooking)
         {
-            var booking = await _bookingRepository.GetBookingByIdAsync(updateBooking.Id);
-            if (booking is null)
+            try
+            {
+                var booking = await _bookingRepository.GetBookingByIdAsync(updateBooking.Id);
+
+                var zone = await _zoneRepository.GetZoneByIdAsync(updateBooking.ZoneId);
+                if (zone is not null && zone.Limit < updateBooking.AmountPeople)
+                {
+                    throw new BookingExceedsLimitException(
+                        $"Exceed limit amount of people for booking with id: {updateBooking.Id}");
+                }
+
+                if (booking.IsChangeDateTime(updateBooking))
+                {
+                    throw new BookingChangeDateTimeException(
+                        $"Changing date or time for booking with id: {booking.Id}");
+                }
+
+                // if (booking.Status != BookingStatus.NoActual && booking.IsBookingExpired())
+                //     booking.ChangeStatus(BookingStatus.NoActual);
+
+                await _bookingRepository.UpdateBookingAsync(updateBooking);
+            }
+            catch (InvalidOperationException)
             {
                 throw new BookingNotFoundException($"Booking with id: {updateBooking.Id} not found");
             }
-
-            var zone = await _zoneRepository.GetZoneByIdAsync(updateBooking.ZoneId);
-            if (zone is not null && zone.Limit < updateBooking.AmountPeople)
-            {
-                throw new BookingExceedsLimitException($"Exceed limit amount of people for booking with id: {updateBooking.Id}");
-            }
-            
-            if (booking.IsChangeDateTime(updateBooking))
-            {
-                throw new BookingChangeDateTimeException($"Changing date or time for booking with id: {booking.Id}");
-            }   
-            
-            // if (booking.Status != BookingStatus.NoActual && booking.IsBookingExpired())
-            //     booking.ChangeStatus(BookingStatus.NoActual);
-
-            await _bookingRepository.UpdateBookingAsync(updateBooking);
         }
 
         public async Task RemoveBookingAsync(Guid bookingId)
         {
-            var booking = await _bookingRepository.GetBookingByIdAsync(bookingId);
-            if (booking is null)
+            try
+            {
+                await _bookingRepository.DeleteBookingAsync(bookingId);
+            }
+            catch (InvalidOperationException e)
             {
                 throw new BookingNotFoundException($"Booking with id: {bookingId} not found");
             }
-
-            await _bookingRepository.DeleteBookingAsync(bookingId);
+            catch (DbUpdateException)
+            {
+                throw new BookingRemoveException($"Booking with id: {bookingId} has not been removed");
+            }
         }
     }
 }

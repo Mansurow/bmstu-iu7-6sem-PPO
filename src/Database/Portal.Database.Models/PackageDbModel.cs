@@ -57,6 +57,19 @@ public class PackageDbModel
     public ICollection<DishDbModel> Dishes { get; set; }
 
     public PackageDbModel(Guid id, string name, PackageType type, double price, int rentalTime,
+        string description)
+    {
+        Id = id;
+        Name = name;
+        Type = type;
+        Price = price;
+        RentalTime = rentalTime;
+        Description = description;
+        Dishes = new List<DishDbModel>();
+        Zones = new List<ZoneDbModel>();
+    }
+
+    public PackageDbModel(Guid id, string name, PackageType type, double price, int rentalTime,
         string description, ICollection<DishDbModel> dishes)
     {
         Id = id;

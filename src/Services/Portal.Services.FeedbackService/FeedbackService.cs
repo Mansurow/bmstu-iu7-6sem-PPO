@@ -1,4 +1,5 @@
-﻿using Portal.Common.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Portal.Common.Models;
 using Portal.Database.Repositories.Interfaces;
 using Portal.Services.FeedbackService.Exceptions;
 using Portal.Services.UserService.Exceptions;
@@ -31,68 +32,104 @@ public class FeedbackService : IFeedbackService
 
     public async Task<List<Feedback>> GetAllFeedbackByZoneAsync(Guid zoneId)
     {
-        var room = await _zoneRepository.GetZoneByIdAsync(zoneId);
-        if (room is null)
+        try
+        {
+            var zone = await _zoneRepository.GetZoneByIdAsync(zoneId);
+            
+            var feedbacks = await _feedbackRepository.GetAllFeedbackByZoneAsync(zone.Id);
+
+            return feedbacks;
+        }
+        catch (InvalidOperationException e)
         {
             throw new ZoneNotFoundException($"Zone not found with id: {zoneId}");
         }
-
-        var feedbacks = await _feedbackRepository.GetAllFeedbackByZoneAsync(zoneId);
-
-        return feedbacks;
     }
 
     public async Task<Guid> AddFeedbackAsync(Guid zoneId, Guid userId, double mark, string description)
     {
-        var zone = await _zoneRepository.GetZoneByIdAsync(zoneId);
-        if (zone is null)
+        try
         {
-            throw new ZoneNotFoundException($"Zone not found with id: {zoneId}");
-        }
+            var zone = await _zoneRepository.GetZoneByIdAsync(zoneId);
+            if (zone is null)
+            {
+                throw new ZoneNotFoundException($"Zone with id: {zoneId} not found");
+            }
 
-        var user = await _userRepository.GetUserByIdAsync(userId);
-        if (user is null)
+            try
+            {
+                var user = await _userRepository.GetUserByIdAsync(userId);
+            }
+            catch (Exception)
+            {
+                throw new UserNotFoundException($"User with id: {userId} not found");
+            }
+
+            var feedback = new Feedback(Guid.NewGuid(), userId, zoneId,
+                DateTime.UtcNow, mark, description);
+            await _feedbackRepository.InsertFeedbackAsync(feedback);
+
+            return feedback.Id;
+        }
+        catch (InvalidOperationException e)
         {
-            throw new UserNotFoundException($"User not found with id: {userId}");
+            throw new ZoneNotFoundException($"Zone with id: {zoneId} not found");
         }
-
-        var feedback = new Feedback(Guid.NewGuid(), userId, zoneId,
-            DateTime.UtcNow, mark, description);
-        await _feedbackRepository.InsertFeedbackAsync(feedback);
-
-        return feedback.Id;
+        catch (DbUpdateException)
+        {
+            throw new FeedbackCreateException($"Feedback has not been created for user; {userId}");
+        }        
     }
 
     public async Task UpdateZoneRatingAsync(Guid zoneId)
     {
-        var allZoneFeedback = await _feedbackRepository.GetAllFeedbackByZoneAsync(zoneId);
+        try
+        {
+            var allZoneFeedback = await _feedbackRepository.GetAllFeedbackByZoneAsync(zoneId);
 
-        var rating = allZoneFeedback.Sum(feedback => feedback.Mark);
-        if (allZoneFeedback.Count > 0)
-            rating /= allZoneFeedback.Count;
+            var rating = allZoneFeedback.Sum(feedback => feedback.Mark);
+            if (allZoneFeedback.Count > 0)
+                rating /= allZoneFeedback.Count;
 
-        await _zoneRepository.UpdateZoneRatingAsync(zoneId, rating);
+            await _zoneRepository.UpdateZoneRatingAsync(zoneId, rating);
+        }
+        catch (Exception e)
+        {
+            throw new ZoneUpdateException(
+                $"Rating for  Zone with id: {zoneId} has not been updated by feedback's marks");
+        }
+        
     }
 
     public async Task UpdateFeedbackAsync(Feedback feedback)
     {
-        var findFeedback = await _feedbackRepository.GetFeedbackAsync(feedback.Id);
-        if (findFeedback is null)
+        try
         {
-            throw new FeedbackNotFoundException($"Feedback not found with id: {feedback.Id}");
+            await _feedbackRepository.UpdateFeedbackAsync(feedback);
         }
-
-        await _feedbackRepository.UpdateFeedbackAsync(feedback);
+        catch (InvalidOperationException)
+        {
+            throw new FeedbackNotFoundException($"Feedback with id: {feedback.Id} not found ");
+        }
+        catch (DbUpdateException)
+        {
+            throw new FeedbackUpdateException($"Feedback with id: {feedback.Id} has not been updated");
+        }
     }
 
     public async Task RemoveFeedbackAsync(Guid feedbackId)
     {
-        var feedback = await _feedbackRepository.GetFeedbackAsync(feedbackId);
-        if (feedback is null)
+        try
         {
-            throw new FeedbackNotFoundException($"Feedback not found with id: {feedbackId}");
+            await _feedbackRepository.DeleteFeedbackAsync(feedbackId);
         }
-
-        await _feedbackRepository.DeleteFeedbackAsync(feedbackId);
+        catch (InvalidOperationException)
+        {
+            throw new FeedbackNotFoundException($"Feedback with id: {feedbackId} not found");
+        }
+        catch (DbUpdateException)
+        {
+            throw new FeedbackRemoveException($"Feedback with id: {feedbackId} has not been removed");
+        }
     }
 }

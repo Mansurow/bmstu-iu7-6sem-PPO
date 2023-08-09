@@ -39,6 +39,8 @@ public class DishDbModel
     /// </summary>
     [Column("description", TypeName = "text")]
     public string Description { get; set; }
+
+    public ICollection<PackageDbModel> Packages { get; set; }
     
     public DishDbModel(Guid id, string name, DishType type, double price, string description)
     {
@@ -47,5 +49,16 @@ public class DishDbModel
         Type = type;
         Price = price;
         Description = description;
+        Packages = new HashSet<PackageDbModel>();
+    }
+
+    public DishDbModel(Guid id, string name, DishType type, double price, string description, ICollection<PackageDbModel> packages) 
+    {
+        Id = id;
+        Name = name;
+        Type = type;
+        Price = price;
+        Description = description;
+        Packages = packages;
     }
 }

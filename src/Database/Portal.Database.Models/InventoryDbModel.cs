@@ -26,7 +26,7 @@ public class InventoryDbModel
     /// <summary>
     /// Зоны
     /// </summary>
-    public Zone? Zone { get; set; }
+    public ZoneDbModel? Zone { get; set; }
     
     /// <summary>
     /// Название инвентаря
