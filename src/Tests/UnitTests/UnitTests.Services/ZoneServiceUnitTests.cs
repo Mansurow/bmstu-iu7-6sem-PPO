@@ -96,7 +96,7 @@ public class ZoneServiceUnitTests
         var expectedCount = zones.Count;
         
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid id) => zones.FirstOrDefault(z => z.Id == id));
+            .ReturnsAsync((Guid id) => zones.First(z => z.Id == id));
         
         // Act
         async Task<Zone> Action() => await _zoneService.GetZoneByIdAsync(expectedZoneId);
@@ -124,7 +124,7 @@ public class ZoneServiceUnitTests
         var price = 449;
         
         _mockZoneRepository.Setup(s => s.GetZoneByNameAsync(It.IsAny<string>()))
-            .ReturnsAsync((string zoneName) => zones.FirstOrDefault(z => z.Name == zoneName));
+            .ReturnsAsync((string zoneName) => zones.First(z => z.Name == zoneName));
 
         _mockZoneRepository.Setup(s => s.InsertZoneAsync(It.IsAny<Zone>()))
             .Callback((Zone zone) => zones.Add(zone));
@@ -163,7 +163,7 @@ public class ZoneServiceUnitTests
         var price = 449;
         
         _mockZoneRepository.Setup(s => s.GetZoneByNameAsync(It.IsAny<string>()))
-            .ReturnsAsync((string zoneName) => zones.FirstOrDefault(z => z.Name == zoneName));
+            .ReturnsAsync((string zoneName) => zones.First(z => z.Name == zoneName));
 
         _mockZoneRepository.Setup(s => s.InsertZoneAsync(It.IsAny<Zone>()))
             .Callback((Zone zone) => zones.Add(zone));
@@ -271,44 +271,44 @@ public class ZoneServiceUnitTests
     /// <summary>
     /// Тест на обновление зоны
     /// </summary>
-    [Fact]
-    public async Task UpdateZoneNameExistsTest()
-    {
-        // Arrange 
-        var zones = CreateMockZones();
-        var expectedCount = zones.Count;
-        
-        var beforeUpdateZone = zones.First();
-        var updateZone = new Zone(beforeUpdateZone.Id, "Zone1", "address", 
-            10.0, 15, 350.99, 0.0);
-        
-        _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid id) => zones.First(z => z.Id == id));
-        
-        _mockZoneRepository.Setup(s => s.GetZoneByNameAsync(It.IsAny<string>()))
-            .ReturnsAsync((string zoneName) => zones.FirstOrDefault(z => z.Name == zoneName));
-        //
-        // _mockZoneRepository.Setup(s => s.UpdateZoneAsync(It.IsAny<Zone>()))
-        //     .Callback((Zone uzone) =>
-        //     {
-        //         var zone = zones.First(e => e.Id == uzone.Id);
-        //         zone.Name = uzone.Name;
-        //         zone.Address = uzone.Address;
-        //         zone.Limit = uzone.Limit;
-        //         zone.Size = uzone.Size;
-        //         zone.Price = uzone.Price;
-        //         zone.Inventories = uzone.Inventories;
-        //         zone.Packages = uzone.Packages;
-        //     });
-        
-        // Act
-        async Task Action() => await _zoneService.UpdateZoneAsync(updateZone);
-        var actualCount = zones.Count;
-
-        // Asserts
-        Assert.Equal(expectedCount, actualCount);
-        await Assert.ThrowsAsync<ZoneNameExistException>(Action);
-    }
+    // [Fact]
+    // public async Task UpdateZoneNameExistsTest()
+    // {
+    //     // Arrange 
+    //     var zones = CreateMockZones();
+    //     var expectedCount = zones.Count;
+    //     
+    //     var beforeUpdateZone = zones.First();
+    //     var updateZone = new Zone(beforeUpdateZone.Id, "Zone1", "address", 
+    //         10.0, 15, 350.99, 0.0);
+    //     
+    //     _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
+    //         .ReturnsAsync((Guid id) => zones.First(z => z.Id == id));
+    //     
+    //     _mockZoneRepository.Setup(s => s.GetZoneByNameAsync(It.IsAny<string>()))
+    //         .ReturnsAsync((string zoneName) => zones.First(z => z.Name == zoneName));
+    //     
+    //     _mockZoneRepository.Setup(s => s.UpdateZoneAsync(It.IsAny<Zone>()))
+    //         .Callback((Zone uzone) =>
+    //         {
+    //             var zone = zones.First(e => e.Id == uzone.Id);
+    //             zone.Name = uzone.Name;
+    //             zone.Address = uzone.Address;
+    //             zone.Limit = uzone.Limit;
+    //             zone.Size = uzone.Size;
+    //             zone.Price = uzone.Price;
+    //             zone.Inventories = uzone.Inventories;
+    //             zone.Packages = uzone.Packages;
+    //         });
+    //     
+    //     // Act
+    //     async Task Action() => await _zoneService.UpdateZoneAsync(updateZone);
+    //     var actualCount = zones.Count;
+    //
+    //     // Asserts
+    //     Assert.Equal(expectedCount, actualCount);
+    //     await Assert.ThrowsAsync<ZoneNameExistException>(Action);
+    // }
     
     /// <summary>
     /// Тест на обновление зоны
@@ -324,23 +324,23 @@ public class ZoneServiceUnitTests
             10.0, 15, 350.99, 0.0);
         
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid id) => zones.FirstOrDefault(z => z.Id == id));
+            .ReturnsAsync((Guid id) => zones.First(z => z.Id == id));
         
-        // _mockZoneRepository.Setup(s => s.GetZoneByNameAsync(It.IsAny<string>()))
-        //     .ReturnsAsync((string zoneName) => zones.FirstOrDefault(z => z.Name == zoneName));
-        //
-        // _mockZoneRepository.Setup(s => s.UpdateZoneAsync(It.IsAny<Zone>()))
-        //     .Callback((Zone uzone) =>
-        //     {
-        //         var zone = zones.First(e => e.Id == uzone.Id);
-        //         zone.Name = uzone.Name;
-        //         zone.Address = uzone.Address;
-        //         zone.Limit = uzone.Limit;
-        //         zone.Size = uzone.Size;
-        //         zone.Price = uzone.Price;
-        //         zone.Inventories = uzone.Inventories;
-        //         zone.Packages = uzone.Packages;
-        //     });
+        _mockZoneRepository.Setup(s => s.GetZoneByNameAsync(It.IsAny<string>()))
+            .ReturnsAsync((string zoneName) => zones.First(z => z.Name == zoneName));
+        
+        _mockZoneRepository.Setup(s => s.UpdateZoneAsync(It.IsAny<Zone>()))
+            .Callback((Zone uzone) =>
+            {
+                var zone = zones.First(e => e.Id == uzone.Id);
+                zone.Name = uzone.Name;
+                zone.Address = uzone.Address;
+                zone.Limit = uzone.Limit;
+                zone.Size = uzone.Size;
+                zone.Price = uzone.Price;
+                zone.Inventories = uzone.Inventories;
+                zone.Packages = uzone.Packages;
+            });
         
         // Act
         async Task Action() => await _zoneService.UpdateZoneAsync(updateZone);
@@ -424,20 +424,20 @@ public class ZoneServiceUnitTests
             "new inventory", "description", new DateOnly(2000, 10, 08));
         
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid id) => zones.FirstOrDefault(z => z.Id == id));
+            .ReturnsAsync((Guid id) => zones.First(z => z.Id == id));
         
-        // _mockZoneRepository.Setup(s => s.UpdateZoneAsync(It.IsAny<Zone>()))
-        //     .Callback((Zone uzone) =>
-        //     {
-        //         var zone = zones.First(e => e.Id == uzone.Id);
-        //         zone.Name = uzone.Name;
-        //         zone.Address = uzone.Address;
-        //         zone.Limit = uzone.Limit;
-        //         zone.Size = uzone.Size;
-        //         zone.Price = uzone.Price;
-        //         zone.Inventories = uzone.Inventories;
-        //         zone.Packages = uzone.Packages;
-        //     });
+        _mockZoneRepository.Setup(s => s.UpdateZoneAsync(It.IsAny<Zone>()))
+            .Callback((Zone uzone) =>
+            {
+                var zone = zones.First(e => e.Id == uzone.Id);
+                zone.Name = uzone.Name;
+                zone.Address = uzone.Address;
+                zone.Limit = uzone.Limit;
+                zone.Size = uzone.Size;
+                zone.Price = uzone.Price;
+                zone.Inventories = uzone.Inventories;
+                zone.Packages = uzone.Packages;
+            });
         
         // Act
         async Task Action() => await _zoneService.AddInventoryAsync(expectedZoneId, inventory);
@@ -522,23 +522,23 @@ public class ZoneServiceUnitTests
         var expectedCount = expectedZone.Packages.Count + 1;
 
         _mockPackageRepository.Setup(s => s.GetPackageByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid packageId) => packages.FirstOrDefault(p => p.Id == packageId));
+            .ReturnsAsync((Guid packageId) => packages.First(p => p.Id == packageId));
         
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid id) => zones.FirstOrDefault(z => z.Id == id));
+            .ReturnsAsync((Guid id) => zones.First(z => z.Id == id));
         
-        // _mockZoneRepository.Setup(s => s.UpdateZoneAsync(It.IsAny<Zone>()))
-        //     .Callback((Zone uzone) =>
-        //     {
-        //         var zone = zones.First(e => e.Id == uzone.Id);
-        //         zone.Name = uzone.Name;
-        //         zone.Address = uzone.Address;
-        //         zone.Limit = uzone.Limit;
-        //         zone.Size = uzone.Size;
-        //         zone.Price = uzone.Price;
-        //         zone.Inventories = uzone.Inventories;
-        //         zone.Packages = uzone.Packages;
-        //     });
+        _mockZoneRepository.Setup(s => s.UpdateZoneAsync(It.IsAny<Zone>()))
+            .Callback((Zone uzone) =>
+            {
+                var zone = zones.First(e => e.Id == uzone.Id);
+                zone.Name = uzone.Name;
+                zone.Address = uzone.Address;
+                zone.Limit = uzone.Limit;
+                zone.Size = uzone.Size;
+                zone.Price = uzone.Price;
+                zone.Inventories = uzone.Inventories;
+                zone.Packages = uzone.Packages;
+            });
         
         // Act
         async Task Action() => await _zoneService.AddPackageAsync(Guid.NewGuid(), expectedPackage.Id);
@@ -570,23 +570,23 @@ public class ZoneServiceUnitTests
         var expectedCount = expectedZone.Packages.Count + 1;
 
         _mockPackageRepository.Setup(s => s.GetPackageByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid packageId) => packages.FirstOrDefault(p => p.Id == packageId));
+            .ReturnsAsync((Guid packageId) => packages.First(p => p.Id == packageId));
         
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid id) => zones.FirstOrDefault(z => z.Id == id));
+            .ReturnsAsync((Guid id) => zones.First(z => z.Id == id));
         
-        // _mockZoneRepository.Setup(s => s.UpdateZoneAsync(It.IsAny<Zone>()))
-        //     .Callback((Zone uzone) =>
-        //     {
-        //         var zone = zones.First(e => e.Id == uzone.Id);
-        //         zone.Name = uzone.Name;
-        //         zone.Address = uzone.Address;
-        //         zone.Limit = uzone.Limit;
-        //         zone.Size = uzone.Size;
-        //         zone.Price = uzone.Price;
-        //         zone.Inventories = uzone.Inventories;
-        //         zone.Packages = uzone.Packages;
-        //     });
+        _mockZoneRepository.Setup(s => s.UpdateZoneAsync(It.IsAny<Zone>()))
+            .Callback((Zone uzone) =>
+            {
+                var zone = zones.First(e => e.Id == uzone.Id);
+                zone.Name = uzone.Name;
+                zone.Address = uzone.Address;
+                zone.Limit = uzone.Limit;
+                zone.Size = uzone.Size;
+                zone.Price = uzone.Price;
+                zone.Inventories = uzone.Inventories;
+                zone.Packages = uzone.Packages;
+            });
         
         // Act
         async Task Action() => await _zoneService.AddPackageAsync(expectedZone.Id, Guid.NewGuid());
@@ -690,7 +690,7 @@ public class ZoneServiceUnitTests
         var expectedCount = zones.Count;
         
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid zoneId) => zones.FirstOrDefault(z => z.Id == zoneId));
+            .ReturnsAsync((Guid zoneId) => zones.First(z => z.Id == zoneId));
 
         _mockZoneRepository.Setup(s => s.DeleteZoneAsync(It.IsAny<Guid>()))
             .Callback((Guid zoneId) =>

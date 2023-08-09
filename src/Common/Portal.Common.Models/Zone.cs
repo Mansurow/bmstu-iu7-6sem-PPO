@@ -126,4 +126,23 @@ public class Zone
     {
         Packages.Add(package);
     }
+    
+    public override bool Equals(object? obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        
+        var other = (Zone) obj;
+        return Id == other.Id
+               && Name == other.Name
+               && Math.Abs(Size - other.Size) < 1e-8
+               && Address == other.Address
+               && Limit == other.Limit
+               && Math.Abs(Price - other.Price) < 1e-8
+               && Math.Abs(Rating - other.Rating) < 1e-8
+               && Inventories == other.Inventories
+               && Packages == other.Packages;
+    }
 }

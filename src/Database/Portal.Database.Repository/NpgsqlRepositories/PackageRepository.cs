@@ -40,7 +40,7 @@ public class PackageRepository: BaseRepository, IPackageRepository
 
     public async Task UpdatePackageAsync(Package package)
     {
-        var packageDb = PackageConverter.ConvertAppModelToDbModel(package);
+        var packageDb = await _context.Packages.FirstAsync(p => p.Id == package.Id);
         
         _context.Packages.Update(packageDb);
         await _context.SaveChangesAsync();

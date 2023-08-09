@@ -86,11 +86,11 @@ public class PackageServiceUnitTests
     public async Task GetPackageByIdNotFoundTest()
     {
         // Arrange
-        // var packages = new List<Package>();
+        var packages = new List<Package>();
         var expectedPackageId = Guid.NewGuid();
 
-        // _mockPackageRepository.Setup(s => s.GetPackageByIdAsync(It.IsAny<Guid>()))
-        //     .ReturnsAsync((Guid packageId) => packages.FirstOrDefault(p => p.Id == packageId));
+        _mockPackageRepository.Setup(s => s.GetPackageByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Guid packageId) => packages.First(p => p.Id == packageId));
 
         // Act
         async Task<Package> Action() => await _packageService.GetPackageById(expectedPackageId);

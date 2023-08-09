@@ -21,28 +21,29 @@ public class BookingRepository: BaseRepository, IBookingRepository
 
     public Task<List<Booking>> GetAllBookingAsync() 
     {
-        return _context.Bookings.Select(b => BookingConverter.ConvertDbModelToAppModel(b)!)
+        return _context.Bookings
+            .Select(b => BookingConverter.ConvertDbModelToAppModel(b))
             .ToListAsync();
     }
 
     public Task<List<Booking>> GetBookingByUserAsync(Guid userId) 
     {
         return _context.Bookings.Where(b => b.UserId == userId)
-            .Select(b => BookingConverter.ConvertDbModelToAppModel(b)!)
+            .Select(b => BookingConverter.ConvertDbModelToAppModel(b))
             .ToListAsync();
     }
 
     public Task<List<Booking>> GetBookingByZoneAsync(Guid zoneId)
     {
         return _context.Bookings.Where(b => b.ZoneId == zoneId)
-            .Select(b => BookingConverter.ConvertDbModelToAppModel(b)!)
+            .Select(b => BookingConverter.ConvertDbModelToAppModel(b))
             .ToListAsync();
     }
 
     public Task<List<Booking>> GetBookingByUserAndZoneAsync(Guid userId, Guid zoneId) 
     {
         return _context.Bookings.Where(b => b.UserId == userId && b.ZoneId == zoneId)
-            .Select(b => BookingConverter.ConvertDbModelToAppModel(b)!)
+            .Select(b => BookingConverter.ConvertDbModelToAppModel(b))
             .ToListAsync();
     }
     
@@ -62,14 +63,13 @@ public class BookingRepository: BaseRepository, IBookingRepository
 
     public async Task UpdateNoActualBookingAsync(Guid bookingId) 
     {
-        var booking = await GetBookingByIdAsync(bookingId);
+        var booking = await _context.Bookings.FirstAsync(b => b.Id == bookingId);
         booking.Status = BookingStatus.NoActual;
-        await UpdateBookingAsync(booking);
+        await _context.SaveChangesAsync();
     }
 
     public async Task UpdateBookingAsync(Booking updateBooking) 
     {
-
         var booking = BookingConverter.ConvertAppModelToDbModel(updateBooking);
         _context.Bookings.Update(booking);
         await _context.SaveChangesAsync();

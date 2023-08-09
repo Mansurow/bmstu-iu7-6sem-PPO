@@ -106,4 +106,23 @@ public class Booking
                || StartTime != booking.StartTime
                || EndTime != booking.EndTime;
     }
+    
+    public override bool Equals(object? obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        
+        var other = (Booking) obj;
+        return Id == other.Id
+               && UserId == other.UserId
+               && ZoneId == other.ZoneId
+               && PackageId == other.PackageId
+               && AmountPeople == other.AmountPeople
+               // && Status == other.Status
+               && StartTime.Equals(other.StartTime)
+               && EndTime.Equals(other.EndTime)
+               && Date.Equals(other.Date);
+    }
 }

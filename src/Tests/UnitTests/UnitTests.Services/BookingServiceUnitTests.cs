@@ -174,8 +174,8 @@ public class BookingServiceUnitTests
         var bookings = CreateMockBooking(users, zones, packages);
         var bookingId = Guid.NewGuid();
 
-        // _mockBookingRepository.Setup(s => s.GetBookingByIdAsync(It.IsAny<Guid>()))
-        //     .ReturnsAsync((Guid id) => bookings.FirstOrDefault(b => b.Id == id));
+        _mockBookingRepository.Setup(s => s.GetBookingByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Guid id) => bookings.First(b => b.Id == id));
         
         // Act
         async Task<Booking> Action() => await _bookingService.GetBookingByIdAsync(bookingId);
@@ -349,6 +349,9 @@ public class BookingServiceUnitTests
             new TimeOnly(12, 0),
             new TimeOnly(20, 0));
         
+        _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Guid zoneId) => zones.First(z => z.Id == zoneId));
+        
         _mockPackageRepository.Setup(s => s.GetPackageByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid packageId) => packages.First(p => p.Id == packageId));
 
@@ -390,6 +393,9 @@ public class BookingServiceUnitTests
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid zoneId) => zones.First(z => z.Id == zoneId));
 
+        _mockPackageRepository.Setup(s => s.GetPackageByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Guid packageId) => packages.First(p => p.Id == packageId));
+        
         _mockBookingRepository.Setup(s => s.GetAllBookingAsync())
             .ReturnsAsync(bookings);
         
@@ -768,8 +774,8 @@ public class BookingServiceUnitTests
          var expectedBooking = new Booking(Guid.NewGuid(), booking.ZoneId, booking.UserId, booking.PackageId,
              20, booking.Status, booking.Date, booking.StartTime, booking.EndTime);
 
-         // _mockBookingRepository.Setup(s => s.GetBookingByIdAsync(It.IsAny<Guid>()))
-         //     .ReturnsAsync((Guid id) => bookings.First(b => b.Id == id));
+         _mockBookingRepository.Setup(s => s.GetBookingByIdAsync(It.IsAny<Guid>()))
+             .ReturnsAsync((Guid id) => bookings.First(b => b.Id == id));
 
          _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
              .ReturnsAsync((Guid id) => zones.First(z => z.Id == id));

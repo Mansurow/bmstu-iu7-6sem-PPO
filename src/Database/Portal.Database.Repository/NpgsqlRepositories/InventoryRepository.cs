@@ -41,7 +41,7 @@ public class InventoryRepository: BaseRepository, IInventoryRepository
 
     public async Task UpdateInventoryAsync(Inventory inventory)
     {
-        var inventoryDb = InventoryConverter.ConvertAppModelToDbModel(inventory);
+        var inventoryDb = await _context.Inventories.FirstAsync(inv => inv.Id == inventory.Id);
         
         _context.Inventories.Update(inventoryDb);
         await _context.SaveChangesAsync();

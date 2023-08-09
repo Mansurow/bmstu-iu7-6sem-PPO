@@ -1,4 +1,5 @@
-﻿using Portal.Common.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Portal.Common.Models;
 using Portal.Common.Models.Enums;
 using Portal.Database.Repositories.Interfaces;
 using Portal.Services.PackageService.Exceptions;
@@ -24,44 +25,65 @@ public class PackageService: IPackageService
 
     public async Task<Package> GetPackageById(Guid packageId)
     {
-        var package = await _packageRepository.GetPackageByIdAsync(packageId);
-        if (package is null)
+        try
+        {
+            var package = await _packageRepository.GetPackageByIdAsync(packageId);
+            
+            return package;
+        }
+        catch (InvalidOperationException)
         {
             throw new PackageNotFoundException($"Package with id: {packageId} not found");
-        } 
-
-        return package;
+        }
     }
 
     public async Task<Guid> AddPackageAsync(string name, PackageType type, double price,
         int rentalTime, string description)
     {
-        var package = new Package(Guid.NewGuid(), name, type, price, rentalTime, description);
+        try
+        {
+            var package = new Package(Guid.NewGuid(), name, type, price, rentalTime, description);
 
-        await _packageRepository.InsertPackageAsync(package);
+            await _packageRepository.InsertPackageAsync(package);
 
-        return package.Id;
+            return package.Id;
+        }
+        catch (DbUpdateException e)
+        {
+            throw new PackageCreateException("Package has not been created");
+        }
+        
     }
 
     public async Task UpdatePackageAsync(Package package)
     {
-        var getPackage = await _packageRepository.GetPackageByIdAsync(package.Id);
-        if (getPackage is null)
+        try
+        {
+            await _packageRepository.UpdatePackageAsync(package);
+        }
+        catch (InvalidOperationException)
         {
             throw new PackageNotFoundException($"Package with id: {package.Id} not found");
         }
-        
-        await _packageRepository.UpdatePackageAsync(package);
+        catch (DbUpdateException)
+        {
+            throw new PackageUpdateException($"Package with id: {package.Id} has not been updated");
+        }
     }
 
     public async Task RemovePackageAsync(Guid packageId)
     {
-        var package = await _packageRepository.GetPackageByIdAsync(packageId);
-        if(package is null)
+        try
+        {
+            await _packageRepository.DeletePackageAsync(packageId);
+        }
+        catch (InvalidOperationException)
         {
             throw new PackageNotFoundException($"Package with id: {packageId} not found");
         }
-
-        await _packageRepository.DeletePackageAsync(packageId);
+        catch (DbUpdateException)
+        {
+            throw new PackageRemoveException($"Package with id: {packageId} has not been removed");
+        }
     }
 }

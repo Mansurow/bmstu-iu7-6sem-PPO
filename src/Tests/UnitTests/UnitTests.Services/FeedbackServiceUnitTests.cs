@@ -116,7 +116,7 @@ public class FeedbackServiceUnitTests
         var zoneId = Guid.NewGuid();
     
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
-                           .ReturnsAsync((Guid id) => zones.Find(e => e.Id == id)!);
+                           .ReturnsAsync((Guid id) => zones.First(e => e.Id == id));
     
         // Act
         async Task<List<Feedback>> Action() => await _feedbackService.GetAllFeedbackByZoneAsync(zoneId);
@@ -198,7 +198,7 @@ public class FeedbackServiceUnitTests
     public async Task AddFeedbackNoExistUserTest()
     {
         // Arrange
-        // var users = CreateMockUsers();
+        var users = CreateMockUsers();
         var zones = CreateMockZones();
         var feedbacks = CreateEmptyMockFeedbacks();
         
@@ -209,14 +209,17 @@ public class FeedbackServiceUnitTests
         
         var feedback = new Feedback(feedbackId, userId, zoneId, DateTime.UtcNow, 5, "Описание 1");
     
+        _mockUserRepository.Setup(s => s.GetUserByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Guid id) => users.First(u => u.Id == id));
+        
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(zoneId))
-                           .ReturnsAsync(zones.Find(e => e.Id == zoneId)!);
+                           .ReturnsAsync(zones.First(e => e.Id == zoneId)!);
     
-        // _mockFeedbackRepository.Setup(s => s.InsertFeedbackAsync(It.IsAny<Feedback>()))
-        //                        .Callback((Feedback f) => feedbacks.Add(f));
+        _mockFeedbackRepository.Setup(s => s.InsertFeedbackAsync(It.IsAny<Feedback>()))
+                               .Callback((Feedback f) => feedbacks.Add(f));
     
         // Act
-        async Task<Guid> Action() => await _feedbackService.AddFeedbackAsync(feedback.ZoneId, feedback.UserId, 
+        async Task<Guid> Action() => await _feedbackService.AddFeedbackAsync(feedback.ZoneId, Guid.NewGuid(), 
             feedback.Mark, feedback.Message!);
         var actualCount = feedbacks.Count;
         
@@ -240,8 +243,8 @@ public class FeedbackServiceUnitTests
     
         var feedback = new Feedback(feedbackId, userId, zoneId, DateTime.UtcNow, 5, "Описание 1");
     
-        _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(zoneId))
-                           .ReturnsAsync(zones.Find(e => e.Id == zoneId)!);
+        _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
+                           .ReturnsAsync((Guid id) => zones.First(e => e.Id == id));
     
         // _mockFeedbackRepository.Setup(s => s.InsertFeedbackAsync(It.IsAny<Feedback>()))
         //                        .Callback((Feedback f) => feedbacks.Add(f));
@@ -270,16 +273,7 @@ public class FeedbackServiceUnitTests
 
         var expectedDate = feedbacks.First().Date;
         var expectedFeedback = new Feedback(feedbackId, userId, zoneId, DateTime.UtcNow, 3, "Описание Новое");
-    
-        _mockUserRepository.Setup(s => s.GetUserByIdAsync(userId))
-                           .ReturnsAsync(users.First());
-    
-        _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(zoneId))
-                           .ReturnsAsync(zones.Find(e => e.Id == zoneId)!);
-    
-        _mockFeedbackRepository.Setup(s => s.GetFeedbackAsync(feedbackId))
-                               .ReturnsAsync(feedbacks.Find(e => e.Id == feedbackId)!);
-    
+        
         _mockFeedbackRepository.Setup(s => s.UpdateFeedbackAsync(It.IsAny<Feedback>()))
                            .Callback((Feedback f) =>
                            {
@@ -314,6 +308,9 @@ public class FeedbackServiceUnitTests
         var feedbackId = Guid.NewGuid();
     
         var feedback = new Feedback(feedbackId, userId, zoneId, DateTime.UtcNow, 3, "Описание Новое");
+        
+        _mockFeedbackRepository.Setup(s => s.UpdateFeedbackAsync(It.IsAny<Feedback>()))
+            .ThrowsAsync(new InvalidOperationException());
         
         // Act
         async Task Action() => await _feedbackService.UpdateFeedbackAsync(feedback);
@@ -373,10 +370,10 @@ public class FeedbackServiceUnitTests
         var expectedCount = feedbacks.Count;
     
         _mockFeedbackRepository.Setup(s => s.GetFeedbackAsync(feedbackId))
-                               .ReturnsAsync(feedbacks.Find(e => e.Id == feedbackId)!);
+                               .ReturnsAsync((Guid id) => feedbacks.First(f => f.Id == id));
     
         _mockFeedbackRepository.Setup(s => s.DeleteFeedbackAsync(It.IsAny<Guid>()))
-                               .Callback((Guid id) => feedbacks.RemoveAll(e => e.Id == id)); ;
+                               .Callback((Guid id) => feedbacks.RemoveAll(e => e.Id == id));
     
         // Act
         await _feedbackService.RemoveFeedbackAsync(feedbackId);
@@ -390,11 +387,14 @@ public class FeedbackServiceUnitTests
     public async Task RemoveFeedbackEmptyTest()
     {
         // Arrange
-        // var users = CreateMockUsers();
-        // var zones = CreateMockZones();
-        // var feedbacks = CreateMockFeedback(zones, users);
+        var users = CreateMockUsers();
+        var zones = CreateMockZones();
+        var feedbacks = CreateMockFeedback(zones, users);
         
         var feedbackId = Guid.NewGuid();
+        
+        _mockFeedbackRepository.Setup(s => s.DeleteFeedbackAsync(It.IsAny<Guid>()))
+            .ThrowsAsync(new InvalidOperationException());
         
         // Act
         async Task Action() => await _feedbackService.RemoveFeedbackAsync(feedbackId);

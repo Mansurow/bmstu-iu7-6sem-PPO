@@ -89,7 +89,7 @@ public class InventoryServiceUnitTests
         var expectedInventoryId = Guid.NewGuid();
         
         _mockInventoryRepository.Setup(s => s.GetInventoryByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid id) => inventories.FirstOrDefault(i => i.Id == id));
+            .ReturnsAsync((Guid id) => inventories.First(i => i.Id == id));
         
         // Act
         async Task<Inventory> Action() => await _inventoryService.GetInventoryByIdAsync(expectedInventoryId);
@@ -109,7 +109,7 @@ public class InventoryServiceUnitTests
         var expectedInventoryId = Guid.NewGuid();
         
         _mockInventoryRepository.Setup(s => s.GetInventoryByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid id) => inventories.FirstOrDefault(i => i.Id == id));
+            .ReturnsAsync((Guid id) => inventories.First(i => i.Id == id));
         
         // Act
         async Task<Inventory> Action() => await _inventoryService.GetInventoryByIdAsync(expectedInventoryId);

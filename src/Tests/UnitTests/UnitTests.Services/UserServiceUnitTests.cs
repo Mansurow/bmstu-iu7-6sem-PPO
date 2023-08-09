@@ -73,11 +73,12 @@ public class UserServiceUnitTests
     public async Task GetUserByIdEmptyNotFoundTest()
     {
         // Arrange
+        var users = CreateMockUsers();
         var userId = Guid.NewGuid();
         // var users = CreatEmptyMockUser();
 
-        // _mockUserRepository.Setup(s => s.GetUserByIdAsync(userId))
-        //                    .ReturnsAsync(users.FirstOrDefault(e => e.Id == userId));
+        _mockUserRepository.Setup(s => s.GetUserByIdAsync(userId))
+            .ThrowsAsync(new InvalidOperationException());
 
         // Act
         async Task<User> Action() => await _userService.GetUserByIdAsync(userId);
@@ -93,11 +94,11 @@ public class UserServiceUnitTests
         var userId = Guid.NewGuid();
         var users = CreateMockUsers();
 
-        _mockUserRepository.Setup(s => s.GetUserByIdAsync(userId))
-                           .ReturnsAsync(users.Find(e => e.Id == userId)!);
+        _mockUserRepository.Setup(s => s.GetUserByIdAsync(It.IsAny<Guid>()))
+            .ThrowsAsync(new InvalidOperationException());
 
         // Act
-        async Task<User> Action() => await _userService.GetUserByIdAsync(userId);
+        Task<User> Action() => _userService.GetUserByIdAsync(userId);
 
         // Assert
         await Assert.ThrowsAsync<UserNotFoundException>(Action);
@@ -131,8 +132,8 @@ public class UserServiceUnitTests
         var userId = Guid.NewGuid();
         var users = CreateMockUsers();
 
-        _mockUserRepository.Setup(s => s.GetUserByIdAsync(userId))
-                           .ReturnsAsync(users.Find(e => e.Id == userId)!);
+        _mockUserRepository.Setup(s => s.GetUserByIdAsync(It.IsAny<Guid>()))
+            .ThrowsAsync(new InvalidOperationException());
 
         // Act
         var action = async () => await _userService.ChangeUserPermissionsAsync(userId, Role.Administrator);
@@ -148,8 +149,8 @@ public class UserServiceUnitTests
         var userId = Guid.NewGuid();
         var users = CreateMockUsers();
 
-        _mockUserRepository.Setup(s => s.GetUserByIdAsync(userId))
-                           .ReturnsAsync(users.Find(e => e.Id == userId)!);
+        _mockUserRepository.Setup(s => s.GetUserByIdAsync(It.IsAny<Guid>()))
+            .ThrowsAsync(new InvalidOperationException());
 
         // Act
         async Task Action() => await _userService.ChangeUserPermissionsAsync(userId, Role.Administrator);

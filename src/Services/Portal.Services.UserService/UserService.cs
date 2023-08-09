@@ -1,4 +1,5 @@
-﻿using Portal.Database.Repositories.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using Portal.Database.Repositories.Interfaces;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
 using Portal.Services.UserService.Exceptions;
@@ -30,21 +31,25 @@ public class UserService : IUserService
             
             return user;
         }
-        catch (Exception)
+        catch (InvalidOperationException)
         {
-            throw new UserNotFoundException($"User not found with id: {userId}");
+            throw new UserNotFoundException($"User with id: {userId} not found");
         }
     }
     
     public async Task ChangeUserPermissionsAsync(Guid userId, Role permissions)
     {
-        var user = await GetUserByIdAsync(userId);
         try
         {
+            var user = await _userRepository.GetUserByIdAsync(userId);
             user.ChangePermission(permissions);
             await _userRepository.UpdateUserAsync(user);
         }
-        catch (Exception)
+        catch (InvalidOperationException)
+        {
+            throw new UserNotFoundException($"User with id: {userId} not found");
+        }
+        catch (DbUpdateException)
         {
             throw new UserUpdateException($"User's {userId} permissions have not been changed");
         }

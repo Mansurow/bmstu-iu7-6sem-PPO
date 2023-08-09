@@ -48,6 +48,30 @@ public class AccessObjectInMemory
         }
     }
     
+    public async Task InsertManyZonesAsync(List<Zone> zones)
+    {
+        foreach (var zone in zones)
+        {
+            await ZoneRepository.InsertZoneAsync(zone);
+        }
+    }
+    
+    public async Task InsertManyPackagesAsync(List<Package> packages)
+    {
+        foreach (var package in packages)
+        {
+            await PackageRepository.InsertPackageAsync(package);
+        }
+    }
+    
+    public async Task InsertManyBookingsAsync(List<Booking> bookings)
+    {
+        foreach (var booking in bookings)
+        {
+            await BookingRepository.InsertBookingAsync(booking);
+        }
+    }
+    
     public List<User> CreatEmptyMockUsers()
     {
         return new List<User>();
@@ -65,6 +89,70 @@ public class AccessObjectInMemory
             new User(Guid.NewGuid(), "Иванов", "Иван", "Иванович",  new DateTime(2002, 03, 17), Gender.Male, "ivanov@mail.ru", "+7899999999", "password12123434"),
             new User(Guid.NewGuid(), "Петров", "Петр", "Петрович",  new DateTime(2003, 05, 18), Gender.Male, "petrov@mail.ru", "+7899909999", "password12122323"),
             new User(Guid.NewGuid(), "Cударь", "Елена", "Александровна",  new DateTime(1999, 09, 18), Gender.Female, "sudar@mail.ru", "+781211111", "password12121212")
+        };
+    }
+    
+    public List<Package> CreateMockPackages()
+    {
+        return new List<Package>()
+        {
+            new Package(Guid.NewGuid(), "Почасовая аренда", PackageType.Usual, 350, 2,
+                "Почасовая стоимость аренды зала для компании людей"),
+            new Package(Guid.NewGuid(), "Пакет \"Для своих\"", PackageType.Simple, 999, 3,
+                "Почасовая стоимость аренды зала для компании людей")
+        };
+    }
+
+    public List<Zone> CreateMockZones(List<Package> packages)
+    {
+        return new List<Zone>
+        {
+            new Zone(Guid.NewGuid(), "Zone1", "address1", 10, 10, 250, 0.0),
+            new Zone(Guid.NewGuid(), "Zone2", "address2", 30, 10, 350, 0.0),
+            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 300, 0.0),
+            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 300, 0.0)
+        };
+    }
+
+    public List<Booking> CreateEmptyMockBookings()
+    {
+        return new List<Booking>();
+    }
+    
+    public List<Booking> CreateMockBookings(List<User> users, List<Zone> zones, List<Package> packages)
+    {
+        return new List<Booking>()
+        {
+            new Booking(Guid.NewGuid(), zones[0].Id, users[0].Id, packages[0].Id,
+                10, BookingStatus.Reserved,
+                DateOnly.FromDateTime(DateTime.Today),
+                new TimeOnly(8, 00), 
+                new TimeOnly(12, 00)),
+            new Booking(Guid.NewGuid(), zones[2].Id, users[1].Id, packages[1].Id, 
+                10, BookingStatus.Reserved, 
+                DateOnly.FromDateTime(DateTime.UtcNow + new TimeSpan(1, 0, 0, 0)),
+                new TimeOnly(13, 00, 00), 
+                new TimeOnly(15, 00, 00)),
+            new Booking(Guid.NewGuid(), zones[2].Id, users[1].Id, packages[1].Id, 
+                10, BookingStatus.TemporaryReserved, 
+                DateOnly.FromDateTime(DateTime.UtcNow + new TimeSpan(5, 0, 0, 0)),
+                new TimeOnly(13, 00, 00), 
+                new TimeOnly(15, 00, 00)),
+            new Booking(Guid.NewGuid(), zones[0].Id, users[2].Id, packages[0].Id, 
+                10, BookingStatus.NoActual,
+                DateOnly.Parse("2023.05.20"),
+                new TimeOnly(12, 00), 
+                new TimeOnly(18, 00)),
+            new Booking(Guid.NewGuid(), zones[0].Id, users[0].Id, packages[0].Id, 
+                10, BookingStatus.Reserved, 
+                DateOnly.FromDateTime(DateTime.UtcNow  + new TimeSpan(2, 0, 0, 0)),
+                new TimeOnly(12, 00), 
+                new TimeOnly(18, 00)),
+            new Booking(Guid.NewGuid(), zones[0].Id, users[0].Id, packages[0].Id, 
+                10, BookingStatus.Cancelled, 
+                DateOnly.FromDateTime(DateTime.UtcNow  + new TimeSpan(6, 0, 0, 0)),
+                new TimeOnly(12, 00), 
+                new TimeOnly(18, 00)),
         };
     }
     

@@ -48,9 +48,17 @@ public class ZoneRepository: BaseRepository, IZoneRepository
 
     public async Task UpdateZoneAsync(Zone zone)
     {
-        var zoneDb = ZoneConverter.ConvertAppModelToDbModel(zone);
+        var zoneDb =  await _context.Zones.FirstAsync(z => z.Id == zone.Id);
 
-        _context.Zones.Update(zoneDb);
+        zoneDb.Name = zone.Name;
+        zoneDb.Rating = zone.Rating;
+        zoneDb.Limit = zone.Limit;
+        zoneDb.Address = zone.Address;
+        zoneDb.Price = zone.Price;
+        zoneDb.Size = zone.Size;
+        // zoneDb.Inventories = zone.Inventories;
+        // zoneDb.Packages = zone.Packages;
+        
         await _context.SaveChangesAsync();
     }
 
