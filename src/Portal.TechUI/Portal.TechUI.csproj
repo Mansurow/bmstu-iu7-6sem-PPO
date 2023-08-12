@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Database\Portal.Database.Repository\Portal.Database.Repositories.csproj" />
+    <ProjectReference Include="..\Services\Portal.Services.BookingService\Portal.Services.BookingService.csproj" />
+    <ProjectReference Include="..\Services\Portal.Services.FeedbackService\Portal.Services.FeedbackService.csproj" />
+    <ProjectReference Include="..\Services\Portal.Services.InventoryServices\Portal.Services.InventoryServices.csproj" />
+    <ProjectReference Include="..\Services\Portal.Services.MenuService\Portal.Services.MenuService.csproj" />
+    <ProjectReference Include="..\Services\Portal.Services.OauthService\Portal.Services.OauthService.csproj" />
+    <ProjectReference Include="..\Services\Portal.Services.PackageService\Portal.Services.PackageService.csproj" />
+    <ProjectReference Include="..\Services\Portal.Services.UserService\Portal.Services.UserService.csproj" />
+    <ProjectReference Include="..\Services\Portal.Services.ZoneService\Portal.Services.ZoneService.csproj" />
+  </ItemGroup>
+
+</Project>
