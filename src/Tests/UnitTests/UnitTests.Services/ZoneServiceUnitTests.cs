@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
 using Xunit;
@@ -23,7 +24,8 @@ public class ZoneServiceUnitTests
     {
         _zoneService = new ZoneService(_mockZoneRepository.Object,
             _mockInventoryRepository.Object,
-            _mockPackageRepository.Object);
+            _mockPackageRepository.Object,
+            NullLogger<ZoneService>.Instance);
     }
     
     /// <summary>

@@ -1,4 +1,6 @@
-﻿using Portal.Database.Repositories.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Portal.Database.Repositories.Interfaces;
 using Portal.Common.Models;
 using Portal.Services.MenuService.Exceptions;
 using Portal.Common.Models.Enums;
@@ -12,10 +14,12 @@ namespace Portal.Services.MenuService;
 public class MenuService: IMenuService
 {
     private readonly IMenuRepository _menuRepository;
+    private readonly ILogger<MenuService> _logger;
 
-    public MenuService(IMenuRepository menuRepository)
+    public MenuService(IMenuRepository menuRepository, ILogger<MenuService> logger)
     {
         _menuRepository = menuRepository ?? throw new ArgumentNullException(nameof(menuRepository));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public Task<List<Dish>> GetAllDishesAsync() 
@@ -31,9 +35,10 @@ public class MenuService: IMenuService
             
             return dish;
         }
-        catch (Exception e)
+        catch (InvalidOperationException e)
         {
-            throw new DishNotFoundException($"Dish not found by id: {dishId}");
+            _logger.LogError(e, "Dish with id: {DishId} not found", dishId);
+            throw new DishNotFoundException($"Dish with id: {dishId} not found");
         }
     }
 
@@ -45,12 +50,14 @@ public class MenuService: IMenuService
             var dish = await _menuRepository.GetDishByIdAsync(updateDish.Id);
             await _menuRepository.UpdateDishAsync(updateDish);
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException e)
         {
+            _logger.LogError(e, "Dish with id: {DishId} not found", updateDish.Id);
             throw new DishNotFoundException($"Dish not found by id: {updateDish.Id}");
         }
-        catch (Exception)
+        catch (DbUpdateException e)
         {
+            _logger.LogError(e, "Error while updating dish: {DishId}", updateDish.Id);
             throw new DishUpdateException($"Dish was not updated: {updateDish.Id}");
         }
     }
@@ -65,7 +72,7 @@ public class MenuService: IMenuService
 
             return dish.Id;
         }
-        catch (Exception)
+        catch (DbUpdateException e)
         {
             throw new DishCreateException($"Dish was not created");
         }
@@ -73,12 +80,16 @@ public class MenuService: IMenuService
 
     public async Task RemoveDishAsync(Guid dishId)
     {
-        await GetDishByIdAsync(dishId);
         try
         {
             await _menuRepository.DeleteDishAsync(dishId);
         }
-        catch (Exception)
+        catch (InvalidOperationException e)
+        {
+            _logger.LogError(e, "Dish with id: {DishId} not found", dishId);
+            throw new DishNotFoundException($"Dish with id: {dishId} not found");
+        }
+        catch (DbUpdateException e)
         {
             throw new DishDeleteException("The dish has not been removed");
         }

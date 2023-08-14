@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
 using Portal.Database.Repositories.Interfaces;
@@ -18,7 +19,8 @@ public class PackageServiceUnitTests
 
     public PackageServiceUnitTests()
     {
-        _packageService = new PackageService(_mockPackageRepository.Object);
+        _packageService = new PackageService(_mockPackageRepository.Object,
+            NullLogger<PackageService>.Instance);
     }
 
     /// <summary>

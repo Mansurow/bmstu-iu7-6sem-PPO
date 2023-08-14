@@ -43,19 +43,19 @@ public class UserDbModel
     /// <summary>
     /// Пол (гендер) пользователя - может быть не указан
     /// </summary>
-    [Column("gender", TypeName = "varchar(64)")]
+    [Column("gender")]
     public Gender Gender { get; set; }
     
     /// <summary>
     /// Электронная почта
     /// </summary>
-    [Column("email", TypeName = "varchar(64)")]
+    [Column("email")]
     public string Email { get; set; }
     
     /// <summary>
     /// Номер телефона
     /// </summary>
-    [Column("phone", TypeName = "varchar(64)")]
+    [Column("phone")]
     public string Phone { get; set; }
     
     /// <summary>
@@ -67,7 +67,7 @@ public class UserDbModel
     /// <summary>
     /// Права доступа
     /// </summary>
-    [Column("role", TypeName = "varchar(64)")]
+    [Column("role")]
     public Role Role { get; set; }
 
     public UserDbModel(Guid id, string lastName, string firstName, string middleName, 

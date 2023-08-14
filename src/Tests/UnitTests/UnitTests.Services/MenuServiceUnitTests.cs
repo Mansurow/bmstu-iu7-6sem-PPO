@@ -1,4 +1,5 @@
-﻿using Portal.Database.Repositories.Interfaces;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using Portal.Database.Repositories.Interfaces;
 using Portal.Services.MenuService;
 using Xunit;
 using Moq;
@@ -15,7 +16,8 @@ public class MenuServiceUnitTests
 
     public MenuServiceUnitTests()
     {
-        _menuService = new MenuService(_mockMenuRepository.Object);
+        _menuService = new MenuService(_mockMenuRepository.Object,
+            NullLogger<MenuService>.Instance);
     }
 
     [Fact]

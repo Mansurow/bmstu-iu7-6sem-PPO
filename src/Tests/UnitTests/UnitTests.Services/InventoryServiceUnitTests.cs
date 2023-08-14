@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 using Portal.Common.Models;
 using Portal.Database.Repositories.Interfaces;
 using Portal.Services.InventoryServices;
@@ -17,7 +18,8 @@ public class InventoryServiceUnitTests
 
     public InventoryServiceUnitTests()
     {
-        _inventoryService = new InventoryService(_mockInventoryRepository.Object);
+        _inventoryService = new InventoryService(_mockInventoryRepository.Object,
+            NullLogger<InventoryService>.Instance);
     }
 
     /// <summary>

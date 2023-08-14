@@ -4,6 +4,7 @@ using Portal.Database.Repositories.Interfaces;
 using Portal.Services.BookingService.Exceptions;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Portal.Services.PackageService.Exceptions;
 using Portal.Services.ZoneService.Exceptions;
 
@@ -17,14 +18,17 @@ namespace Portal.Services.BookingService
         private readonly IBookingRepository _bookingRepository;
         private readonly IPackageRepository _packageRepository;
         private readonly IZoneRepository _zoneRepository;
+        private readonly ILogger<BookingService> _logger;
 
         public BookingService(IBookingRepository bookingRepository, 
             IPackageRepository packageRepository,
-            IZoneRepository zoneRepository)
+            IZoneRepository zoneRepository,
+            ILogger<BookingService> logger)
         {
             _bookingRepository = bookingRepository ?? throw new ArgumentNullException(nameof(bookingRepository));
             _packageRepository = packageRepository ?? throw new ArgumentNullException(nameof(packageRepository));
             _zoneRepository = zoneRepository ?? throw new ArgumentNullException(nameof(zoneRepository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<List<Booking>> GetAllBookingAsync()
@@ -37,8 +41,9 @@ namespace Portal.Services.BookingService
 
                 return bookings;
             }
-            catch (Exception)
+            catch (DbUpdateException e)
             {
+                _logger.LogError(e,"Error while updating no actual bookings while getting all bookings");
                 throw new BookingUpdateException("No actual bookings were not updated");
             }
         }
@@ -53,8 +58,9 @@ namespace Portal.Services.BookingService
 
                 return bookings;
             }
-            catch (Exception)
+            catch (DbUpdateException e)
             {
+                _logger.LogError(e,"Error while updating no actual bookings when getting bookings for user: {UserId}", userId);
                 throw new BookingUpdateException("No actual bookings were not updated");
             }
         }
@@ -79,8 +85,9 @@ namespace Portal.Services.BookingService
 
                 return bookings;
             }
-            catch (Exception)
+            catch (DbUpdateException e)
             {
+                _logger.LogError(e, "Error while updating no actual bookings when getting bookings for zone: {ZoneId}", zoneId);
                 throw new BookingUpdateException("No actual bookings were not updated");
             }
             
@@ -100,12 +107,14 @@ namespace Portal.Services.BookingService
                 
                 return booking;
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException e)
             {
+                _logger.LogError(e,"Bookings with id: {BookingId} not found", bookingId);
                 throw new BookingNotFoundException($"Bookings with id: {bookingId} not found");
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
+                _logger.LogError(e, "Error while updating no actual booking: {BookingId}", bookingId);
                 throw new BookingUpdateException("No actual bookings were not updated");
             }
         }
@@ -157,22 +166,25 @@ namespace Portal.Services.BookingService
                 {
                     await _packageRepository.GetPackageByIdAsync(packageId);
                 }
-                catch (Exception)
+                catch (InvalidOperationException e)
                 {
-                    throw new PackageNotFoundException($"Package with id: {zoneId} not found");
+                    _logger.LogError(e, "Package with id: {PackageId} not found", packageId);
+                    throw new PackageNotFoundException($"Package with id: {packageId} not found");
                 }
                 
                 var booking = (await _bookingRepository.GetBookingByUserAndZoneAsync(userId, zoneId))
                     .FirstOrDefault(b => b.Date == dateRu);
                 if (booking is not null)
                 {
+                    _logger.LogError("User with id: {UserId} reversed for zone with id: {ZoneId}", userId, zoneId);
                     throw new BookingExistsException($"User with id: {userId} reversed for zone with id: {zoneId}");
                 }
 
                 if (!await IsFreeTimeAsync(dateRu, startTimeRu, endTimeRu))
                 {
+                    _logger.LogError("Zone full or partial reversed on {Date} from {StartTime} to {EndTime}", date, startTime, endTime);
                     throw new BookingReversedException(
-                        $"Zone full or partial reversed on {dateRu} from {startTime} to {endTime}");
+                        $"Zone full or partial reversed on {date} from {startTime} to {endTime}");
                 }
 
                 var newBooking = new Booking(Guid.NewGuid(), zoneId, userId, packageId,
@@ -182,12 +194,14 @@ namespace Portal.Services.BookingService
 
                 return newBooking.Id;
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException e)
             {
+                _logger.LogError(e, "Zone with id: {ZoneId} not found", zoneId);
                 throw new ZoneNotFoundException($"Zone with id: {zoneId} not found");
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
+                _logger.LogError(e, "Error while creating booking");
                 throw new BookingCreateException("Booking has bot been created");
             }
         }
@@ -206,23 +220,26 @@ namespace Portal.Services.BookingService
         {
             try
             {
-                var booking =  await _bookingRepository.GetBookingByIdAsync(bookingId);;
+                var booking =  await _bookingRepository.GetBookingByIdAsync(bookingId);
 
                 if (!booking.IsSuitableStatus(status))
                 {
+                    _logger.LogError("Changing for booking with id: {BookingId} for user: {UserId} isn't suitable for next step", booking.Id, booking.UserId);
                     throw new BookingNotSuitableStatusException(
-                        $"Changing for booking with id: {bookingId} for user: {booking.UserId} isn't suitable for next step");
+                        $"Changing for booking with id: {booking.Id} for user: {booking.UserId} isn't suitable for next step");
                 }
 
                 booking.ChangeStatus(status);
                 await _bookingRepository.UpdateBookingAsync(booking);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException e)
             {
+                _logger.LogError(e,"Bookings with id: {BookingId} not found", bookingId);
                 throw new BookingNotFoundException($"Booking with id: {bookingId} not found");
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
+                _logger.LogError(e, "Error while updating no actual bookings when getting changing status for booking: {BookingId}", bookingId);
                 throw new BookingUpdateException($"No actual booking: {bookingId} was not updated");
             }
         }
@@ -236,12 +253,14 @@ namespace Portal.Services.BookingService
                 var zone = await _zoneRepository.GetZoneByIdAsync(updateBooking.ZoneId);
                 if (zone is not null && zone.Limit < updateBooking.AmountPeople)
                 {
+                    _logger.LogError("Exceed limit amount of people for booking with id: {BookingId}", booking.Id);
                     throw new BookingExceedsLimitException(
                         $"Exceed limit amount of people for booking with id: {updateBooking.Id}");
                 }
 
                 if (booking.IsChangeDateTime(updateBooking))
                 {
+                    _logger.LogError("Changing date or time for booking with id: {BookingId}", booking.Id);
                     throw new BookingChangeDateTimeException(
                         $"Changing date or time for booking with id: {booking.Id}");
                 }
@@ -251,8 +270,9 @@ namespace Portal.Services.BookingService
 
                 await _bookingRepository.UpdateBookingAsync(updateBooking);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException e)
             {
+                _logger.LogError(e, "Bookings with id: {BookingId} not found", updateBooking.Id);
                 throw new BookingNotFoundException($"Booking with id: {updateBooking.Id} not found");
             }
         }
@@ -265,10 +285,12 @@ namespace Portal.Services.BookingService
             }
             catch (InvalidOperationException e)
             {
+                _logger.LogError(e, "Bookings with id: {BookingId} not found", bookingId);
                 throw new BookingNotFoundException($"Booking with id: {bookingId} not found");
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
+                _logger.LogError(e, "Error while removing booking: {BookingId}", bookingId);
                 throw new BookingRemoveException($"Booking with id: {bookingId} has not been removed");
             }
         }

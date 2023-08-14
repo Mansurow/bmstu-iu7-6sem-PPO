@@ -1,4 +1,5 @@
 ﻿using IntegrationalTests.Services.AccessObject;
+using Microsoft.Extensions.Logging.Abstractions;
 using Portal.Common.Models;
 using Portal.Services.MenuService;
 using Portal.Services.MenuService.Exceptions;
@@ -14,7 +15,8 @@ public class MenuServiceIntegrationTests: IDisposable
     public MenuServiceIntegrationTests()
     {
         _accessObject = new AccessObjectInMemory();
-        _menuService = new MenuService(_accessObject.MenuRepository);
+        _menuService = new MenuService(_accessObject.MenuRepository,
+            NullLogger<MenuService>.Instance);
     }
 
     [Fact]

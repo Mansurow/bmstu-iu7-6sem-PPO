@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Portal.Common.Converter;
 using Portal.Common.Models;
+using Portal.Common.Models.Enums;
 using Portal.Database.Context;
 using Portal.Database.Repositories.Interfaces;
 
@@ -18,7 +19,7 @@ public class UserRepository: BaseRepository, IUserRepository
     public Task<List<User>> GetAllUsersAsync()
     {
         return _context.Users
-            .Select(u => UserConverter.ConvertDbModelToAppModel(u)!)
+            .Select(u => UserConverter.ConvertDbModelToAppModel(u))
             .ToListAsync();
     }
 
@@ -27,6 +28,14 @@ public class UserRepository: BaseRepository, IUserRepository
         var user = await _context.Users.FirstAsync(u => u.Id == userId);
 
         return UserConverter.ConvertDbModelToAppModel(user);
+    }
+
+    public Task<List<User>> GetAdmins()
+    {
+        return _context.Users.Where(u => u.Role == Role.Administrator)
+            .Select(u => UserConverter.ConvertDbModelToAppModel(u))
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     public async Task<User> GetUserByEmailAsync(string email)

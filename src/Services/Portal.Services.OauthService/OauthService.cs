@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Portal.Common.Models;
 using Portal.Database.Repositories.Interfaces;
 using Portal.Services.OauthService.Exceptions;
@@ -12,10 +13,12 @@ namespace Portal.Services.OauthService
     public class OauthService: IOauthService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ILogger<OauthService> _logger;
 
-        public OauthService(IUserRepository userRepository)
+        public OauthService(IUserRepository userRepository, ILogger<OauthService> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Registrate(User user, string password) 
@@ -23,17 +26,20 @@ namespace Portal.Services.OauthService
             try
             {
                 var userModel = await _userRepository.GetUserByEmailAsync(user.Email);
-
+                
+                _logger.LogError("User with login: {Login} already exists", userModel.Email);
                 throw new UserLoginAlreadyExistsException($"User with login: {userModel.Email} already exists.");
             }
             catch (InvalidOperationException)
             {
+                _logger.LogInformation("User with login: {Login} not found", user.Email);
                 user.CreateHash(password);
 
                 await _userRepository.InsertUserAsync(user);
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException e)
             {
+                _logger.LogError(e, "Error while creating user");
                 throw new UserCreateException();
             }
         }
@@ -46,13 +52,15 @@ namespace Portal.Services.OauthService
                 
                 if (!user.VerifyPassword(password))
                 {
-                    throw new IncorrectPasswordException("User password is incorrect.");
+                    _logger.LogError("Password is incorrect for user: {UserId}", user.Id);
+                    throw new IncorrectPasswordException($"Password is incorrect for user: {user.Id}");
                 }
 
                 return user;
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException e)
             {
+                _logger.LogError(e, "User with login: {Login} not found", login);
                 throw new UserLoginNotFoundException($"User with login: {login} not found.");
             }
         }

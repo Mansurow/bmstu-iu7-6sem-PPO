@@ -19,7 +19,10 @@ public class ZoneRepository: BaseRepository, IZoneRepository
     public Task<List<Zone>> GetAllZonesAsync()
     {
         return _context.Zones
+            .Include(z => z.Inventories)
+            .Include(z => z.Packages)
             .Select(z => ZoneConverter.ConvertDbModelToAppModel(z))
+            .AsNoTracking()
             .ToListAsync();
     }
 

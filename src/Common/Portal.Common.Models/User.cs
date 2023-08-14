@@ -56,19 +56,19 @@ public class User
     /// </summary>
     /// <example>89268899772</example>
     [Phone]
-    public string Phone { get; set; }
+    public string? Phone { get; set; }
     
     /// <summary>
     /// Зашифрованный пароль 
     /// </summary>
-    public string? PasswordHash { get; set; }
+    public string? PasswordHash { get; private set; }
     
     /// <summary>
     /// Права доступа
     /// </summary>
     public Role Role { get; set; }
 
-    public User(Guid id, string lastName, string firstName, string middleName, DateTime birthday, Gender gender, string email, string phone, string? passwordHash = null, Role role = Role.User)
+    public User(Guid id, string lastName, string firstName, string middleName, DateTime birthday, Gender gender, string email, string? phone = null, string? passwordHash = null, Role role = Role.User)
     {
         Id = id;
         LastName = lastName;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
 using Portal.Database.Repositories.Interfaces;
@@ -12,10 +13,12 @@ namespace Portal.Services.PackageService;
 public class PackageService: IPackageService
 {
     private readonly IPackageRepository _packageRepository;
+    private readonly ILogger<PackageService> _logger;
 
-    public PackageService(IPackageRepository packageRepository)
+    public PackageService(IPackageRepository packageRepository, ILogger<PackageService> logger)
     {
         _packageRepository = packageRepository ?? throw new ArgumentNullException(nameof(packageRepository));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public Task<List<Package>> GetPackagesAsync()
@@ -31,8 +34,9 @@ public class PackageService: IPackageService
             
             return package;
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException e)
         {
+            _logger.LogError(e, "Package with id: {PackageId} not found", packageId);
             throw new PackageNotFoundException($"Package with id: {packageId} not found");
         }
     }
@@ -50,6 +54,7 @@ public class PackageService: IPackageService
         }
         catch (DbUpdateException e)
         {
+            _logger.LogError(e, "Error while creating package");
             throw new PackageCreateException("Package has not been created");
         }
         
@@ -61,12 +66,14 @@ public class PackageService: IPackageService
         {
             await _packageRepository.UpdatePackageAsync(package);
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException e)
         {
+            _logger.LogError(e, "Package with id: {PackageId} not found", package.Id);
             throw new PackageNotFoundException($"Package with id: {package.Id} not found");
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException e)
         {
+            _logger.LogError(e, "Error while updating package: {PackageId}", package.Id);
             throw new PackageUpdateException($"Package with id: {package.Id} has not been updated");
         }
     }
@@ -77,12 +84,14 @@ public class PackageService: IPackageService
         {
             await _packageRepository.DeletePackageAsync(packageId);
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException e)
         {
+            _logger.LogError(e, "Package with id: {PackageId} not found", packageId);
             throw new PackageNotFoundException($"Package with id: {packageId} not found");
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException e)
         {
+            _logger.LogError(e, "Error while removing package: {PackageId}", packageId);
             throw new PackageRemoveException($"Package with id: {packageId} has not been removed");
         }
     }

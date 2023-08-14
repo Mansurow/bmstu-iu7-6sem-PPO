@@ -1,4 +1,6 @@
-﻿using Portal.Common.Models;
+﻿using System.Security.Cryptography;
+using Npgsql.Replication;
+using Portal.Common.Models;
 using Portal.Common.Models.Enums;
 
 namespace Portal.Services.UserService;
@@ -28,4 +30,12 @@ public interface IUserService
     /// <param name="permissions">Новые права доступа</param>
     /// <returns></returns>
     Task ChangeUserPermissionsAsync(Guid userId, Role permissions);
+
+    /// <summary>
+    /// Создать администратора
+    /// </summary>
+    /// <param name="login">Логин</param>
+    /// <param name="password">Пароль</param>
+    /// <returns></returns>
+    Task CreateAdmin(string login, string password);
 }

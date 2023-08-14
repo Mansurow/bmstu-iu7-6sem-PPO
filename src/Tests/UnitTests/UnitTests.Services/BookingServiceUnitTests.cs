@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 using Xunit;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
@@ -21,7 +22,8 @@ public class BookingServiceUnitTests
     {
         _bookingService = new BookingService(_mockBookingRepository.Object,
             _mockPackageRepository.Object,
-            _mockZoneRepository.Object);
+            _mockZoneRepository.Object,
+            NullLogger<BookingService>.Instance);
     }
 
     /// <summary>

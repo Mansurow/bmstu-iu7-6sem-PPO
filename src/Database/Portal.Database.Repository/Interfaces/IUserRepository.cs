@@ -10,8 +10,14 @@ public interface IUserRepository
     /// <summary>
     /// Получить всех пользователя
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Список пользователей</returns>
     Task<List<User>> GetAllUsersAsync();
+
+    /// <summary>
+    /// Получить всех админов
+    /// </summary>
+    /// <returns>Список админов</returns>
+    Task<List<User>> GetAdmins();
     
     /// <summary>
     /// Получить пользователя

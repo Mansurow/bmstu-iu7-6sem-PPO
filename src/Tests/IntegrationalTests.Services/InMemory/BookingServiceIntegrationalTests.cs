@@ -1,4 +1,5 @@
 ﻿using IntegrationalTests.Services.AccessObject;
+using Microsoft.Extensions.Logging.Abstractions;
 using Portal.Common.Models;
 using Portal.Database.Repositories.Interfaces;
 using Portal.Database.Repositories.NpgsqlRepositories;
@@ -18,7 +19,8 @@ public class BookingServiceIntegrationalTests
         _accessObject = new AccessObjectInMemory();
         _bookingService = new BookingService(_accessObject.BookingRepository,
             _accessObject.PackageRepository,
-            _accessObject.ZoneRepository);
+            _accessObject.ZoneRepository,
+            NullLogger<BookingService>.Instance);
     }
 
     [Fact]
