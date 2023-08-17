@@ -83,7 +83,7 @@ public class Zone
         Packages = packages;
     }
 
-    public Zone(Guid id, string name, string address, int size, int limit, double price, double rating, ICollection<Inventory> inventories)
+    public Zone(Guid id, string name, string address, double size, int limit, double price, double rating, ICollection<Inventory> inventories)
     {
         Id = id;
         Name = name;

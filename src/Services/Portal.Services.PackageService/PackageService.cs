@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
 using Portal.Database.Repositories.Interfaces;
+using Portal.Services.MenuService.Exceptions;
 using Portal.Services.PackageService.Exceptions;
 
 namespace Portal.Services.PackageService;
@@ -13,11 +14,13 @@ namespace Portal.Services.PackageService;
 public class PackageService: IPackageService
 {
     private readonly IPackageRepository _packageRepository;
+    private readonly IMenuRepository _menuRepository;
     private readonly ILogger<PackageService> _logger;
 
-    public PackageService(IPackageRepository packageRepository, ILogger<PackageService> logger)
+    public PackageService(IPackageRepository packageRepository, ILogger<PackageService> logger, IMenuRepository menuRepository)
     {
         _packageRepository = packageRepository ?? throw new ArgumentNullException(nameof(packageRepository));
+        _menuRepository = menuRepository ?? throw new ArgumentNullException(nameof(menuRepository));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -42,11 +45,28 @@ public class PackageService: IPackageService
     }
 
     public async Task<Guid> AddPackageAsync(string name, PackageType type, double price,
-        int rentalTime, string description)
+        int rentalTime, string description, List<Guid> dishes)
     {
         try
         {
             var package = new Package(Guid.NewGuid(), name, type, price, rentalTime, description);
+
+            foreach (var dishId in dishes)
+            {
+                try
+                {
+                    var dish = await _menuRepository.GetDishByIdAsync(dishId);
+                    
+                    // TODO: Проверка что блюдо уже добавлено в пакет
+                    
+                    package.Dishes.Add(dish);
+                }
+                catch (InvalidOperationException e)
+                {
+                    _logger.LogError(e, "Dish: {DishId} not found for adding in package: {PackageId}", dishId, package.Id);
+                    throw new DishNotFoundException($"Dish: {dishId} not found for adding in package: {package.Id}");
+                }
+            }
 
             await _packageRepository.InsertPackageAsync(package);
 

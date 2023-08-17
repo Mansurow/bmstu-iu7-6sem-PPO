@@ -20,18 +20,19 @@ public interface IPackageService
     /// <param name="packageId">Идентификатор пакета</param>
     /// <returns>Пакет</returns>
     Task<Package> GetPackageById(Guid packageId);
-    
+
     /// <summary>
     /// Добавить пакет зоны
     /// </summary>
     /// <param name="name">Название пакета</param>
-    /// <param name="Type">Тип пакета</param>
+    /// <param name="type">Тип пакета</param>
     /// <param name="price">Цена пакета (общая)</param>
     /// <param name="rentalTime">Общее время</param>
     /// <param name="description">Описание пакета</param>
+    /// <param name="dishes">Блюда для добавления</param>
     /// <returns>Идентификатор созданного пакета</returns>
-    Task<Guid> AddPackageAsync(string name, PackageType Type, double price, 
-        int rentalTime, string description);
+    Task<Guid> AddPackageAsync(string name, PackageType type, double price, 
+        int rentalTime, string description, List<Guid> dishes);
     
     /// <summary>
     /// Обновить пакет 

@@ -1,7 +1,11 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json.Converters;
 using Portal.Database.Context;
 using Portal.Database.Repositories;
+using Portal.Json;
+using Portal.Services.BookingService.Configuration;
 using Serilog;
 
 namespace Portal.Extensions;
@@ -13,17 +17,24 @@ public static class WebApplicationBuilderProviderExtensions
         var config = builder.Configuration;
         
         var serviceCollection = builder.Services;
-    
+        
         serviceCollection.AddControllers()
             .AddNewtonsoftJson(options =>
-                options.SerializerSettings.Converters.Add(new StringEnumConverter()));
+            {
+                var systemConfig = config.GetRequiredSection("SystemConfiguration");
+                var dateFormat = systemConfig.GetValue<string>("Date");
+                var timeFormat = systemConfig.GetValue<string>("Time");
+                
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                options.SerializerSettings.Converters.Add(new CustomDateOnlyConverter(dateFormat));
+                options.SerializerSettings.Converters.Add(new CustomTimeOnlyConverter(timeFormat));
+            });
         // order is vital, this *must* be called *after* AddNewtonsoftJson()
         serviceCollection.AddSwaggerGenNewtonsoftSupport();
         
-
         serviceCollection.AddPortalCors(policyName);
         serviceCollection.AddPortalJwtAuthentication(config);
-        serviceCollection.AddPortalSwaggerGen();
+        serviceCollection.AddPortalSwaggerGen(config);
         
         // TODO: Добавить conneсt на каждую роль - 3 конекта в общем
         serviceCollection.AddDbContext<PortalDbContext>(

@@ -135,6 +135,7 @@ public class MenuController: ControllerBase
         }
     }
     
+    // TODO: пофиксить обновление блюда
     /// <summary>
     /// Обновить данные о блюде
     /// </summary>
@@ -179,16 +180,38 @@ public class MenuController: ControllerBase
         }
     }
     
-    [HttpDelete]
-    public async Task<IActionResult> DeleteDish([FromBody] CreateDishDto dish)
+    /// <summary>
+    /// Удалить блюдо
+    /// </summary>
+    /// <param name="dishId">Идентификатор блюда</param>
+    /// <response code="204">NoContent. Удаление успешно произошло.</response>
+    /// <response code="400">Bad request. Некорректные данные.</response>
+    /// <response code="401">Unauthorized. Пользователь неавторизован.</response>
+    /// <response code="403">Forbidden. У пользователя недостаточно прав доступа.</response>
+    /// <response code="404">NotFound. Блюдо не найдено.</response>
+    /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
+    [Authorize(Roles = nameof(Role.Administrator))]
+    [HttpDelete("{dishId:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> DeleteDish([FromRoute] Guid dishId)
     {
         try
         {
-            var dishId = await _menuService.AddDishAsync(dish.Name, dish.Type, dish.Price, dish.Description);
+            await _menuService.RemoveDishAsync(dishId);
 
-            return Ok(new
+            return StatusCode(StatusCodes.Status204NoContent);
+        }
+        catch (DishNotFoundException e)
+        {
+            _logger.LogError(e, "Dish not found: {DishId}", dishId);
+            return NotFound(new
             {
-                dishId
+                message = e.Message
             });
         }
         catch (Exception e)

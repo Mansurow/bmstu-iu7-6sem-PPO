@@ -22,9 +22,25 @@ public static class PackageConverter
             rentalTime: package.RentalTime,
             description: package.Description,
             dishes: package.Dishes.Select(MenuConverter.ConvertDbModelToAppModel).ToList(),
-            zones: package.Zones.Select(ZoneConverter.ConvertDbModelToAppModel).ToList());
+            zones: package.Zones.Select(ZoneConverter.ConvertDbModelToAppModelNoInclude).ToList());
     }
-
+    
+    /// <summary>
+    /// Преобразовать из модели базы данных в модель бизнес логики приложения
+    /// </summary>
+    /// <param name="package">Модель базы данных</param>
+    /// <returns>Модель бизнес логики</returns>
+    public static Package ConvertDbModelToAppModelNoInclude(PackageDbModel package)
+    {
+        return new Package(id: package.Id,
+            name: package.Name,
+            type: package.Type,
+            price: package.Price,
+            rentalTime: package.RentalTime,
+            description: package.Description,
+            dishes: package.Dishes.Select(MenuConverter.ConvertDbModelToAppModel).ToList());
+    }
+    
     /// <summary>
     /// Преобразовать из модели бизнес логики в модели базы данных приложения
     /// </summary>

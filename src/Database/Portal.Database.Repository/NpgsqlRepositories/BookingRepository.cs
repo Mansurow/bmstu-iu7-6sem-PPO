@@ -22,6 +22,7 @@ public class BookingRepository: BaseRepository, IBookingRepository
     public Task<List<Booking>> GetAllBookingAsync() 
     {
         return _context.Bookings
+            .OrderBy(b => b.Date)
             .Select(b => BookingConverter.ConvertDbModelToAppModel(b))
             .ToListAsync();
     }
@@ -29,6 +30,7 @@ public class BookingRepository: BaseRepository, IBookingRepository
     public Task<List<Booking>> GetBookingByUserAsync(Guid userId) 
     {
         return _context.Bookings.Where(b => b.UserId == userId)
+            .OrderBy(b => b.Date)
             .Select(b => BookingConverter.ConvertDbModelToAppModel(b))
             .ToListAsync();
     }
@@ -36,6 +38,7 @@ public class BookingRepository: BaseRepository, IBookingRepository
     public Task<List<Booking>> GetBookingByZoneAsync(Guid zoneId)
     {
         return _context.Bookings.Where(b => b.ZoneId == zoneId)
+            .OrderBy(b => b.Date)
             .Select(b => BookingConverter.ConvertDbModelToAppModel(b))
             .ToListAsync();
     }
@@ -43,6 +46,7 @@ public class BookingRepository: BaseRepository, IBookingRepository
     public Task<List<Booking>> GetBookingByUserAndZoneAsync(Guid userId, Guid zoneId) 
     {
         return _context.Bookings.Where(b => b.UserId == userId && b.ZoneId == zoneId)
+            .OrderBy(b => b.Date)
             .Select(b => BookingConverter.ConvertDbModelToAppModel(b))
             .ToListAsync();
     }
@@ -70,8 +74,18 @@ public class BookingRepository: BaseRepository, IBookingRepository
 
     public async Task UpdateBookingAsync(Booking updateBooking) 
     {
-        var booking = BookingConverter.ConvertAppModelToDbModel(updateBooking);
-        _context.Bookings.Update(booking);
+        var booking = await _context.Bookings.FirstAsync(b => b.Id == updateBooking.Id);
+
+        // booking.UserId = updateBooking.UserId;
+        // booking.ZoneId = updateBooking.ZoneId;
+        booking.PackageId = updateBooking.PackageId;
+        booking.Package = await _context.Packages.FirstAsync(p => p.Id == updateBooking.PackageId);
+        booking.Status = updateBooking.Status;
+        booking.AmountPeople = updateBooking.AmountPeople;
+        booking.Date = updateBooking.Date;
+        booking.StartTime = updateBooking.StartTime;
+        booking.EndTime = updateBooking.EndTime;
+        
         await _context.SaveChangesAsync();
     }
 

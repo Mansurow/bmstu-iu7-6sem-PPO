@@ -21,14 +21,18 @@ public class ZoneRepository: BaseRepository, IZoneRepository
         return _context.Zones
             .Include(z => z.Inventories)
             .Include(z => z.Packages)
-            .Select(z => ZoneConverter.ConvertDbModelToAppModel(z))
             .AsNoTracking()
+            .Select(z => ZoneConverter.ConvertDbModelToAppModel(z))
             .ToListAsync();
     }
 
     public async Task<Zone> GetZoneByIdAsync(Guid zoneId)
     {
-        var zone = await _context.Zones.FirstAsync(z => z.Id == zoneId);
+        var zone = await _context.Zones
+            .Include(z => z.Inventories)
+            .Include(z => z.Packages)
+            .AsNoTracking()
+            .FirstAsync(z => z.Id == zoneId);
 
         return ZoneConverter.ConvertDbModelToAppModel(zone);
     }
@@ -59,9 +63,10 @@ public class ZoneRepository: BaseRepository, IZoneRepository
         zoneDb.Address = zone.Address;
         zoneDb.Price = zone.Price;
         zoneDb.Size = zone.Size;
-        // zoneDb.Inventories = zone.Inventories;
-        // zoneDb.Packages = zone.Packages;
-        
+        zoneDb.Inventories = zone.Inventories.Select(InventoryConverter.ConvertAppModelToDbModel).ToList();
+        zoneDb.Packages = zone.Packages.Select(PackageConverter.ConvertAppModelToDbModel).ToList();;
+
+        _context.Zones.Update(zoneDb);
         await _context.SaveChangesAsync();
     }
 

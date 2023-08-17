@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Portal.Services.BookingService;
+using Portal.Services.BookingService.Configuration;
 using Portal.Services.FeedbackService;
 using Portal.Services.InventoryServices;
 using Portal.Services.MenuService;
@@ -18,6 +19,8 @@ public static class ServiceCollectionExtension
 {
     public static void AddPortalService(this IServiceCollection services, IConfiguration config)
     {
+        services.Configure<BookingServiceConfiguration>(config.GetRequiredSection("BookingServiceConfiguration"));
+        
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IBookingService, BookingService>();
         services.AddScoped<IFeedbackService, FeedbackService>();
@@ -28,7 +31,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IPackageService, PackageService>();
     }
     
-    public static void AddPortalSwaggerGen(this IServiceCollection services)
+    public static void AddPortalSwaggerGen(this IServiceCollection services, IConfiguration config)
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(options =>
@@ -53,7 +56,14 @@ public static class ServiceCollectionExtension
                 Type = SecuritySchemeType.ApiKey
             });
             
-            options.OperationFilter<AuthorizationHeaderParameterOperationFilter>();;
+            options.OperationFilter<AuthorizationHeaderParameterOperationFilter>();
+            
+            var systemConfig = config.GetRequiredSection("SystemConfiguration");
+            var dateFormat = systemConfig.GetValue<string>("Date");
+            var timeFormat = systemConfig.GetValue<string>("Time");
+            
+            options.MapType<DateOnly>(() => new OpenApiSchema { Type = "string", Format = dateFormat});
+            options.MapType<TimeOnly>(() => new OpenApiSchema { Type = "string", Format = timeFormat});
             
             // var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             // options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
@@ -80,7 +90,7 @@ public static class ServiceCollectionExtension
     {
         services.Configure<AuthorizationConfiguration>(config.GetSection("AuthorizationConfiguration"));
 
-        var authOptions = config.GetSection("AuthorizationConfiguration").Get<AuthorizationConfiguration>();
+        var authOptions = config.GetRequiredSection("AuthorizationConfiguration").Get<AuthorizationConfiguration>();
         
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>

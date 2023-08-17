@@ -45,8 +45,7 @@ public class MenuRepository: BaseRepository, IMenuRepository
         updatedDish.Type = dish.Type;
         updatedDish.Price = dish.Price;
         updatedDish.Description = dish.Description;
-        // updatedDish.Packages = dish.Packages;
-            
+        
         await _context.SaveChangesAsync();
     }
 

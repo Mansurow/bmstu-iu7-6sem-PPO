@@ -9,7 +9,6 @@ using Portal.Common.Models;
 using Portal.Common.Models.Dto;
 using Portal.Services.OauthService;
 using Portal.Services.OauthService.Exceptions;
-using Portal.Services.UserService.Exceptions;
 using Portal.Swagger;
 
 namespace Portal.Controllers;
@@ -50,6 +49,9 @@ public class OauthController : ControllerBase
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
     [HttpPost("signup")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorizationResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [AllowAnonymous]
     public async Task<IActionResult> SignUp([FromBody] CreateUserDto userDto)
     {
@@ -59,7 +61,7 @@ public class OauthController : ControllerBase
 
             await _oauthService.Registrate(user, userDto.Password);
 
-            var token = GenerateJWT(user);
+            var token = GenerateJwt(user);
             
             return Ok(new
             {
@@ -88,6 +90,9 @@ public class OauthController : ControllerBase
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
     [HttpPost("signin")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorizationResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [AllowAnonymous]
     public async Task<IActionResult> SignIn([FromBody] LoginModel logins)
     {
@@ -97,7 +102,7 @@ public class OauthController : ControllerBase
             var user = await _oauthService.LogIn(logins.Login, logins.Password);
             userId = user.Id;
 
-            var token = GenerateJWT(user);
+            var token = GenerateJwt(user);
             
             return Ok(new
             {   
@@ -131,7 +136,7 @@ public class OauthController : ControllerBase
         }
     }
 
-    private string GenerateJWT(User user)
+    private string GenerateJwt(User user)
     {
         var authParams = _authOptions.Value;
         

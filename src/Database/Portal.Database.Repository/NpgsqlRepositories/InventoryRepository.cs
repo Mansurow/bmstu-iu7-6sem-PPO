@@ -41,6 +41,7 @@ public class InventoryRepository: BaseRepository, IInventoryRepository
 
     public async Task UpdateInventoryAsync(Inventory inventory)
     {
+        // TODO: пофиксить
         var inventoryDb = await _context.Inventories.FirstAsync(inv => inv.Id == inventory.Id);
         
         _context.Inventories.Update(inventoryDb);

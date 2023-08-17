@@ -2,9 +2,10 @@
 using Portal.Common.Models.Enums;
 using Portal.Database.Repositories.Interfaces;
 using Portal.Services.BookingService.Exceptions;
-using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Portal.Services.BookingService.Configuration;
 using Portal.Services.PackageService.Exceptions;
 using Portal.Services.ZoneService.Exceptions;
 
@@ -19,16 +20,28 @@ namespace Portal.Services.BookingService
         private readonly IPackageRepository _packageRepository;
         private readonly IZoneRepository _zoneRepository;
         private readonly ILogger<BookingService> _logger;
+        private readonly BookingServiceConfiguration _config;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bookingRepository"></param>
+        /// <param name="packageRepository"></param>
+        /// <param name="zoneRepository"></param>
+        /// <param name="logger"></param>
+        /// <param name="config"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public BookingService(IBookingRepository bookingRepository, 
             IPackageRepository packageRepository,
             IZoneRepository zoneRepository,
-            ILogger<BookingService> logger)
+            ILogger<BookingService> logger, 
+            IOptions<BookingServiceConfiguration> config)
         {
             _bookingRepository = bookingRepository ?? throw new ArgumentNullException(nameof(bookingRepository));
             _packageRepository = packageRepository ?? throw new ArgumentNullException(nameof(packageRepository));
             _zoneRepository = zoneRepository ?? throw new ArgumentNullException(nameof(zoneRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _config = config is null ? throw new ArgumentNullException(nameof(config)): config.Value;
         }
 
         public async Task<List<Booking>> GetAllBookingAsync()
@@ -122,13 +135,23 @@ namespace Portal.Services.BookingService
         public async Task<List<FreeTime>> GetFreeTimeAsync(Guid zoneId, DateOnly date)
         {
             var bookings = (await GetBookingByZoneAsync(zoneId))
-                .FindAll(e => e.Date == date && e.Status != BookingStatus.NoActual)
+                .FindAll(e => e.Date == date && e.IsActualStatus())
                 .OrderBy(e => e.StartTime).ToList();
             
+            if (bookings.Count == 0)
+            {
+                return new List<FreeTime>()
+                {
+                    new FreeTime(_config.StartTimeWorking, 
+                        _config.EndTimeWorking)
+                };
+            }
+            
             var freeTimes = new List<FreeTime>();
-            var startTimeWork = new TimeOnly(8, 0);
-            var endTimeWork = new TimeOnly(23, 0);
-            for (var i = 0; i < bookings.Count; i++)
+            var startTimeWork = TimeOnly.Parse(_config.StartTimeWorking);
+            var endTimeWork = TimeOnly.Parse(_config.EndTimeWorking);
+            
+            for (var i = 0; i <= bookings.Count; i++)
             {
                 FreeTime addFreeTime;
                 if (i == 0)
@@ -138,6 +161,10 @@ namespace Portal.Services.BookingService
                 else if (i == bookings.Count - 1)
                 {
                     addFreeTime = new FreeTime(bookings[i].EndTime, endTimeWork);
+                }
+                else if (i > bookings.Count - 1)
+                {
+                    addFreeTime = new FreeTime(bookings[i - 1].EndTime, endTimeWork);
                 }
                 else
                 {
@@ -151,15 +178,10 @@ namespace Portal.Services.BookingService
             return freeTimes.OrderBy(f => f.StartTime).ToList();
         }
 
-        public async Task<Guid> AddBookingAsync(Guid userId, Guid zoneId, Guid packageId, string date, string startTime, string endTime)
+        public async Task<Guid> AddBookingAsync(Guid userId, Guid zoneId, Guid packageId, DateOnly date, TimeOnly startTime, TimeOnly endTime)
         {
             try
             {
-                var culture = CultureInfo.CreateSpecificCulture("ru-RU");
-                var dateRu = DateOnly.Parse(date, culture);
-                var startTimeRu = TimeOnly.Parse(startTime, culture);
-                var endTimeRu = TimeOnly.Parse(endTime, culture);
-                
                 var zone = await _zoneRepository.GetZoneByIdAsync(zoneId);
 
                 try
@@ -173,14 +195,14 @@ namespace Portal.Services.BookingService
                 }
                 
                 var booking = (await _bookingRepository.GetBookingByUserAndZoneAsync(userId, zoneId))
-                    .FirstOrDefault(b => b.Date == dateRu);
+                    .FirstOrDefault(b => b.Date == date);
                 if (booking is not null)
                 {
                     _logger.LogError("User with id: {UserId} reversed for zone with id: {ZoneId}", userId, zoneId);
                     throw new BookingExistsException($"User with id: {userId} reversed for zone with id: {zoneId}");
                 }
 
-                if (!await IsFreeTimeAsync(dateRu, startTimeRu, endTimeRu))
+                if (!await IsFreeTimeAsync(date, startTime, endTime))
                 {
                     _logger.LogError("Zone full or partial reversed on {Date} from {StartTime} to {EndTime}", date, startTime, endTime);
                     throw new BookingReversedException(
@@ -189,7 +211,7 @@ namespace Portal.Services.BookingService
 
                 var newBooking = new Booking(Guid.NewGuid(), zoneId, userId, packageId,
                     zone.Limit, BookingStatus.TemporaryReserved,
-                    dateRu, startTimeRu, endTimeRu);
+                    date, startTime, endTime);
                 await _bookingRepository.InsertBookingAsync(newBooking);
 
                 return newBooking.Id;
@@ -211,8 +233,8 @@ namespace Portal.Services.BookingService
             var bookings =  (await _bookingRepository.GetAllBookingAsync())
                 .FindAll(b => b.Date == date);
             
-            return bookings.Count != 0 
-                   && bookings.All(b => (b.StartTime < startTime && b.EndTime <= startTime) 
+            return bookings.Count == 0 
+                   || bookings.All(b => (b.StartTime < startTime && b.EndTime <= startTime) 
                                         || (b.StartTime >= endTime && b.EndTime > startTime));
         }
         

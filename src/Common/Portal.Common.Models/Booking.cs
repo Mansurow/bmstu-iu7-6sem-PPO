@@ -66,6 +66,12 @@ public class Booking
         EndTime = endTime;
     }
 
+    public bool IsActualStatus()
+    {
+        return Status != BookingStatus.NoActual 
+               && Status != BookingStatus.Cancelled;
+    }
+    
     /// <summary>
     /// Изменить статус 
     /// </summary>

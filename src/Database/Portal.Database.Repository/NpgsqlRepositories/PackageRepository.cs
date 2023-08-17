@@ -19,22 +19,45 @@ public class PackageRepository: BaseRepository, IPackageRepository
     public Task<List<Package>> GetAllPackagesAsync()
     {
         return _context.Packages
-            .Select(p => PackageConverter.ConvertDbModelToAppModel(p)!)
+            .Include(p => p.Zones)
+            .Include(p => p.Dishes)
+            .AsNoTracking()
+            .Select(p => PackageConverter.ConvertDbModelToAppModel(p))
             .ToListAsync();
     }
 
     public async Task<Package> GetPackageByIdAsync(Guid packageId)
     {
-        var package = await _context.Packages.FirstAsync(p => p.Id == packageId);
+        var package = await _context.Packages
+            .Include(p => p.Zones)
+            .Include(p => p.Dishes)
+            .AsNoTracking()
+            .FirstAsync(p => p.Id == packageId);
 
         return PackageConverter.ConvertDbModelToAppModel(package);
     }
 
     public async Task InsertPackageAsync(Package package)
     {
-        var packageDb = PackageConverter.ConvertAppModelToDbModel(package);
+        var packageDb = new PackageDbModel(
+                package.Id,
+                package.Name,
+                package.Type,
+                package.Price,
+                package.RentalTime,
+                package.Description
+            );
         
         await _context.Packages.AddAsync(packageDb);
+        
+        /*var dishes = package.Dishes.Select(MenuConverter.ConvertAppModelToDbModel).ToList();
+        packageDb.Dishes = dishes;*/
+
+        foreach (var dish in package.Dishes)
+        {
+            packageDb.Dishes.Add(_context.Menu.First(d => d.Id == dish.Id));
+        }
+        
         await _context.SaveChangesAsync();
     }
 

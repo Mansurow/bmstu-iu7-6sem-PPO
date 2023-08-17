@@ -2,7 +2,6 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Portal.Common.Converter;
-using Portal.Common.Models;
 using Portal.Common.Models.Dto;
 using Portal.Common.Models.Enums;
 using Portal.Services.UserService;
@@ -10,6 +9,9 @@ using Portal.Services.UserService.Exceptions;
 
 namespace Portal.Controllers;
 
+/// <summary>
+/// Контроллер пользователей
+/// </summary>
 [ApiController]
 [Route("api/v1/users/")]
 public class UserController : ControllerBase
@@ -62,11 +64,13 @@ public class UserController : ControllerBase
     /// <response code="200">OK. Возвращается список всех пользователей.</response>
     /// <response code="400">Bad request. Некорректные данные</response>
     /// <response code="401">Unauthorized. Пользователь неавторизован.</response>
-    /// <response code="403">Forbidden. У пользователя недостаточно прав доступа.</response>
-    /// <response code="404">NotFound. Пользователь не найден.</response>
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
-    [HttpGet("{userId}")]
+    [HttpGet("{userId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Authorize]
     public async Task<IActionResult> GetUser([FromRoute] Guid userId)
     {
