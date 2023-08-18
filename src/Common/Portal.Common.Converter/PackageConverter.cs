@@ -38,7 +38,8 @@ public static class PackageConverter
             price: package.Price,
             rentalTime: package.RentalTime,
             description: package.Description,
-            dishes: package.Dishes.Select(MenuConverter.ConvertDbModelToAppModel).ToList());
+            dishes: package.Dishes.Select(MenuConverter.ConvertDbModelToAppModel).ToList(),
+            zones: new List<Zone>());
     }
     
     /// <summary>

@@ -40,7 +40,8 @@ namespace Portal.Common.Converter
                 limit: zone.Limit,
                 price: zone.Price,
                 rating: zone.Rating,
-                inventories: zone.Inventories.Select(InventoryConverter.ConvertDbModelToAppModel).ToList());
+                inventories: zone.Inventories.Select(InventoryConverter.ConvertDbModelToAppModel).ToList(),
+                packages: new List<Package>());
         }
         
         public static ZoneDbModel ConvertAppModelToDbModel(Zone zone)

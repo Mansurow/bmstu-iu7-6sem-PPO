@@ -16,6 +16,12 @@ public class MenuService: IMenuService
     private readonly IMenuRepository _menuRepository;
     private readonly ILogger<MenuService> _logger;
 
+    /// <summary>
+    /// Конструктор сервиса меню блюд
+    /// </summary>
+    /// <param name="menuRepository">Репозиторий меню блюд</param>
+    /// <param name="logger">Инструмент логгирования</param>
+    /// <exception cref="ArgumentNullException">Параметры неверно переданы</exception>
     public MenuService(IMenuRepository menuRepository, ILogger<MenuService> logger)
     {
         _menuRepository = menuRepository ?? throw new ArgumentNullException(nameof(menuRepository));
@@ -47,7 +53,7 @@ public class MenuService: IMenuService
 
         try
         {
-            var dish = await _menuRepository.GetDishByIdAsync(updateDish.Id);
+            await _menuRepository.GetDishByIdAsync(updateDish.Id);
             await _menuRepository.UpdateDishAsync(updateDish);
         }
         catch (InvalidOperationException e)
@@ -74,6 +80,7 @@ public class MenuService: IMenuService
         }
         catch (DbUpdateException e)
         {
+            _logger.LogError(e, "Error while creating dish");
             throw new DishCreateException($"Dish was not created");
         }
     }
@@ -91,7 +98,8 @@ public class MenuService: IMenuService
         }
         catch (DbUpdateException e)
         {
-            throw new DishDeleteException("The dish has not been removed");
+            _logger.LogError(e, "Error while removing dish: {DishId}", dishId);
+            throw new DishRemoveException("The dish has not been removed");
         }
     }
 }

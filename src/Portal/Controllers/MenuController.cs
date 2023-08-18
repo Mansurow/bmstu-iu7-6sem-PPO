@@ -135,7 +135,6 @@ public class MenuController: ControllerBase
         }
     }
     
-    // TODO: пофиксить обновление блюда
     /// <summary>
     /// Обновить данные о блюде
     /// </summary>

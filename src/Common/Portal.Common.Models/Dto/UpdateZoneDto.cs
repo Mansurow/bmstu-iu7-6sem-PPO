@@ -1,21 +1,28 @@
 namespace Portal.Common.Models.Dto;
 
 /// <summary>
-/// Модель Dto для создания зоны
+/// Модель для обновления зоны
 /// </summary>
-public class CreateZoneDto
+public class UpdateZoneDto
 {
-    public CreateZoneDto(string name, string address, int limit, double size, double price, List<CreateInventoryDto> inventories, List<Guid> packages)
+    public UpdateZoneDto(Guid id, string name, string address, int limit, double size, double price, ICollection<Package> packages, ICollection<Inventory> inventories)
     {
+        Id = id;
         Name = name;
         Address = address;
         Limit = limit;
         Size = size;
         Price = price;
-        Inventories = inventories;
         Packages = packages;
+        Inventories = inventories;
     }
 
+    /// <summary>
+    /// Идентификатор зоны 
+    /// </summary>
+    /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
+    public Guid Id { get; set; }
+    
     /// <summary>
     /// Название зоны
     /// </summary>
@@ -49,10 +56,10 @@ public class CreateZoneDto
     /// <summary>
     /// Инвентарь зоны
     /// </summary>
-    public List<CreateInventoryDto> Inventories { get; set; }
+    public ICollection<Inventory> Inventories { get; set; }
     
     /// <summary>
     /// Пакеты зоны
     /// </summary>
-    public List<Guid> Packages { get; set; }
+    public ICollection<Package> Packages { get; set; }
 }

@@ -2,7 +2,7 @@ using Portal.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
-using Portal.Configurations;
+using Portal.Configuration;
 using Portal.Database.Repositories.NpgsqlRepositories;
 using Portal.Services.OauthService;
 using Portal.Services.UserService;

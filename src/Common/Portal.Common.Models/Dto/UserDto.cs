@@ -5,6 +5,9 @@ using Portal.Common.Models.Enums;
 
 namespace Portal.Common.Models.Dto;
 
+/// <summary>
+/// Модель для получения данных о пользователе
+/// </summary>
 public class UserDto
 {
     public UserDto(Guid userId, string lastName, string firstName, string middleName, DateTime birthday, Gender gender, string email, string phone, Role role)
@@ -32,7 +35,7 @@ public class UserDto
     public string LastName { get; set; }
     
     /// <summary>
-    /// Имя пользовтеля
+    /// Имя пользователя
     /// </summary>
     /// <example>Иван</example>
     public string FirstName { get; set; }
@@ -56,7 +59,7 @@ public class UserDto
     public Gender Gender { get; set; }
     
     /// <summary>
-    /// Email пользовтеля
+    /// Email пользователя
     /// </summary>
     /// <example>user.portal@gmail.com</example>
     [EmailAddress]

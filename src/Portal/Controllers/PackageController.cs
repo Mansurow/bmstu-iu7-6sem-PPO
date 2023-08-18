@@ -127,13 +127,56 @@ public class PackageController: ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            _logger.LogError(e, "Internal server error");
+            return StatusCode(StatusCodes.Status500InternalServerError, new
+            {
+                message = e.Message
+            });
         }
     }
-    
-    // TODO: добавить обновление пакета 
-    
+
+    /// <summary>
+    /// Обновить пакет
+    /// </summary>
+    /// <param name="package">Данные о пакете</param>
+    /// <response code="204">NotContent. Пакет успешно обновлен.</response>
+    /// <response code="400">Bad request. Некорректные данные</response>
+    /// <response code="401">Unauthorized. Пользователь неавторизован.</response>
+    /// <response code="403">Forbidden. У пользователя недостаточно прав доступа.</response>
+    /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
+    [HttpPut]
+    [Authorize(Roles = nameof(Role.Administrator))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> PutPackage([FromBody] Package package)
+    {
+        try
+        {
+            await _packageService.UpdatePackageAsync(package);
+
+            return StatusCode(StatusCodes.Status204NoContent);
+        }
+        catch (PackageNotFoundException e)
+        {
+            _logger.LogError(e, "Package {PackageId} not found", package.Id);
+            return NotFound(new
+            {
+                message = e.Message
+            });
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Internal server error");
+            return StatusCode(StatusCodes.Status500InternalServerError, new
+            {
+                message = e.Message
+            });
+        }
+    }
+
     /// <summary>
     /// Удалить пакет
     /// </summary>

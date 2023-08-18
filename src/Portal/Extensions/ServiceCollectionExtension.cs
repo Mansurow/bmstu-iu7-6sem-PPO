@@ -90,7 +90,7 @@ public static class ServiceCollectionExtension
     {
         services.Configure<AuthorizationConfiguration>(config.GetSection("AuthorizationConfiguration"));
 
-        var authOptions = config.GetRequiredSection("AuthorizationConfiguration").Get<AuthorizationConfiguration>();
+        var authOptions = config.GetRequiredSection("AuthorizationConfiguration").Get<AuthorizationConfiguration>()!;
         
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>

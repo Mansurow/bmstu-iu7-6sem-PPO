@@ -63,9 +63,19 @@ public class PackageRepository: BaseRepository, IPackageRepository
 
     public async Task UpdatePackageAsync(Package package)
     {
-        var packageDb = await _context.Packages.FirstAsync(p => p.Id == package.Id);
+        var packageDb = await _context.Packages
+            .Include(p => p.Zones)    
+            .Include(p => p.Dishes)
+            .FirstAsync(p => p.Id == package.Id);
+
+        packageDb.Name = package.Name;
+        packageDb.Description = package.Description;
+        packageDb.Type = package.Type;
+        packageDb.RentalTime = package.RentalTime;
+        packageDb.Price = package.Price;
+        packageDb.Dishes = package.Dishes.Select(MenuConverter.ConvertAppModelToDbModel).ToList();
+        packageDb.Zones = package.Zones.Select(ZoneConverter.ConvertAppModelToDbModel).ToList();
         
-        _context.Packages.Update(packageDb);
         await _context.SaveChangesAsync();
     }
 

@@ -1,5 +1,8 @@
 namespace Portal.Common.Models.Dto;
 
+/// <summary>
+/// Модель для создания отзыва
+/// </summary>
 public class CreateFeedbackDto
 {
     public CreateFeedbackDto(Guid userId, Guid zoneId, DateTime date, double mark, string message)

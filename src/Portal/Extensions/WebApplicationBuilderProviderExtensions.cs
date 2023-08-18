@@ -26,8 +26,8 @@ public static class WebApplicationBuilderProviderExtensions
                 var timeFormat = systemConfig.GetValue<string>("Time");
                 
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
-                options.SerializerSettings.Converters.Add(new CustomDateOnlyConverter(dateFormat));
-                options.SerializerSettings.Converters.Add(new CustomTimeOnlyConverter(timeFormat));
+                options.SerializerSettings.Converters.Add(new CustomDateOnlyConverter(dateFormat!));
+                options.SerializerSettings.Converters.Add(new CustomTimeOnlyConverter(timeFormat!));
             });
         // order is vital, this *must* be called *after* AddNewtonsoftJson()
         serviceCollection.AddSwaggerGenNewtonsoftSupport();

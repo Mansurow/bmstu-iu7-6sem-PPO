@@ -2,6 +2,9 @@ using Portal.Common.Models.Enums;
 
 namespace Portal.Common.Models.Dto;
 
+/// <summary>
+/// Модель для создания пакета
+/// </summary>
 public class CreatePackageDto
 {
     public CreatePackageDto(string name, PackageType type, double price, int rentalTime, string description, List<Guid> dishes)

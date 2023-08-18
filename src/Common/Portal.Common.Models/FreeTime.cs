@@ -8,11 +8,13 @@ public class FreeTime
     /// <summary>
     /// Начало времени
     /// </summary>
+    /// <example>12:00:00</example>
     public TimeOnly StartTime;
     
     /// <summary>
     /// Конец времени
     /// </summary>
+    /// <example>18:00:00</example>
     public TimeOnly EndTime;
 
     public FreeTime(TimeOnly startTime, TimeOnly endTime)

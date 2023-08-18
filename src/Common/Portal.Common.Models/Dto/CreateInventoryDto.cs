@@ -1,9 +1,8 @@
-using System.Text.Json.Serialization;
-using Newtonsoft.Json;
-
 namespace Portal.Common.Models.Dto;
 
-[JsonObject]
+/// <summary>
+/// Модель для создания инвентаря
+/// </summary>
 public class CreateInventoryDto
 {
     public CreateInventoryDto(string name, string description, string yearOfProduction)
@@ -16,16 +15,18 @@ public class CreateInventoryDto
     /// <summary>
     /// Название инветаря
     /// </summary>
+    /// <example>Телевизор</example>
     public string Name { get; set; }
     
     /// <summary>
     /// Описание инветаря
     /// </summary>
+    /// <example>Новый инвентарь</example>
     public string Description { get; set; }
     
     /// <summary>
     /// Год выпуска или производства
     /// </summary>
-    /// <example>2023-12-01</example>
+    /// <example>01.12.2023</example>
     public string YearOfProduction { get; set; }
 }

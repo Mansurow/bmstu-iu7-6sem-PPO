@@ -16,7 +16,7 @@ public class CustomTimeOnlyConverter: JsonConverter<TimeOnly>
         TimeOnly existingValue,
         bool hasExistingValue,
         JsonSerializer serializer) =>
-        TimeOnly.ParseExact((string)reader.Value, _format, CultureInfo.InvariantCulture);
+        TimeOnly.ParseExact((string)reader.Value!, _format, CultureInfo.InvariantCulture);
 
     public override void WriteJson(JsonWriter writer, TimeOnly value, JsonSerializer serializer) => 
         writer.WriteValue(value.ToString(_format, CultureInfo.InvariantCulture));

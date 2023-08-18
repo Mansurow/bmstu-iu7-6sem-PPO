@@ -14,7 +14,7 @@ public class BookingRepository: BaseRepository, IBookingRepository
 {
     private readonly PortalDbContext _context;
 
-    public BookingRepository(PortalDbContext context): base()
+    public BookingRepository(PortalDbContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }

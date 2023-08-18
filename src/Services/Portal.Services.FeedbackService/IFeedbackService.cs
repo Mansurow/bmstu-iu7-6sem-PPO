@@ -1,4 +1,6 @@
 ﻿using Portal.Common.Models;
+using Portal.Services.FeedbackService.Exceptions;
+using Portal.Services.ZoneService.Exceptions;
 
 namespace Portal.Services.FeedbackService
 {
@@ -12,6 +14,7 @@ namespace Portal.Services.FeedbackService
         /// </summary>
         /// <param name="zoneId">Идентификатор зоны</param>
         /// <returns>Список отзывов зоны</returns>
+        /// <exception cref="ZoneNotFoundException">Зона не найдена</exception>
         Task<List<Feedback>> GetAllFeedbackByZoneAsync(Guid zoneId);
         
         /// <summary>
@@ -34,21 +37,22 @@ namespace Portal.Services.FeedbackService
         /// Обновить отзыв
         /// </summary>
         /// <param name="feedback">Данные отзыв для обновления</param>
-        /// <returns></returns>
+        /// <exception cref="FeedbackUpdateException">При обновлении отзыва</exception>
         Task UpdateFeedbackAsync(Feedback feedback);
         
         /// <summary>
         /// Обновить рейтинг зоны
         /// </summary>
         /// <param name="zoneId">Идентификатор зоны</param>
-        /// <returns></returns>
+        /// <exception cref="ZoneUpdateException">При обновлении рейтинга зоны</exception>
         Task UpdateZoneRatingAsync(Guid zoneId);
         
         /// <summary>
         /// Удалить отзыв
         /// </summary>
         /// <param name="feedbackId">Идентификатор зоны</param>
-        /// <returns></returns>
+        /// <exception cref="FeedbackNotFoundException">Отзыв не найден</exception>
+        /// <exception cref="FeedbackRemoveException">При удалении рейтинга зоны</exception>
         Task RemoveFeedbackAsync(Guid feedbackId);
     }
 }

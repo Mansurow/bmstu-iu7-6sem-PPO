@@ -5,8 +5,16 @@ using Portal.Database.Repositories.NpgsqlRepositories;
 
 namespace Portal.Database.Repositories;
 
+/// <summary>
+/// Провайдер для инверсии зависимостей репозиториев  
+/// </summary>
 public static class RepositoriesProviderExtension
 {
+    /// <summary>
+    /// Инверсия зависимостей репозиториев
+    /// </summary>
+    /// <param name="services">Коллекция сервисов</param>
+    /// <param name="configuration">Конфигурация приложения</param>
     public static void AddPortalNpgsqlRepositories(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IUserRepository, UserRepository>();

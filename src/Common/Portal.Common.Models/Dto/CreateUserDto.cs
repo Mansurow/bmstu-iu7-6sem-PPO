@@ -15,7 +15,7 @@ public class CreateUserDto
     public string LastName { get; set; }
     
     /// <summary>
-    /// Имя пользовтеля
+    /// Имя пользователя
     /// </summary>
     /// <example>Иван</example>
     public string FirstName { get; set; }
@@ -39,7 +39,7 @@ public class CreateUserDto
     public Gender Gender { get; set; }
     
     /// <summary>
-    /// Email пользовтеля
+    /// Email пользователя
     /// </summary>
     /// <example>user.portal@gmail.com</example>
     [EmailAddress]

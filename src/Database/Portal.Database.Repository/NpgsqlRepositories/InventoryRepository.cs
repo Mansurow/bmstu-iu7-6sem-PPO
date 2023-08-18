@@ -2,7 +2,6 @@
 using Portal.Common.Converter;
 using Portal.Common.Models;
 using Portal.Database.Context;
-using Portal.Database.Models;
 using Portal.Database.Repositories.Interfaces;
 
 namespace Portal.Database.Repositories.NpgsqlRepositories;
@@ -15,8 +14,7 @@ public class InventoryRepository: BaseRepository, IInventoryRepository
     {
         _context = context;
     }
-
-
+    
     public Task<List<Inventory>> GetAllInventoryAsync()
     {
         return _context.Inventories
@@ -41,10 +39,13 @@ public class InventoryRepository: BaseRepository, IInventoryRepository
 
     public async Task UpdateInventoryAsync(Inventory inventory)
     {
-        // TODO: пофиксить
         var inventoryDb = await _context.Inventories.FirstAsync(inv => inv.Id == inventory.Id);
+
+        inventoryDb.Name = inventory.Name;
+        inventoryDb.Description = inventory.Description;
+        inventoryDb.YearOfProduction = inventory.YearOfProduction;
+        // TODo: поле отвечающее за то что вещь списана
         
-        _context.Inventories.Update(inventoryDb);
         await _context.SaveChangesAsync();
     }
 

@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Logging;
 using Portal.Common.Models;
 using Portal.Common.Models.Dto;
 using Portal.Database.Repositories.Interfaces;
-using Portal.Services.InventoryServices.Exceptions;
 using Portal.Services.PackageService.Exceptions;
 using Portal.Services.ZoneService.Exceptions;
 
@@ -46,7 +46,7 @@ public class ZoneService: IZoneService
         catch (InvalidOperationException e)
         {
             _logger.LogError(e, "Zone with id: {ZoneId} not found", zoneId);
-            throw new ZoneNotFoundException($"Zone with id: {zoneId} not found");;
+            throw new ZoneNotFoundException($"Zone with id: {zoneId} not found");
         }
     }
     
@@ -64,7 +64,9 @@ public class ZoneService: IZoneService
             catch (InvalidOperationException)
             {
                 _logger.LogInformation("This name \"{ZoneName}\" of zone not found.", name);
-                var newZone = new Zone(Guid.NewGuid(), name, address, size, limit, price, 0.0);
+                var newZone = new Zone(Guid.NewGuid(), name, address, size, limit, price, 0.0,
+                    new List<Inventory>(),
+                    new List<Package>());
                 await _zoneRepository.InsertZoneAsync(newZone);
 
                 return newZone.Id;
@@ -90,7 +92,6 @@ public class ZoneService: IZoneService
             }
             catch (InvalidOperationException)
             {
-                // TODO: Если не находит пакет кидаеть ошибку
                 _logger.LogInformation("This name \"{ZoneName}\" of zone not found.", name);
                 var newZone = new Zone(Guid.NewGuid(), name, address, size, limit, price, 0.0, inventories, packages);
                 await _zoneRepository.InsertZoneAsync(newZone);
@@ -109,6 +110,21 @@ public class ZoneService: IZoneService
     {
         try
         {
+            // await _zoneRepository.GetZoneByNameAsync(updateZone.Zone);
+
+            foreach (var inv in updateZone.Inventories)
+            {
+                try
+                {
+                    await _inventoryRepository.GetInventoryByIdAsync(inv.Id);
+                }
+                catch (Exception)
+                {
+                    inv.Id = Guid.NewGuid();
+                    await _inventoryRepository.InsertInventoryAsync(inv);
+                }
+            }
+            
             await _zoneRepository.UpdateZoneAsync(updateZone);
         }
         catch (InvalidOperationException e)
@@ -256,7 +272,7 @@ public class ZoneService: IZoneService
         catch (DbUpdateException e)
         {
             _logger.LogError(e, "Error while removing zone: {ZoneId}", zoneId);
-            throw new ZoneDeleteException($"Zone was not updated: {zoneId}");
+            throw new ZoneRemoveException($"Zone was not updated: {zoneId}");
         }
     }
 }

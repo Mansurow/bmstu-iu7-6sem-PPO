@@ -100,9 +100,9 @@ public class ZoneController : ControllerBase
     /// <summary>
     /// Обновить зон
     /// </summary>
-    /// <param name="zone">Данные для обновления зоны</param>
+    /// <param name="zoneDto">Данные для обновления зоны</param>
     /// <response code="204">NoContent. Зоны успешно обновлена.</response>
-    /// <response code="400">Bad request. Некорректные данные</response>
+    /// <response code="400">Bad request. Некорректные данные.</response>
     /// <response code="401">Unauthorized. Пользователь неавторизован.</response>
     /// <response code="403">Forbidden. У пользователя недостаточно прав доступа.</response>
     /// <response code="404">NotFound. Зона не найдена.</response>
@@ -115,14 +115,33 @@ public class ZoneController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> PutZone([FromBody] Zone zone)
+    public async Task<IActionResult> PutZone([FromBody] UpdateZoneDto zoneDto)
     {
         try
         {
-            // TODO: пофиксить
-            await _zoneService.UpdateZoneAsync(zone);
+            if (zoneDto.Inventories.Any(inv => inv.ZoneId != zoneDto.Id))
+            {
+                _logger.LogError("One or more inventory.ZoneId is different from zoneId {ZoneId}", zoneDto.Id);
+                return BadRequest(new
+                {
+                    message = $"One or more inventory.ZoneId is different from zoneId {zoneDto.Id}"
+                });
+            }
+            
+            await _zoneService.UpdateZoneAsync(new Zone(
+                zoneDto.Id, zoneDto.Name, zoneDto.Address,
+                zoneDto.Size, zoneDto.Limit, zoneDto.Price,
+                0, zoneDto.Inventories, zoneDto.Packages));
 
             return StatusCode(StatusCodes.Status204NoContent);
+        }
+        catch (ZoneNotFoundException e)
+        {
+            _logger.LogError(e, "Zone {ZoneId} not found", zoneDto.Id);
+            return NotFound(new
+            {
+                message = e.Message
+            }); 
         }
         catch (Exception e)
         {

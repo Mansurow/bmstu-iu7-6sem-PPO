@@ -49,7 +49,7 @@ public class PackageService: IPackageService
     {
         try
         {
-            var package = new Package(Guid.NewGuid(), name, type, price, rentalTime, description);
+            var package = new Package(Guid.NewGuid(), name, type, price, rentalTime, description, new List<Zone>(), new List<Dish>());
 
             foreach (var dishId in dishes)
             {
@@ -84,6 +84,8 @@ public class PackageService: IPackageService
     {
         try
         {
+            // TODO: если блюд нет или зон нет - проверка - выкидывать ошибку
+            
             await _packageRepository.UpdatePackageAsync(package);
         }
         catch (InvalidOperationException e)
