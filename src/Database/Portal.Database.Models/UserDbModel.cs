@@ -32,7 +32,7 @@ public class UserDbModel
     /// Отчество пользователя
     /// </summary>
     [Column("middle_name", TypeName = "varchar(64)")]
-    public string MiddleName { get; set; }
+    public string? MiddleName { get; set; }
     
     /// <summary>
     /// Дата рождения
@@ -56,7 +56,7 @@ public class UserDbModel
     /// Номер телефона
     /// </summary>
     [Column("phone")]
-    public string Phone { get; set; }
+    public string? Phone { get; set; }
     
     /// <summary>
     /// Хеш-пароль 
@@ -70,8 +70,8 @@ public class UserDbModel
     [Column("role")]
     public Role Role { get; set; }
 
-    public UserDbModel(Guid id, string lastName, string firstName, string middleName, 
-        DateTime birthday, Gender gender, string email, string phone, string? passwordHash, 
+    public UserDbModel(Guid id, string lastName, string firstName, string? middleName, 
+        DateTime birthday, Gender gender, string email, string? phone, string? passwordHash, 
         Role role = Role.User)
     {
         Id = id;

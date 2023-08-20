@@ -74,7 +74,7 @@ public class PackageRepository: BaseRepository, IPackageRepository
         packageDb.RentalTime = package.RentalTime;
         packageDb.Price = package.Price;
         packageDb.Dishes = package.Dishes.Select(MenuConverter.ConvertAppModelToDbModel).ToList();
-        packageDb.Zones = package.Zones.Select(ZoneConverter.ConvertAppModelToDbModel).ToList();
+        // packageDb.Zones = package.Zones.Select(ZoneConverter.ConvertAppModelToDbModel).ToList();
         
         await _context.SaveChangesAsync();
     }

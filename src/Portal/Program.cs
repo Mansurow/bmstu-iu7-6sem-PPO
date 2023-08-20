@@ -26,7 +26,7 @@ public static class Program
             app.UseSwaggerUI();
             
             await app.MigrateDatabaseAsync();
-            // await app.AddPortalAdministrator();
+            await app.AddPortalAdministrator();
             
             app.UseHttpsRedirection();
 

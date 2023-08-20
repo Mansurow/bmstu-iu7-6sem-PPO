@@ -24,17 +24,20 @@ public static class WebApplicationProviderExtension
     public static async Task<WebApplication> AddPortalAdministrator(this WebApplication app)
     {
         var adminOptions = app.Configuration.GetSection("AdministratorConfiguration").Get<AdministratorConfiguration>();
-        var service = app.Services.GetRequiredService<UserService>();
 
+        using var serviceScope = app.Services.CreateScope();
+        var services = serviceScope.ServiceProvider;
+        var userService = services.GetRequiredService<IUserService>();
+            
         if (adminOptions is null)
         {
-            await service.CreateAdmin("admin@gmail.com", "admin");
+            await userService.CreateAdmin("admin","admin");
         }
         else
         {
-            await service.CreateAdmin(adminOptions.Login, adminOptions.Password);
+            await userService.CreateAdmin(adminOptions.Login, adminOptions.Password);
         }
-        
+
         return app;
     }
 }

@@ -424,11 +424,11 @@ public class FeedbackServiceUnitTests
     {
         return new List<Zone>
         {
-            new Zone(Guid.NewGuid(), "Zone1", "address1", 10, 6, 2500, 4),
-            new Zone(Guid.NewGuid(), "Zone2", "address2", 30, 6, 3500, 0.0),
-            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 3000, 0.0),
+            new Zone(Guid.NewGuid(), "Zone1", "address1", 10, 6, 2500, 4, new List<Inventory>(), new List<Package>()),
+            new Zone(Guid.NewGuid(), "Zone2", "address2", 30, 6, 3500, 0.0, new List<Inventory>(), new List<Package>()),
+            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 3000, 0.0, new List<Inventory>(), new List<Package>()),
             new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 3000, 0.0, 
-                CreateMockInventory(Guid.NewGuid()))
+                CreateMockInventory(Guid.NewGuid()), new List<Package>())
         };
     }
 

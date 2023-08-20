@@ -28,13 +28,13 @@ public enum DishType
     /// <summary>
     /// Холодные блюда
     /// </summary>
-    [EnumMember(Value = "Холодные блюда")] 
+    [EnumMember(Value = "Холодные закуски")] 
     ColdSnacks = 4,
     
     /// <summary>
     /// Горячые блюда
     /// </summary>
-    [EnumMember(Value = "Горячые блюда")] 
+    [EnumMember(Value = "Горячие закуски")] 
     HotSnacks = 5,
     
     /// <summary>
@@ -47,5 +47,11 @@ public enum DishType
     /// Десерты
     /// </summary>
     [EnumMember(Value = "Десерты")] 
-    Desserts = 7
+    Desserts = 7,
+    
+    /// <summary>
+    /// Десерты
+    /// </summary>
+    [EnumMember(Value = "Разное")] 
+    Others = 8
 }

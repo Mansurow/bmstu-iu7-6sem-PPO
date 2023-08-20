@@ -167,6 +167,10 @@ namespace Portal.Database.Context.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
+                    b.Property<bool>("IsWrittenOff")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_written_off");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(64)")
@@ -253,7 +257,6 @@ namespace Portal.Database.Context.Migrations
                         .HasColumnName("last_name");
 
                     b.Property<string>("MiddleName")
-                        .IsRequired()
                         .HasColumnType("varchar(64)")
                         .HasColumnName("middle_name");
 
@@ -262,7 +265,6 @@ namespace Portal.Database.Context.Migrations
                         .HasColumnName("password");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("phone");
 

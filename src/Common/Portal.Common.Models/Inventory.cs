@@ -35,12 +35,18 @@ public class Inventory
     /// <example>10.12.2023</example>
     public DateOnly YearOfProduction { get; set; }
 
-    public Inventory(Guid id, Guid zoneId, string name, string description, DateOnly yearOfProduction)
+    /// <summary>
+    /// Списали ли инвентарь
+    /// </summary>
+    public bool IsWrittenOff { get; set; }
+
+    public Inventory(Guid id, Guid zoneId, string name, string description, DateOnly yearOfProduction, bool isWrittenOff = false)
     {
         Id = id;
         ZoneId = zoneId;
         Name = name;
         Description = description;
         YearOfProduction = yearOfProduction;
+        IsWrittenOff = isWrittenOff;
     }
 }

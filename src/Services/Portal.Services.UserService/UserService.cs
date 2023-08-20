@@ -75,6 +75,7 @@ public class UserService : IUserService
 
             var user = new User(Guid.NewGuid(), login, "", "",
                 DateTime.UtcNow, Gender.Unknown, login);
+            user.ChangePermission(Role.Administrator);
             user.CreateHash(password);
             
             await _userRepository.InsertUserAsync(user);

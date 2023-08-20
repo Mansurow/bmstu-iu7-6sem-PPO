@@ -220,7 +220,7 @@ public class MenuServiceIntegrationTests: IDisposable
         var expectedCount = menu.Count;
 
         // Act
-        Task Action() => _menuService.UpdateDishAsync(updateDish!);
+        Task Action() => _menuService.UpdateDishAsync(updateDish);
 
         var actualMenu = await _menuService.GetAllDishesAsync();
         var actualDish = actualMenu.FirstOrDefault(d => d.Id == updateDish.Id);
@@ -279,6 +279,6 @@ public class MenuServiceIntegrationTests: IDisposable
     
     public void Dispose()
     {
-        _accessObject.DateBaseCleanup();
+        _accessObject.Dispose();
     }
 }

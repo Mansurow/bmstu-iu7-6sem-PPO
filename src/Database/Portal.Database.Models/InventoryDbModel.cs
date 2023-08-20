@@ -46,12 +46,19 @@ public class InventoryDbModel
     [Column("year_of_production")]
     public DateOnly YearOfProduction { get; set; }
 
-    public InventoryDbModel(Guid id, Guid zoneId, string name, string description, DateOnly yearOfProduction)
+    /// <summary>
+    /// Списали ли инвентарь
+    /// </summary>
+    [Column("is_written_off")]
+    public bool IsWrittenOff { get; set; }
+
+    public InventoryDbModel(Guid id, Guid zoneId, string name, string description, DateOnly yearOfProduction, bool isWrittenOff)
     {
         Id = id;
         ZoneId = zoneId;
         Name = name;
         Description = description;
         YearOfProduction = yearOfProduction;
+        IsWrittenOff = isWrittenOff;
     }
 }

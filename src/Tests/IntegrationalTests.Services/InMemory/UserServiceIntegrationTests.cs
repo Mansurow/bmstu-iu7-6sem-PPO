@@ -105,7 +105,7 @@ public class UserServiceIntegrationTests: IDisposable
 
         var expectedCount = users.Count;
         var expectedUser = users.First();
-        expectedUser.Role = Role.Administrator;
+        expectedUser.ChangePermission(Role.Administrator);
 
         // Act
         await _userService.ChangeUserPermissionsAsync(expectedUser.Id, Role.Administrator);
@@ -142,6 +142,6 @@ public class UserServiceIntegrationTests: IDisposable
     
     public void Dispose()
     {
-        _accessObject.DateBaseCleanup();
+        _accessObject.Dispose();
     }
 }

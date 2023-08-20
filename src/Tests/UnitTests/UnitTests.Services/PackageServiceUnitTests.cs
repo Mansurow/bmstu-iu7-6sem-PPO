@@ -16,11 +16,13 @@ public class PackageServiceUnitTests
 {
     private readonly IPackageService _packageService;
     private readonly Mock<IPackageRepository> _mockPackageRepository = new();
-
+    private readonly Mock<IMenuRepository> _mockMenuRepository = new();
+    
     public PackageServiceUnitTests()
     {
         _packageService = new PackageService(_mockPackageRepository.Object,
-            NullLogger<PackageService>.Instance);
+            NullLogger<PackageService>.Instance,
+            _mockMenuRepository.Object);
     }
 
     /// <summary>
@@ -89,6 +91,7 @@ public class PackageServiceUnitTests
     {
         // Arrange
         var packages = new List<Package>();
+        if (packages == null) throw new ArgumentNullException(nameof(packages));
         var expectedPackageId = Guid.NewGuid();
 
         _mockPackageRepository.Setup(s => s.GetPackageByIdAsync(It.IsAny<Guid>()))
@@ -110,14 +113,14 @@ public class PackageServiceUnitTests
         // Arrange
         var packages = CreateMockPackages();
         var expectedPackage = new Package(Guid.NewGuid(), "Пакет \"День рождение\"", PackageType.Holidays,  
-            9399, 10, "Отпразднуй свой день рождение");
+            9399, 10, "Отпразднуй свой день рождение", new List<Zone>(), new List<Dish>());
 
         _mockPackageRepository.Setup(s => s.InsertPackageAsync(It.IsAny<Package>()))
             .Callback((Package package) => packages.Add(package));
 
         // Act
         var actualPackageId = await _packageService.AddPackageAsync(expectedPackage.Name, expectedPackage.Type, 
-            expectedPackage.Price, expectedPackage.RentalTime, expectedPackage.Description);
+            expectedPackage.Price, expectedPackage.RentalTime, expectedPackage.Description, new List<Guid>());
         var actualPackage = packages.First(p => p.Id == actualPackageId);
             
         // Assert
@@ -140,14 +143,14 @@ public class PackageServiceUnitTests
         // Arrange
         var packages = new List<Package>();
         var expectedPackage = new Package(Guid.NewGuid(), "Пакет \"День рождение\"", PackageType.Holidays,  
-            9399, 10, "Отпразднуй свой день рождение");
+            9399, 10, "Отпразднуй свой день рождение", new List<Zone>(), new List<Dish>());
 
         _mockPackageRepository.Setup(s => s.InsertPackageAsync(It.IsAny<Package>()))
             .Callback((Package package) => packages.Add(package));
 
         // Act
         var actualPackageId = await _packageService.AddPackageAsync(expectedPackage.Name, expectedPackage.Type, 
-            expectedPackage.Price, expectedPackage.RentalTime, expectedPackage.Description);
+            expectedPackage.Price, expectedPackage.RentalTime, expectedPackage.Description, new List<Guid>());
         var actualPackage = packages.First(p => p.Id == actualPackageId);
             
         // Assert
@@ -171,7 +174,7 @@ public class PackageServiceUnitTests
         // Arrange
         var packages = CreateMockPackages();
         var expectedPackage = new Package(packages.First().Id, "Пакет \"День рождение\"", PackageType.Holidays,  
-            9399, 10, "Отпразднуй свой день рождение");
+            9399, 10, "Отпразднуй свой день рождение", new List<Zone>(), new List<Dish>());
 
         _mockPackageRepository.Setup(s => s.GetPackageByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid packageId) => packages.First(e => e.Id == packageId));
@@ -210,7 +213,7 @@ public class PackageServiceUnitTests
         // Arrange
         var packages = CreateMockPackages();
         var expectedPackage = new Package(Guid.NewGuid(), "Пакет \"День рождение\"", PackageType.Holidays,  
-            9399, 10, "Отпразднуй свой день рождение");
+            9399, 10, "Отпразднуй свой день рождение", new List<Zone>(), new List<Dish>());
 
         // _mockPackageRepository.Setup(s => s.GetPackageByIdAsync(It.IsAny<Guid>()))
         //     .ReturnsAsync((Guid packageId) => packages.FirstOrDefault(e => e.Id == packageId));
@@ -292,6 +295,7 @@ public class PackageServiceUnitTests
         var actualCount = packages.Count;
             
         // Assert
+        Assert.Equal(expectedCount, actualCount);
         await Assert.ThrowsAsync<PackageNotFoundException>(Action);
     }
     
@@ -304,28 +308,12 @@ public class PackageServiceUnitTests
         return new List<Package>()
         {
             new Package(Guid.NewGuid(), "Почасовая аренда", PackageType.Usual, 350, 2,
-                "Почасовая стоимость аренды зала для компании людей"),
+                "Почасовая стоимость аренды зала для компании людей", new List<Zone>(), new List<Dish>()),
             new Package(Guid.NewGuid(), "Пакет \"Для своих\"", PackageType.Simple, 999, 3,
-                "Почасовая стоимость аренды зала для компании людей")
+                "Почасовая стоимость аренды зала для компании людей", new List<Zone>(), new List<Dish>())
         };
     }
 
-    /// <summary>
-    /// Создание моковых данных о зонах
-    /// </summary>
-    /// <param name="packages">Пакеты</param>
-    /// <returns>Список зон</returns>
-    private List<Zone> CreateMockZones(List<Package> packages)
-    {
-        return new List<Zone>
-        {
-            new Zone(Guid.NewGuid(), "Zone1", "address1", 10, 10, 250, 0.0),
-            new Zone(Guid.NewGuid(), "Zone2", "address2", 30, 10, 350, 0.0),
-            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 300, 0.0),
-            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 300, 0.0)
-        };
-    }
-    
     // private List<User> CreateMockUsers()
     // {
     //     return new List<User>()

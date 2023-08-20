@@ -22,7 +22,7 @@ public class InventoryService: IInventoryService
     {
         return _inventoryRepository.GetAllInventoryAsync();
     }
-
+    
     public async Task<Inventory> GetInventoryByIdAsync(Guid inventoryId)
     {
         try

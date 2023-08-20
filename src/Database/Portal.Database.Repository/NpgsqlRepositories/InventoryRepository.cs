@@ -44,7 +44,7 @@ public class InventoryRepository: BaseRepository, IInventoryRepository
         inventoryDb.Name = inventory.Name;
         inventoryDb.Description = inventory.Description;
         inventoryDb.YearOfProduction = inventory.YearOfProduction;
-        // TODo: поле отвечающее за то что вещь списана
+        inventoryDb.IsWrittenOff = inventory.IsWrittenOff;
         
         await _context.SaveChangesAsync();
     }

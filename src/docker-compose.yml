@@ -35,7 +35,7 @@ services:
   backend: # rest api
     build: .
     container_name: portal-backend
-    image: 'portal/backend:lastest'
+    image: portal-backend:latest
     restart: always
     ports:
       - 443:443

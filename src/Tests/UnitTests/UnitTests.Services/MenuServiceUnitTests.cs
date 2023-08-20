@@ -78,7 +78,7 @@ public class MenuServiceUnitTests
         var dishId = Guid.NewGuid();
 
         _mockMenuRepository.Setup(s => s.GetDishByIdAsync(dishId))
-            .ThrowsAsync(new Exception());
+            .ThrowsAsync(new InvalidOperationException());
 
         // Act
         async Task<Dish> Action() => await _menuService.GetDishByIdAsync(dishId);
@@ -245,16 +245,9 @@ public class MenuServiceUnitTests
         var menu = CreateMockMenu();
         var dishId = Guid.NewGuid();
 
-        _mockMenuRepository.Setup(s => s.GetDishByIdAsync(It.IsAny<Guid>()))
-            .ThrowsAsync(new Exception());
-
         _mockMenuRepository.Setup(s => s.DeleteDishAsync(It.IsAny<Guid>()))
-           .Callback((Guid id) =>
-           {
-               var dish = menu.Find(m => m.Id == id);
-               menu.Remove(dish!);
-           });
-
+            .ThrowsAsync(new InvalidOperationException());
+        
         // Act
         async Task Action() => await _menuService.RemoveDishAsync(dishId);
 
@@ -269,15 +262,8 @@ public class MenuServiceUnitTests
         var menu = CreateEmptyMockMenu();
         var dishId = Guid.NewGuid();
 
-        _mockMenuRepository.Setup(s => s.GetDishByIdAsync(It.IsAny<Guid>()))
-            .ThrowsAsync(new Exception());;
-
         _mockMenuRepository.Setup(s => s.DeleteDishAsync(It.IsAny<Guid>()))
-           .Callback((Guid id) =>
-           {
-               var dish = menu.Find(m => m.Id == id);
-               menu.Remove(dish!);
-           });
+            .ThrowsAsync(new InvalidOperationException());
 
         // Act
         async Task Action() => await _menuService.RemoveDishAsync(dishId);

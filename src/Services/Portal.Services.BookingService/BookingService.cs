@@ -164,7 +164,10 @@ namespace Portal.Services.BookingService
                 }
                 else if (i > bookings.Count - 1)
                 {
-                    addFreeTime = new FreeTime(bookings[i - 1].EndTime, endTimeWork);
+                    if (freeTimes.Last().EndTime != endTimeWork)
+                        addFreeTime = new FreeTime(bookings[i - 1].EndTime, endTimeWork);
+                    else
+                        continue;
                 }
                 else
                 {
@@ -232,6 +235,15 @@ namespace Portal.Services.BookingService
         {
             var bookings =  (await _bookingRepository.GetAllBookingAsync())
                 .FindAll(b => b.Date == date);
+
+            var startTimeWork = TimeOnly.Parse(_config.StartTimeWorking);
+            var endTimeWork = TimeOnly.Parse(_config.EndTimeWorking);
+            
+            if (date < DateOnly.FromDateTime(DateTime.UtcNow) 
+                || endTime > endTimeWork
+                || startTime < startTimeWork)
+                return false;
+            
             
             return bookings.Count == 0 
                    || bookings.All(b => (b.StartTime < startTime && b.EndTime <= startTime) 

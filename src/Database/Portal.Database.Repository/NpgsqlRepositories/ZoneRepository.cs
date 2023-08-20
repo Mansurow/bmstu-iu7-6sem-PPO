@@ -2,6 +2,7 @@
 using Portal.Common.Converter;
 using Portal.Common.Models;
 using Portal.Database.Context;
+using Portal.Database.Models;
 using Portal.Database.Repositories.Interfaces;
 
 namespace Portal.Database.Repositories.NpgsqlRepositories;
@@ -66,9 +67,18 @@ public class ZoneRepository: BaseRepository, IZoneRepository
         zoneDb.Price = zone.Price;
         zoneDb.Size = zone.Size;
         zoneDb.Inventories = zone.Inventories.Select(InventoryConverter.ConvertAppModelToDbModel).ToList();
-        zoneDb.Packages = zone.Packages.Select(PackageConverter.ConvertAppModelToDbModel).ToList();
+        // zoneDb.Packages = zone.Packages.Select(PackageConverter.ConvertAppModelToDbModel).ToList();
 
-        _context.Zones.Update(zoneDb);
+        var packages = new List<PackageDbModel>();
+        foreach (var package in zone.Packages)
+        {
+            var packageDb = await _context.Packages.FirstAsync(p => p.Id == package.Id);
+            packages.Add(packageDb);
+        }
+
+        zoneDb.Packages = packages;
+        
+        // _context.Zones.Update(zoneDb);
         await _context.SaveChangesAsync();
     }
 

@@ -83,7 +83,7 @@ public class InventoryController: ControllerBase
         try
         {
             var inventory = await _inventoryService.GetInventoryByIdAsync(inventoryId);
-            // inventory.IsActual = false; // TODO: добавить поле
+            inventory.IsWrittenOff = true;
             await _inventoryService.UpdateInventoryAsync(inventory);
 
             return StatusCode(StatusCodes.Status204NoContent);

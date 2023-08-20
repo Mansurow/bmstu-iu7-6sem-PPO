@@ -5,12 +5,6 @@ namespace Portal.Services.BookingService.Configuration;
 /// </summary>
 public class BookingServiceConfiguration
 {
-    public BookingServiceConfiguration(string startTimeWorking, string endTimeWorking)
-    {
-        StartTimeWorking = startTimeWorking;
-        EndTimeWorking = endTimeWorking;
-    }
-
     /// <summary>
     /// Время начало рабочего дня
     /// </summary>

@@ -234,7 +234,7 @@ public class ZoneServiceUnitTests
 
         var beforeUpdateZone = zones.First();
         var updateZone = new Zone(beforeUpdateZone.Id, "update zone", "address", 
-            10.0, 15, 350.99, 0.0);
+            10.0, 15, 350.99, 0.0, new List<Inventory>(), new List<Package>());
         
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid id) => zones.First(z => z.Id == id));
@@ -324,7 +324,7 @@ public class ZoneServiceUnitTests
         var expectedCount = zones.Count;
         
         var updateZone = new Zone(Guid.NewGuid(), "update zone", "address", 
-            10.0, 15, 350.99, 0.0);
+            10.0, 15, 350.99, 0.0, new List<Inventory>(), new List<Package>());
         
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid id) => zones.First(z => z.Id == id));
@@ -726,9 +726,9 @@ public class ZoneServiceUnitTests
         return new List<Package>()
         {
             new Package(Guid.NewGuid(), "Почасовая аренда", PackageType.Usual, 350, 2,
-                "Почасовая стоимость аренды зала для компании людей"),
+                "Почасовая стоимость аренды зала для компании людей", new List<Zone>(), new List<Dish>()),
             new Package(Guid.NewGuid(), "Пакет \"Для своих\"", PackageType.Simple, 999, 3,
-                "Почасовая стоимость аренды зала для компании людей")
+                "Почасовая стоимость аренды зала для компании людей", new List<Zone>(), new List<Dish>())
         };
     }
     
@@ -758,10 +758,10 @@ public class ZoneServiceUnitTests
     {
         return new List<Zone>
         {
-            new Zone(Guid.NewGuid(), "Zone1", "address1", 10, 6, 2500, 4),
-            new Zone(Guid.NewGuid(), "Zone2", "address2", 30, 6, 3500, 0.0),
-            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 3000, 0.0),
-            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 3000, 0.0)
+            new Zone(Guid.NewGuid(), "Zone1", "address1", 10, 6, 2500, 4, new List<Inventory>(), new List<Package>()),
+            new Zone(Guid.NewGuid(), "Zone2", "address2", 30, 6, 3500, 0.0, new List<Inventory>(), new List<Package>()),
+            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 3000, 0.0, new List<Inventory>(), new List<Package>()),
+            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 3000, 0.0, new List<Inventory>(), new List<Package>())
         };
     }
 }

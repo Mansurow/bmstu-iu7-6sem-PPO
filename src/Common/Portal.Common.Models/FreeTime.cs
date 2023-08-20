@@ -28,4 +28,16 @@ public class FreeTime
         StartTime = TimeOnly.Parse(startTime);
         EndTime = TimeOnly.Parse(endTime);
     }
+    
+    public override bool Equals(object? obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        
+        var other = (FreeTime) obj;
+        return StartTime == other.StartTime
+               && EndTime == other.EndTime;
+    }
 }
