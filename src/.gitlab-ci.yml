@@ -1,0 +1,23 @@
+stages:
+  - build
+  #- test
+  #- publish_dev
+  #- publish_latest
+  #- deploy_staging
+  #- deploy_prod
+
+###############################################################################################
+#                                       Build stage                                           #
+###############################################################################################
+
+build-backend:
+  image: mcr.microsoft.com/dotnet/sdk:6.0
+  stage: build
+  script: 
+    - dotnet publish src/Portal/Portal.csproj -c Release
+    - cp -r src/Portal/bin/Release/net6.0/publish g-artefacts_dir/
+  artifacts:
+    expire_in: 30 mins
+    when: on_success
+    paths: 
+    - g-artefacts_dir
