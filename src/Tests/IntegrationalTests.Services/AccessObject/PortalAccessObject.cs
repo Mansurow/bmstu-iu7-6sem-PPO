@@ -137,7 +137,7 @@ public class PortalAccessObject
                 DateOnly.FromDateTime(DateTime.Today),
                 new TimeOnly(8, 00), 
                 new TimeOnly(12, 00)),
-            new Booking(Guid.NewGuid(), zones[2].Id, users[1].Id, packages[1].Id, 
+            new Booking(Guid.NewGuid(), zones[3].Id, users[1].Id, packages[1].Id, 
                 10, BookingStatus.Reserved, 
                 DateOnly.FromDateTime(DateTime.UtcNow + new TimeSpan(1, 0, 0, 0)),
                 new TimeOnly(13, 00, 00), 

@@ -240,14 +240,15 @@ public class BookingServiceIntegrationalTests
         await _accessObject.InsertManyZonesAsync(zones);
         await _accessObject.InsertManyBookingsAsync(bookings);
 
-        var zone = zones.First();
+        var zone = zones.Last();
         var expectedListFreeTime = new List<FreeTime>()
         {
-            new FreeTime("12:00:00", "23:00:00")
+            new FreeTime("8:00:00", "13:00:00"),
+            new FreeTime("15:00:00", "23:00:00")
         };
         
         // Act
-        var actualListFreeTime = await _bookingService.GetFreeTimeAsync(zone.Id, DateOnly.FromDateTime(DateTime.Today));
+        var actualListFreeTime = await _bookingService.GetFreeTimeAsync(zone.Id, DateOnly.FromDateTime(DateTime.UtcNow + new TimeSpan(1, 0, 0, 0)));
 
         // Asserts
         Assert.Equal(expectedListFreeTime, actualListFreeTime);
@@ -328,7 +329,7 @@ public class BookingServiceIntegrationalTests
         await _accessObject.InsertManyZonesAsync(zones);
         await _accessObject.InsertManyBookingsAsync(bookings);
 
-        var zone = zones.Last();
+        var zone = zones.First();
         var user = users.Last();
         var package = packages.First();
         var expectedCount = bookings.Count;
@@ -336,7 +337,7 @@ public class BookingServiceIntegrationalTests
         // Act
         Task<Guid> Action() => _bookingService.AddBookingAsync(user.Id, zone.Id, package.Id, 
             DateOnly.FromDateTime(DateTime.Today), 
-            TimeOnly.Parse("12:00"), TimeOnly.Parse("14:00"));
+            TimeOnly.Parse("8:00"), TimeOnly.Parse("14:00"));
 
         var actualBookings = await _bookingService.GetAllBookingAsync();
         var actualCount = actualBookings.Count;
