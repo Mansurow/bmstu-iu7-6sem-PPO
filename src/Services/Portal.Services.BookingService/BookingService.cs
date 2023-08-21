@@ -137,7 +137,7 @@ namespace Portal.Services.BookingService
             var bookings = (await GetBookingByZoneAsync(zoneId))
                 .FindAll(e => e.Date == date && e.IsActualStatus())
                 .OrderBy(e => e.StartTime).ToList();
-            
+
             if (bookings.Count == 0)
             {
                 return new List<FreeTime>()
