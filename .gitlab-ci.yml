@@ -28,4 +28,12 @@ unit-tests:
     - build-backend
   stage: test
   script: 
-    - dotnet test src/Tests/UnitTests/UnitTests.Service/UnitTests.Service.csproj
+    - dotnet test src/Tests/UnitTests/UnitTests.Services/UnitTests.Services.csproj
+
+integration-tests:
+  image: mcr.microsoft.com/dotnet/sdk:6.0
+  needs:
+    - build-backend
+  stage: test
+  script: 
+    - dotnet test src/Tests/IntegrationalTests.Services/IntegrationalTests.Services.csproj
