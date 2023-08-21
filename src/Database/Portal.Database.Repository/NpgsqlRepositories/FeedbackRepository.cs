@@ -20,6 +20,7 @@ public class FeedbackRepository: BaseRepository, IFeedbackRepository
     {
         return _context.Feedbacks
             .Where(f => f.ZoneId == zoneId)
+            .OrderBy(f => f.Date)
             .Select(f => FeedbackConverter.ConvertDbModelToAppModel(f))
             .ToListAsync();
     }
@@ -28,6 +29,7 @@ public class FeedbackRepository: BaseRepository, IFeedbackRepository
     {
         return _context.Feedbacks
             .Where(f => f.UserId == userId)
+            .OrderBy(f => f.Date)
             .Select(f => FeedbackConverter.ConvertDbModelToAppModel(f))
             .ToListAsync();
     }
@@ -35,6 +37,7 @@ public class FeedbackRepository: BaseRepository, IFeedbackRepository
     public Task<List<Feedback>> GetAllFeedbackAsync()
     {
         return _context.Feedbacks
+            .OrderBy(f => f.Date)
             .Select(f => FeedbackConverter.ConvertDbModelToAppModel(f))
             .ToListAsync();
     }
@@ -56,9 +59,13 @@ public class FeedbackRepository: BaseRepository, IFeedbackRepository
 
     public async Task UpdateFeedbackAsync(Feedback feedback)
     {
-        var feedbackDb = FeedbackConverter.ConvertAppModelToDbModel(feedback);
+        var feedbackDb = await _context.Feedbacks.FirstAsync(f => f.Id == feedback.Id);
 
-        _context.Feedbacks.Update(feedbackDb);
+        feedbackDb.Mark = feedback.Mark;
+        feedbackDb.Message = feedback.Message;
+        // feedbackDb.ChangeTime = feedback.ChangeTime; // TODO: добавить время изменения
+        // Возможно флаг изменения IsChanged    
+        
         await _context.SaveChangesAsync();
     }
 

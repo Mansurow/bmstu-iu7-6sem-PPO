@@ -1,4 +1,5 @@
-﻿using Portal.Common.Models.Enums;
+﻿using Newtonsoft.Json;
+using Portal.Common.Models.Enums;
 
 namespace Portal.Common.Models
 {
@@ -46,7 +47,7 @@ namespace Portal.Common.Models
         /// Включенный список блюд в пакет 
         /// </summary>
         public ICollection<Dish> Dishes { get; set; }
-
+        
         public Package(Guid id, string name, PackageType type, double price, int rentalTime, string description, ICollection<Zone> zones, ICollection<Dish> dishes)
         {
             Id = id;
@@ -57,18 +58,6 @@ namespace Portal.Common.Models
             Description = description;
             Zones = zones;
             Dishes = dishes;
-        }
-
-        public Package(Guid id, string name, PackageType type, double price, int rentalTime, string description)
-        {
-            Id = id;
-            Name = name;
-            Type = type;
-            Price = price;
-            RentalTime = rentalTime;
-            Description = description;
-            Zones = new List<Zone>();
-            Dishes = new List<Dish>();
         }
     }
 }

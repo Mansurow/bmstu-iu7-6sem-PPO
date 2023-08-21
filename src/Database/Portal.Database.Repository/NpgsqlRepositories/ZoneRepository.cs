@@ -19,13 +19,20 @@ public class ZoneRepository: BaseRepository, IZoneRepository
     public Task<List<Zone>> GetAllZonesAsync()
     {
         return _context.Zones
+            .Include(z => z.Inventories)
+            .Include(z => z.Packages)
+            .AsNoTracking()
             .Select(z => ZoneConverter.ConvertDbModelToAppModel(z))
             .ToListAsync();
     }
 
     public async Task<Zone> GetZoneByIdAsync(Guid zoneId)
     {
-        var zone = await _context.Zones.FirstAsync(z => z.Id == zoneId);
+        var zone = await _context.Zones
+            .Include(z => z.Inventories)
+            .Include(z => z.Packages)
+            .AsNoTracking()
+            .FirstAsync(z => z.Id == zoneId);
 
         return ZoneConverter.ConvertDbModelToAppModel(zone);
     }
@@ -33,7 +40,7 @@ public class ZoneRepository: BaseRepository, IZoneRepository
     public async Task<Zone> GetZoneByNameAsync(string name)
     {
         var zone = await _context.Zones
-            .FirstAsync(z => String.Equals(z.Name, name, StringComparison.CurrentCultureIgnoreCase));
+            .FirstAsync(z => string.Equals(z.Name, name, StringComparison.CurrentCultureIgnoreCase));
 
         return ZoneConverter.ConvertDbModelToAppModel(zone);
     }
@@ -48,17 +55,30 @@ public class ZoneRepository: BaseRepository, IZoneRepository
 
     public async Task UpdateZoneAsync(Zone zone)
     {
-        var zoneDb =  await _context.Zones.FirstAsync(z => z.Id == zone.Id);
+        var zoneDb =  await _context.Zones
+            .Include(z => z.Inventories)
+            .Include(z => z.Packages)
+            .FirstAsync(z => z.Id == zone.Id);
 
         zoneDb.Name = zone.Name;
-        zoneDb.Rating = zone.Rating;
+        // zoneDb.Rating = zone.Rating;
         zoneDb.Limit = zone.Limit;
         zoneDb.Address = zone.Address;
         zoneDb.Price = zone.Price;
         zoneDb.Size = zone.Size;
-        // zoneDb.Inventories = zone.Inventories;
-        // zoneDb.Packages = zone.Packages;
+        zoneDb.Inventories = zone.Inventories.Select(InventoryConverter.ConvertAppModelToDbModel).ToList();
+        // zoneDb.Packages = zone.Packages.Select(PackageConverter.ConvertAppModelToDbModel).ToList();
+
+        var packages = new List<PackageDbModel>();
+        foreach (var package in zone.Packages)
+        {
+            var packageDb = await _context.Packages.FirstAsync(p => p.Id == package.Id);
+            packages.Add(packageDb);
+        }
+
+        zoneDb.Packages = packages;
         
+        // _context.Zones.Update(zoneDb);
         await _context.SaveChangesAsync();
     }
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Portal.Database.Context.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitCreatePortaDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,13 +49,13 @@ namespace Portal.Database.Context.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     last_name = table.Column<string>(type: "varchar(64)", nullable: false),
                     first_name = table.Column<string>(type: "varchar(64)", nullable: false),
-                    middle_name = table.Column<string>(type: "varchar(64)", nullable: false),
+                    middle_name = table.Column<string>(type: "varchar(64)", nullable: true),
                     birthday = table.Column<string>(type: "varchar(64)", nullable: false),
-                    gender = table.Column<string>(type: "varchar(64)", nullable: false),
-                    email = table.Column<string>(type: "varchar(64)", nullable: false),
-                    phone = table.Column<string>(type: "varchar(64)", nullable: false),
+                    gender = table.Column<int>(type: "integer", nullable: false),
+                    email = table.Column<string>(type: "text", nullable: false),
+                    phone = table.Column<string>(type: "text", nullable: true),
                     password = table.Column<string>(type: "varchar(128)", nullable: true),
-                    role = table.Column<string>(type: "varchar(64)", nullable: false)
+                    role = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -80,24 +80,24 @@ namespace Portal.Database.Context.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DishDbModelPackageDbModel",
+                name: "PackageDishes",
                 columns: table => new
                 {
-                    DishesId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PackagesId = table.Column<Guid>(type: "uuid", nullable: false)
+                    dish_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    package_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DishDbModelPackageDbModel", x => new { x.DishesId, x.PackagesId });
+                    table.PrimaryKey("PK_PackageDishes", x => new { x.dish_id, x.package_id });
                     table.ForeignKey(
-                        name: "FK_DishDbModelPackageDbModel_Menu_DishesId",
-                        column: x => x.DishesId,
+                        name: "FK_PackageDishes_Menu_dish_id",
+                        column: x => x.dish_id,
                         principalTable: "Menu",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DishDbModelPackageDbModel_Packages_PackagesId",
-                        column: x => x.PackagesId,
+                        name: "FK_PackageDishes_Packages_package_id",
+                        column: x => x.package_id,
                         principalTable: "Packages",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -176,7 +176,8 @@ namespace Portal.Database.Context.Migrations
                     zone_id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "varchar(64)", nullable: false),
                     description = table.Column<string>(type: "text", nullable: false),
-                    year_of_production = table.Column<DateOnly>(type: "date", nullable: false)
+                    year_of_production = table.Column<DateOnly>(type: "date", nullable: false),
+                    is_written_off = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -190,24 +191,24 @@ namespace Portal.Database.Context.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PackageDbModelZoneDbModel",
+                name: "ZonePackages",
                 columns: table => new
                 {
-                    PackagesId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ZonesId = table.Column<Guid>(type: "uuid", nullable: false)
+                    package_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    zone_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PackageDbModelZoneDbModel", x => new { x.PackagesId, x.ZonesId });
+                    table.PrimaryKey("PK_ZonePackages", x => new { x.package_id, x.zone_id });
                     table.ForeignKey(
-                        name: "FK_PackageDbModelZoneDbModel_Packages_PackagesId",
-                        column: x => x.PackagesId,
+                        name: "FK_ZonePackages_Packages_package_id",
+                        column: x => x.package_id,
                         principalTable: "Packages",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PackageDbModelZoneDbModel_Zones_ZonesId",
-                        column: x => x.ZonesId,
+                        name: "FK_ZonePackages_Zones_zone_id",
+                        column: x => x.zone_id,
                         principalTable: "Zones",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -229,11 +230,6 @@ namespace Portal.Database.Context.Migrations
                 column: "zone_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DishDbModelPackageDbModel_PackagesId",
-                table: "DishDbModelPackageDbModel",
-                column: "PackagesId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Feedbacks_user_id",
                 table: "Feedbacks",
                 column: "user_id");
@@ -249,9 +245,14 @@ namespace Portal.Database.Context.Migrations
                 column: "zone_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PackageDbModelZoneDbModel_ZonesId",
-                table: "PackageDbModelZoneDbModel",
-                column: "ZonesId");
+                name: "IX_PackageDishes_package_id",
+                table: "PackageDishes",
+                column: "package_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ZonePackages_zone_id",
+                table: "ZonePackages",
+                column: "zone_id");
         }
 
         /// <inheritdoc />
@@ -261,22 +262,22 @@ namespace Portal.Database.Context.Migrations
                 name: "Bookings");
 
             migrationBuilder.DropTable(
-                name: "DishDbModelPackageDbModel");
-
-            migrationBuilder.DropTable(
                 name: "Feedbacks");
 
             migrationBuilder.DropTable(
                 name: "Inventories");
 
             migrationBuilder.DropTable(
-                name: "PackageDbModelZoneDbModel");
+                name: "PackageDishes");
 
             migrationBuilder.DropTable(
-                name: "Menu");
+                name: "ZonePackages");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Menu");
 
             migrationBuilder.DropTable(
                 name: "Packages");

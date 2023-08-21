@@ -1,4 +1,6 @@
-﻿namespace Portal.Common.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Portal.Common.Models;
 
 /// <summary>
 /// Комната/Зал/Зона
@@ -57,19 +59,6 @@ public class Zone
     /// </summary>
     public ICollection<Package> Packages { get; set; }
     
-    public Zone(Guid id, string name, string address, double size, int limit, double price, double rating)
-    {
-        Id = id;
-        Name = name;
-        Address = address;
-        Size = size;
-        Limit = limit;
-        Price = price;
-        Rating = rating;
-        Inventories = new List<Inventory>();
-        Packages = new List<Package>();
-    }
-
     public Zone(Guid id, string name, string address, double size, int limit, double price, double rating, ICollection<Inventory> inventories, ICollection<Package> packages)
     {
         Id = id;
@@ -82,20 +71,7 @@ public class Zone
         Inventories = inventories;
         Packages = packages;
     }
-
-    public Zone(Guid id, string name, string address, int size, int limit, double price, double rating, ICollection<Inventory> inventories)
-    {
-        Id = id;
-        Name = name;
-        Size = size;
-        Address = address;
-        Limit = limit;
-        Price = price;
-        Rating = rating;
-        Inventories = inventories;
-        Packages = new List<Package>();
-    }
-
+    
     public void ChangeRating(double rating)
     {
         Rating = rating;

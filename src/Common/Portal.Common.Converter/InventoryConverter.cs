@@ -19,7 +19,8 @@ public static class InventoryConverter
             zoneId: inventory.ZoneId,    
             name: inventory.Name,
             description: inventory.Description,
-            yearOfProduction: inventory.YearOfProduction);
+            yearOfProduction: inventory.YearOfProduction,
+            isWrittenOff: inventory.IsWrittenOff);
     }
 
     /// <summary>
@@ -33,6 +34,7 @@ public static class InventoryConverter
         zoneId: inventory.ZoneId,
         name: inventory.Name,
         description: inventory.Description,
-        yearOfProduction: inventory.YearOfProduction);
+        yearOfProduction: inventory.YearOfProduction,
+        isWrittenOff: inventory.IsWrittenOff);
     }
 }

@@ -32,7 +32,7 @@ public class UserDbModel
     /// Отчество пользователя
     /// </summary>
     [Column("middle_name", TypeName = "varchar(64)")]
-    public string MiddleName { get; set; }
+    public string? MiddleName { get; set; }
     
     /// <summary>
     /// Дата рождения
@@ -43,20 +43,20 @@ public class UserDbModel
     /// <summary>
     /// Пол (гендер) пользователя - может быть не указан
     /// </summary>
-    [Column("gender", TypeName = "varchar(64)")]
+    [Column("gender")]
     public Gender Gender { get; set; }
     
     /// <summary>
     /// Электронная почта
     /// </summary>
-    [Column("email", TypeName = "varchar(64)")]
+    [Column("email")]
     public string Email { get; set; }
     
     /// <summary>
     /// Номер телефона
     /// </summary>
-    [Column("phone", TypeName = "varchar(64)")]
-    public string Phone { get; set; }
+    [Column("phone")]
+    public string? Phone { get; set; }
     
     /// <summary>
     /// Хеш-пароль 
@@ -67,11 +67,11 @@ public class UserDbModel
     /// <summary>
     /// Права доступа
     /// </summary>
-    [Column("role", TypeName = "varchar(64)")]
+    [Column("role")]
     public Role Role { get; set; }
 
-    public UserDbModel(Guid id, string lastName, string firstName, string middleName, 
-        DateTime birthday, Gender gender, string email, string phone, string? passwordHash, 
+    public UserDbModel(Guid id, string lastName, string firstName, string? middleName, 
+        DateTime birthday, Gender gender, string email, string? phone, string? passwordHash, 
         Role role = Role.User)
     {
         Id = id;

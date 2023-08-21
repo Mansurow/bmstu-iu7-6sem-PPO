@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Portal.Common.Models;
 using Portal.Database.Repositories.Interfaces;
 using Portal.Services.FeedbackService.Exceptions;
@@ -15,14 +16,17 @@ public class FeedbackService : IFeedbackService
     private readonly IFeedbackRepository _feedbackRepository;
     private readonly IZoneRepository _zoneRepository;
     private readonly IUserRepository _userRepository;
+    private readonly ILogger<FeedbackService> _logger;
 
     public FeedbackService(IFeedbackRepository feedbackRepository,
                            IZoneRepository zoneRepository,
-                           IUserRepository userRepository)
+                           IUserRepository userRepository,
+                           ILogger<FeedbackService> logger)
     {
         _feedbackRepository = feedbackRepository ?? throw new ArgumentNullException(nameof(feedbackRepository));
         _zoneRepository = zoneRepository ?? throw new ArgumentNullException(nameof(zoneRepository));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public Task<List<Feedback>> GetAllFeedbackAsync()
@@ -42,7 +46,8 @@ public class FeedbackService : IFeedbackService
         }
         catch (InvalidOperationException e)
         {
-            throw new ZoneNotFoundException($"Zone not found with id: {zoneId}");
+            _logger.LogError(e, "Zone with id: {ZoneId} not found", zoneId);
+            throw new ZoneNotFoundException($"Zone with id: {zoneId} not found");
         }
     }
 
@@ -51,21 +56,18 @@ public class FeedbackService : IFeedbackService
         try
         {
             var zone = await _zoneRepository.GetZoneByIdAsync(zoneId);
-            if (zone is null)
-            {
-                throw new ZoneNotFoundException($"Zone with id: {zoneId} not found");
-            }
-
+            
             try
             {
-                var user = await _userRepository.GetUserByIdAsync(userId);
+                await _userRepository.GetUserByIdAsync(userId);
             }
-            catch (Exception)
+            catch (InvalidOperationException e)
             {
+                _logger.LogError(e, "User with id: {UserId} not found", userId);
                 throw new UserNotFoundException($"User with id: {userId} not found");
             }
 
-            var feedback = new Feedback(Guid.NewGuid(), userId, zoneId,
+            var feedback = new Feedback(Guid.NewGuid(), userId, zone.Id,
                 DateTime.UtcNow, mark, description);
             await _feedbackRepository.InsertFeedbackAsync(feedback);
 
@@ -73,11 +75,13 @@ public class FeedbackService : IFeedbackService
         }
         catch (InvalidOperationException e)
         {
+            _logger.LogError(e, "Zone with id: {ZoneId} not found", zoneId);
             throw new ZoneNotFoundException($"Zone with id: {zoneId} not found");
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException e)
         {
-            throw new FeedbackCreateException($"Feedback has not been created for user; {userId}");
+            _logger.LogError(e, "Error while creating feedback by user: {UserId} for zone: {ZoneId}", userId, zoneId);
+            throw new FeedbackCreateException($"Feedback has not been created by user: {userId} or zone: {zoneId}");
         }        
     }
 
@@ -93,10 +97,11 @@ public class FeedbackService : IFeedbackService
 
             await _zoneRepository.UpdateZoneRatingAsync(zoneId, rating);
         }
-        catch (Exception e)
+        catch (DbUpdateException e)
         {
+            _logger.LogError(e, "Rating for zone with id: {ZoneId} has not been updated by feedback's marks", zoneId);
             throw new ZoneUpdateException(
-                $"Rating for  Zone with id: {zoneId} has not been updated by feedback's marks");
+                $"Rating for zone with id: {zoneId} has not been updated by feedback's marks");
         }
         
     }
@@ -107,12 +112,14 @@ public class FeedbackService : IFeedbackService
         {
             await _feedbackRepository.UpdateFeedbackAsync(feedback);
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException e)
         {
-            throw new FeedbackNotFoundException($"Feedback with id: {feedback.Id} not found ");
+            _logger.LogError(e, "Feedback with id: {FeedbackId} not found", feedback.Id);
+            throw new FeedbackNotFoundException($"Feedback with id: {feedback.Id} not found");
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException e)
         {
+            _logger.LogError(e, "Error while updating feedback: {FeedbackId}", feedback.Id);
             throw new FeedbackUpdateException($"Feedback with id: {feedback.Id} has not been updated");
         }
     }
@@ -123,12 +130,14 @@ public class FeedbackService : IFeedbackService
         {
             await _feedbackRepository.DeleteFeedbackAsync(feedbackId);
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException e)
         {
+            _logger.LogError(e, "Feedback with id: {FeedbackId} not found", feedbackId);
             throw new FeedbackNotFoundException($"Feedback with id: {feedbackId} not found");
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException e)
         {
+            _logger.LogError(e, "Error while removing feedback: {FeedbackId}", feedbackId);
             throw new FeedbackRemoveException($"Feedback with id: {feedbackId} has not been removed");
         }
     }

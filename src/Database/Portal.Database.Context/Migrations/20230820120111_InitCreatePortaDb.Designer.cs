@@ -12,47 +12,32 @@ using Portal.Database.Context;
 namespace Portal.Database.Context.Migrations
 {
     [DbContext(typeof(PortalDbContext))]
-    [Migration("20230726092533_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230820120111_InitCreatePortaDb")]
+    partial class InitCreatePortaDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.9")
+                .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("DishDbModelPackageDbModel", b =>
+            modelBuilder.Entity("PackageDishes", b =>
                 {
-                    b.Property<Guid>("DishesId")
+                    b.Property<Guid>("dish_id")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("PackagesId")
+                    b.Property<Guid>("package_id")
                         .HasColumnType("uuid");
 
-                    b.HasKey("DishesId", "PackagesId");
+                    b.HasKey("dish_id", "package_id");
 
-                    b.HasIndex("PackagesId");
+                    b.HasIndex("package_id");
 
-                    b.ToTable("DishDbModelPackageDbModel");
-                });
-
-            modelBuilder.Entity("PackageDbModelZoneDbModel", b =>
-                {
-                    b.Property<Guid>("PackagesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ZonesId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("PackagesId", "ZonesId");
-
-                    b.HasIndex("ZonesId");
-
-                    b.ToTable("PackageDbModelZoneDbModel");
+                    b.ToTable("PackageDishes");
                 });
 
             modelBuilder.Entity("Portal.Database.Models.BookingDbModel", b =>
@@ -185,6 +170,10 @@ namespace Portal.Database.Context.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
+                    b.Property<bool>("IsWrittenOff")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_written_off");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(64)")
@@ -253,7 +242,7 @@ namespace Portal.Database.Context.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("varchar(64)")
+                        .HasColumnType("text")
                         .HasColumnName("email");
 
                     b.Property<string>("FirstName")
@@ -261,9 +250,8 @@ namespace Portal.Database.Context.Migrations
                         .HasColumnType("varchar(64)")
                         .HasColumnName("first_name");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("varchar(64)")
+                    b.Property<int>("Gender")
+                        .HasColumnType("integer")
                         .HasColumnName("gender");
 
                     b.Property<string>("LastName")
@@ -272,7 +260,6 @@ namespace Portal.Database.Context.Migrations
                         .HasColumnName("last_name");
 
                     b.Property<string>("MiddleName")
-                        .IsRequired()
                         .HasColumnType("varchar(64)")
                         .HasColumnName("middle_name");
 
@@ -281,13 +268,11 @@ namespace Portal.Database.Context.Migrations
                         .HasColumnName("password");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("varchar(64)")
+                        .HasColumnType("text")
                         .HasColumnName("phone");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("varchar(64)")
+                    b.Property<int>("Role")
+                        .HasColumnType("integer")
                         .HasColumnName("role");
 
                     b.HasKey("Id");
@@ -333,32 +318,32 @@ namespace Portal.Database.Context.Migrations
                     b.ToTable("Zones");
                 });
 
-            modelBuilder.Entity("DishDbModelPackageDbModel", b =>
+            modelBuilder.Entity("ZonePackages", b =>
+                {
+                    b.Property<Guid>("package_id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("zone_id")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("package_id", "zone_id");
+
+                    b.HasIndex("zone_id");
+
+                    b.ToTable("ZonePackages");
+                });
+
+            modelBuilder.Entity("PackageDishes", b =>
                 {
                     b.HasOne("Portal.Database.Models.DishDbModel", null)
                         .WithMany()
-                        .HasForeignKey("DishesId")
+                        .HasForeignKey("dish_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Portal.Database.Models.PackageDbModel", null)
                         .WithMany()
-                        .HasForeignKey("PackagesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("PackageDbModelZoneDbModel", b =>
-                {
-                    b.HasOne("Portal.Database.Models.PackageDbModel", null)
-                        .WithMany()
-                        .HasForeignKey("PackagesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Portal.Database.Models.ZoneDbModel", null)
-                        .WithMany()
-                        .HasForeignKey("ZonesId")
+                        .HasForeignKey("package_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -418,6 +403,21 @@ namespace Portal.Database.Context.Migrations
                         .IsRequired();
 
                     b.Navigation("Zone");
+                });
+
+            modelBuilder.Entity("ZonePackages", b =>
+                {
+                    b.HasOne("Portal.Database.Models.PackageDbModel", null)
+                        .WithMany()
+                        .HasForeignKey("package_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Portal.Database.Models.ZoneDbModel", null)
+                        .WithMany()
+                        .HasForeignKey("zone_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Portal.Database.Models.ZoneDbModel", b =>

@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 using Xunit;
 using Portal.Database.Repositories.Interfaces;
 using Portal.Services.UserService;
@@ -15,7 +16,8 @@ public class UserServiceUnitTests
 
     public UserServiceUnitTests()
     {
-        _userService = new UserService(_mockUserRepository.Object);
+        _userService = new UserService(_mockUserRepository.Object,
+            NullLogger<UserService>.Instance);
     }
 
     [Fact]

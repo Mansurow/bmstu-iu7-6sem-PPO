@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Portal.Database.Repositories.Interfaces;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
@@ -12,10 +13,12 @@ namespace Portal.Services.UserService;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly ILogger<UserService> _logger;
 
-    public UserService(IUserRepository userRepository)
+    public UserService(IUserRepository userRepository, ILogger<UserService> logger)
     {
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
     
     public Task<List<User>> GetAllUsersAsync()
@@ -31,8 +34,9 @@ public class UserService : IUserService
             
             return user;
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException e)
         {
+            _logger.LogError(e, "User with id: {UserId} not found", userId);
             throw new UserNotFoundException($"User with id: {userId} not found");
         }
     }
@@ -45,13 +49,42 @@ public class UserService : IUserService
             user.ChangePermission(permissions);
             await _userRepository.UpdateUserAsync(user);
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException e)
         {
+            _logger.LogError(e, "User with id: {UserId} not found", userId);
             throw new UserNotFoundException($"User with id: {userId} not found");
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException e)
         {
+            _logger.LogError(e, "Error while changing permissions for user: {UserId}", userId);
             throw new UserUpdateException($"User's {userId} permissions have not been changed");
+        }
+    }
+
+    public async Task CreateAdmin(string login, string password)
+    {
+        try
+        {
+            var admins = await _userRepository.GetAdmins();
+
+            if (admins.Any(admin => admin.Email == login))
+            {
+                _logger.LogInformation("Administrator already has been created");
+                return;
+            }
+
+            var user = new User(Guid.NewGuid(), login, "", "",
+                DateTime.UtcNow, Gender.Unknown, login);
+            user.ChangePermission(Role.Administrator);
+            user.CreateHash(password);
+            
+            await _userRepository.InsertUserAsync(user);
+            _logger.LogInformation("Administrator was created successfully");
+        }
+        catch (DbUpdateException e)
+        {
+            _logger.LogError(e, "Error while creating administrator");
+            throw new UserCreateException($"Administrator has not been created");
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Portal.Common.Models;
+using Portal.Services.InventoryServices.Exceptions;
 
 namespace Portal.Services.InventoryServices;
 
@@ -18,6 +19,7 @@ public interface IInventoryService
     /// </summary>
     /// <param name="inventoryId">Идентификатор инвентаря</param>
     /// <returns>Данные инвентаря</returns>
+    /// <exception cref="InventoryNotFoundException">Инвентарь не найден</exception>
     Task<Inventory> GetInventoryByIdAsync(Guid inventoryId);
 
     /// <summary>
@@ -28,19 +30,22 @@ public interface IInventoryService
     /// <param name="yearOfProduction">Год выпуска или производства</param>
     /// <param name="description">Описание инветаря</param>
     /// <returns>Идентификатор нового инветаря</returns>
+    /// <exception cref="InventoryCreateException">При создании инвентаря</exception>
     Task<Guid> AddInventoryAsync(Guid zoneId, string name, DateOnly yearOfProduction, string description);
 
     /// <summary>
     /// Обновить инвентарь
     /// </summary>
     /// <param name="inventory">Данные инвентаря на обновление</param>
-    /// <returns></returns>
+    /// <exception cref="InventoryNotFoundException">Инвентарь не найден</exception>
+    /// <exception cref="InventoryUpdateException">При обновлении инвентаря</exception>
     Task UpdateInventoryAsync(Inventory inventory);
     
     /// <summary>
     /// Удалить инвентарь
     /// </summary>
     /// <param name="inventoryId">Идентификатор инвентаря</param>
-    /// <returns></returns>
+    /// <exception cref="InventoryNotFoundException">Инвентарь не найден</exception>
+    /// <exception cref="InventoryRemoveException">При удалении инвентаря</exception>
     Task RemoveInventoryAsync(Guid inventoryId);
 }

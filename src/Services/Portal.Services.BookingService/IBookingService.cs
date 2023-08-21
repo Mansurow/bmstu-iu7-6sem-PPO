@@ -1,5 +1,8 @@
 ﻿using Portal.Common.Models;
 using Portal.Common.Models.Enums;
+using Portal.Services.BookingService.Exceptions;
+using Portal.Services.PackageService.Exceptions;
+using Portal.Services.ZoneService.Exceptions;
 
 namespace Portal.Services.BookingService
 {
@@ -12,6 +15,7 @@ namespace Portal.Services.BookingService
         /// Получить все брони 
         /// </summary>
         /// <returns>Список всех броней</returns>
+        /// <exception cref="BookingUpdateException">Ошибка при обновлении неактуальных броней</exception>
         Task<List<Booking>> GetAllBookingAsync();
         
         /// <summary>
@@ -19,6 +23,7 @@ namespace Portal.Services.BookingService
         /// </summary>
         /// <param name="userId">Идентификатор пользовтаеля</param>
         /// <returns>Список всех броней пользователя</returns>
+        /// <exception cref="BookingUpdateException">Ошибка при обновлении неактуальных броней</exception>
         Task<List<Booking>> GetBookingByUserAsync(Guid userId);
         
         /// <summary>
@@ -26,6 +31,7 @@ namespace Portal.Services.BookingService
         /// </summary>
         /// <param name="zoneId">Идентификатор зоны</param>
         /// <returns>Список всех броней зоны</returns>
+        /// <exception cref="BookingUpdateException">Ошибка при обновлении неактуальных броней</exception>
         Task<List<Booking>> GetBookingByZoneAsync(Guid zoneId);
         
         /// <summary>
@@ -41,6 +47,8 @@ namespace Portal.Services.BookingService
         /// </summary>
         /// <param name="bookingId">Идентификатор брони</param>
         /// <returns>Бронь комнаты</returns>
+        /// <exception cref="BookingNotFoundException">Бронь не найдена</exception>
+        /// <exception cref="BookingUpdateException">При обновлении неактуальных броней</exception>
         Task<Booking> GetBookingByIdAsync(Guid bookingId);
         
         /// <summary>
@@ -52,28 +60,39 @@ namespace Portal.Services.BookingService
         /// <param name="date">Дата брони</param>
         /// <param name="startTime">Время брони (начало)</param>
         /// <param name="endTime">Время брони (конец)</param>
-        Task<Guid> AddBookingAsync(Guid userId, Guid zoneId, Guid packageId, string date, string startTime, string endTime);
+        /// <exception cref="ZoneNotFoundException">Зона не найден</exception>
+        /// <exception cref="PackageNotFoundException">Пакет не найден</exception>
+        /// <exception cref="BookingCreateException">При создании брони</exception>
+        /// <exception cref="BookingExistsException">Пользователь уже забронировал зону на указанный день</exception>
+        /// <exception cref="BookingReversedException">Бронь уже существует на указанный день и время</exception>
+        Task<Guid> AddBookingAsync(Guid userId, Guid zoneId, Guid packageId, DateOnly date, TimeOnly startTime, TimeOnly endTime);
         
         /// <summary>
         /// Изменить статус брони
         /// </summary>
         /// <param name="bookingId">Идентификатор брони</param>
         /// <param name="status">Новый статус брони</param>
-        /// <returns></returns>
+        /// <exception cref="BookingNotSuitableStatusException">Неверное изменение статуса</exception>
+        /// <exception cref="BookingNotFoundException">Бронь не найдена</exception>
+        /// <exception cref="BookingUpdateException">При обновлении брони</exception>
         Task ChangeBookingStatusAsync(Guid bookingId, BookingStatus status);
         
         /// <summary>
         /// Обновить бронь зоны
         /// </summary>
         /// <param name="booking">Данные для обновления брони зоны</param>
-        /// <returns></returns>
+        /// <exception cref="BookingChangeDateTimeException">Время указано неверно для изменение. Нельзя бронировать время прошедших дней</exception>
+        /// <exception cref="BookingExceedsLimitException">Максимальное количество людей превысило лимит по зоне</exception>
+        /// <exception cref="BookingNotFoundException">Бронь не найдена</exception>
+        /// <exception cref="BookingUpdateException">При обновлении брони</exception>
         Task UpdateBookingAsync(Booking booking);
         
         /// <summary>
         /// Удалить бронь зоны
         /// </summary>
         /// <param name="bookingId">Идентификатор брони</param>
-        /// <returns></returns>
+        /// <exception cref="BookingNotFoundException">Бронь не найдена</exception>
+        /// <exception cref="BookingRemoveException">При удалении брони</exception>
         Task RemoveBookingAsync(Guid bookingId);
         
         /// <summary>

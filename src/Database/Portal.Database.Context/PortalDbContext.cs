@@ -54,11 +54,19 @@ public class PortalDbContext : DbContext
     {
         modelBuilder.Entity<ZoneDbModel>()
             .HasMany(r => r.Packages)
-            .WithMany(p => p.Zones);
+            .WithMany(p => p.Zones)
+            .UsingEntity("ZonePackages",
+                p => p.HasOne(typeof(PackageDbModel)).WithMany().HasForeignKey("package_id").HasPrincipalKey(nameof(PackageDbModel.Id)),
+                z => z.HasOne(typeof(ZoneDbModel)).WithMany().HasForeignKey("zone_id").HasPrincipalKey(nameof(ZoneDbModel.Id)),
+                j => j.HasKey("package_id", "zone_id"));
 
         modelBuilder.Entity<PackageDbModel>()
             .HasMany(p => p.Dishes)
-            .WithMany(d => d.Packages);
+            .WithMany(d => d.Packages)
+            .UsingEntity("PackageDishes",
+                d => d.HasOne(typeof(DishDbModel)).WithMany().HasForeignKey("dish_id").HasPrincipalKey(nameof(DishDbModel.Id)),
+                p => p.HasOne(typeof(PackageDbModel)).WithMany().HasForeignKey("package_id").HasPrincipalKey(nameof(PackageDbModel.Id)),
+                j => j.HasKey("dish_id", "package_id"));
 
         base.OnModelCreating(modelBuilder);
     }

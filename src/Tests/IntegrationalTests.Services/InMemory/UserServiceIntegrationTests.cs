@@ -1,4 +1,5 @@
 ﻿using IntegrationalTests.Services.AccessObject;
+using Microsoft.Extensions.Logging.Abstractions;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
 using Portal.Services.UserService;
@@ -15,7 +16,8 @@ public class UserServiceIntegrationTests: IDisposable
     public UserServiceIntegrationTests()
     {
         _accessObject = new AccessObjectInMemory();
-        _userService = new UserService(_accessObject.UserRepository);
+        _userService = new UserService(_accessObject.UserRepository,
+            NullLogger<UserService>.Instance);
     }
     
     [Fact]
@@ -103,7 +105,7 @@ public class UserServiceIntegrationTests: IDisposable
 
         var expectedCount = users.Count;
         var expectedUser = users.First();
-        expectedUser.Role = Role.Administrator;
+        expectedUser.ChangePermission(Role.Administrator);
 
         // Act
         await _userService.ChangeUserPermissionsAsync(expectedUser.Id, Role.Administrator);
@@ -140,6 +142,6 @@ public class UserServiceIntegrationTests: IDisposable
     
     public void Dispose()
     {
-        _accessObject.DateBaseCleanup();
+        _accessObject.Dispose();
     }
 }

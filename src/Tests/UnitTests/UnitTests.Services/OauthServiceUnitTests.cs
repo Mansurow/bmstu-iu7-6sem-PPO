@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
@@ -15,7 +16,8 @@ public class OauthServiceUnitTests
 
     public OauthServiceUnitTests()
     {
-        _oauthService = new OauthService(_mockUserRepository.Object);
+        _oauthService = new OauthService(_mockUserRepository.Object,
+            NullLogger<OauthService>.Instance);
     }
 
     [Fact]

@@ -30,7 +30,7 @@ public class User
     /// Отчество пользователя
     /// </summary>
     /// <example>Иванович</example>
-    public string MiddleName { get; set; }
+    public string? MiddleName { get; set; }
     
     /// <summary>
     /// Дата рождения пользователя
@@ -48,27 +48,25 @@ public class User
     /// Email пользовтеля
     /// </summary>
     /// <example>user.portal@gmail.com</example>
-    [EmailAddress]
     public string Email { get; set; }
     
     /// <summary>
     /// Номер телефона пользователя
     /// </summary>
     /// <example>89268899772</example>
-    [Phone]
-    public string Phone { get; set; }
+    public string? Phone { get; set; }
     
     /// <summary>
     /// Зашифрованный пароль 
     /// </summary>
-    public string? PasswordHash { get; set; }
+    public string? PasswordHash { get; private set; }
     
     /// <summary>
     /// Права доступа
     /// </summary>
-    public Role Role { get; set; }
+    public Role Role { get; private set; }
 
-    public User(Guid id, string lastName, string firstName, string middleName, DateTime birthday, Gender gender, string email, string phone, string? passwordHash = null, Role role = Role.User)
+    public User(Guid id, string lastName, string firstName, string middleName, DateTime birthday, Gender gender, string email, string? phone = null, string? passwordHash = null, Role role = Role.User)
     {
         Id = id;
         LastName = lastName;

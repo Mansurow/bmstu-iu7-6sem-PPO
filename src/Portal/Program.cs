@@ -1,33 +1,59 @@
-using Microsoft.EntityFrameworkCore;
-using Portal.Database.Context;
 
-var builder = WebApplication.CreateBuilder(args);
-var config = new ConfigurationBuilder()
-               .SetBasePath(Directory.GetCurrentDirectory())
-               .AddJsonFile("appsettings.json")
-               .Build();
-// Add services to the container.
+using Portal.Extensions;
+using Serilog;
 
-builder.Services.AddControllers();
-builder.Services.AddDbContext<PortalDbContext>(option => option.UseNpgsql(config.GetConnectionString("default")));
+namespace Portal;
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+public static class Program
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    private const string CorsPolicy = "AllowAllCorsPolicy";
+    public static async Task Main(string[] args)
+    {
+        try
+        {
+            var app = WebApplication.CreateBuilder(args)
+                .ConfigurePortalServices(CorsPolicy)
+                .ConfigureSerilog()
+                .Build();
+
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
+            {
+                 
+            }
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            
+            await app.MigrateDatabaseAsync();
+            await app.AddPortalAdministrator();
+            
+            app.UseHttpsRedirection();
+
+            app.UseRouting();
+            app.UseCors(CorsPolicy);
+        
+            app.UseAuthentication();
+            app.UseAuthorization();
+        
+            app.UseEndpoints(opt =>
+            {
+                opt.MapControllers();
+            });
+            // app.MapControllers();
+
+            await app.RunAsync();
+        }
+        catch (Exception e)
+        {
+            Log.Error(e, "Something went wrong!");
+        }
+        finally
+        {
+            Log.Information("Portal Service is stopping...");
+            await Log.CloseAndFlushAsync();
+        }
+
+        
+    }
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

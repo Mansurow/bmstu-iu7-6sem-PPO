@@ -2,7 +2,6 @@
 using Portal.Common.Converter;
 using Portal.Common.Models;
 using Portal.Database.Context;
-using Portal.Database.Models;
 using Portal.Database.Repositories.Interfaces;
 
 namespace Portal.Database.Repositories.NpgsqlRepositories;
@@ -18,11 +17,11 @@ public class MenuRepository: BaseRepository, IMenuRepository
     
     public Task<List<Dish>> GetAllDishesAsync()
     {
-        return _context.Menu.Select(d => MenuConverter.ConvertDbModelToAppModel(d)!)
+        return _context.Menu
+            .Select(d => MenuConverter.ConvertDbModelToAppModel(d))
             .ToListAsync();
     }
     
-
     public async Task<Dish> GetDishByIdAsync(Guid dishId)
     {
         var dish = await _context.Menu.FirstAsync(d => d.Id == dishId);
@@ -45,8 +44,7 @@ public class MenuRepository: BaseRepository, IMenuRepository
         updatedDish.Type = dish.Type;
         updatedDish.Price = dish.Price;
         updatedDish.Description = dish.Description;
-        // updatedDish.Packages = dish.Packages;
-            
+        
         await _context.SaveChangesAsync();
     }
 
