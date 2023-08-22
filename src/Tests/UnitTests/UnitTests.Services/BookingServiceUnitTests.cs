@@ -437,7 +437,7 @@ public class BookingServiceUnitTests
     [InlineData("2002.05.07", "16:00", "20:00", false)]
     [InlineData("2023.08.21", "16:00", "20:00", false)]
     [InlineData("2023.08.21", "15:00", "19:00", false)]
-    [InlineData("2023.08.21", "12:00", "16:00", true)]
+    [InlineData("2023.09.21", "12:00", "16:00", true)]
     [InlineData("2023.09.21", "22:00", "23:00", true)]
     [InlineData("2023.09.21", "18:00", "23:00", true)]
     [InlineData("2023.09.21", "22:00", "23:30", false)]
