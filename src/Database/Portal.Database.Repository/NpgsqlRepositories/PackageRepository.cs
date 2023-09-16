@@ -2,8 +2,8 @@
 using Portal.Common.Converter;
 using Portal.Common.Models;
 using Portal.Database.Context;
+using Portal.Database.Core.Repositories;
 using Portal.Database.Models;
-using Portal.Database.Repositories.Interfaces;
 
 namespace Portal.Database.Repositories.NpgsqlRepositories;
 

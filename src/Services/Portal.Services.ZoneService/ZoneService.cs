@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Logging;
 using Portal.Common.Models;
 using Portal.Common.Models.Dto;
-using Portal.Database.Repositories.Interfaces;
+using Portal.Database.Core.Repositories;
 using Portal.Services.PackageService.Exceptions;
 using Portal.Services.ZoneService.Exceptions;
 

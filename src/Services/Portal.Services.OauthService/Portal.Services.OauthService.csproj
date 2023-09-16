@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Database\Portal.Database.Repository\Portal.Database.Repositories.csproj" />
     <ProjectReference Include="..\Portal.Services.UserService\Portal.Services.UserService.csproj" />
   </ItemGroup>
 

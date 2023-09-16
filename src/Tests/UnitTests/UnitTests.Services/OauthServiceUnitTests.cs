@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
-using Portal.Database.Repositories.Interfaces;
+using Portal.Database.Core.Repositories;
 using Portal.Services.OauthService;
 using Portal.Services.OauthService.Exceptions;
 using Xunit;

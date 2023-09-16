@@ -1,10 +1,10 @@
 ﻿using Portal.Common.Models;
 using Portal.Common.Models.Enums;
-using Portal.Database.Repositories.Interfaces;
 using Portal.Services.BookingService.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Portal.Database.Core.Repositories;
 using Portal.Services.BookingService.Configuration;
 using Portal.Services.PackageService.Exceptions;
 using Portal.Services.ZoneService.Exceptions;

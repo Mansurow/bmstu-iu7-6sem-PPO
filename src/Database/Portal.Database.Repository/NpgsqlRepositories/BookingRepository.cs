@@ -3,7 +3,7 @@ using Portal.Common.Converter;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
 using Portal.Database.Context;
-using Portal.Database.Repositories.Interfaces;
+using Portal.Database.Core.Repositories;
 
 namespace Portal.Database.Repositories.NpgsqlRepositories;
 

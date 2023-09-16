@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Portal.Database.Repositories.Interfaces;
+using Portal.Database.Core.Repositories;
 using Portal.Database.Repositories.NpgsqlRepositories;
 
 namespace Portal.Database.Repositories;

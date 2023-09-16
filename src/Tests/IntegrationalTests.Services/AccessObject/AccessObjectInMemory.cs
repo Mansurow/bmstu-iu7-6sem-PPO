@@ -1,9 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using Portal.Common.Models;
-using Portal.Common.Models.Enums;
-using Portal.Database.Context;
-using Portal.Database.Repositories.Interfaces;
-using Portal.Database.Repositories.NpgsqlRepositories;
+﻿using Portal.Database.Context;
 
 namespace IntegrationalTests.Services.AccessObject;
 

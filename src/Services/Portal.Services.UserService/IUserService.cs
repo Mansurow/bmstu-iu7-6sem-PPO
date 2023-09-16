@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using Npgsql.Replication;
-using Portal.Common.Models;
+﻿using Portal.Common.Models;
 using Portal.Common.Models.Enums;
 using Portal.Services.UserService.Exceptions;
 

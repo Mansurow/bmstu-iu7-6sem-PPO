@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
-using Portal.Database.Repositories.Interfaces;
 using Portal.Services.InventoryServices;
 using Portal.Services.InventoryServices.Exceptions;
 

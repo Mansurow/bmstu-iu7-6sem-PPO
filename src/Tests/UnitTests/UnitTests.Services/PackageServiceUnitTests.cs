@@ -2,7 +2,7 @@
 using Moq;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
-using Portal.Database.Repositories.Interfaces;
+using Portal.Database.Core.Repositories;
 using Portal.Services.PackageService;
 using Portal.Services.PackageService.Exceptions;
 using Xunit;

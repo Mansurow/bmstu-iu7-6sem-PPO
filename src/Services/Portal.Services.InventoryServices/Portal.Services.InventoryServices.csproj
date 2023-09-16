@@ -8,7 +8,12 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Common\Portal.Common.Models\Portal.Common.Models.csproj" />
-      <ProjectReference Include="..\..\Database\Portal.Database.Repository\Portal.Database.Repositories.csproj" />
+      <ProjectReference Include="..\..\Database\Portal.Database.Core\Portal.Database.Core\Portal.Database.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
     </ItemGroup>
 
 </Project>

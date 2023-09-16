@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Portal.Common.Models;
-using Portal.Database.Repositories.Interfaces;
+using Portal.Database.Core.Repositories;
 using Portal.Services.InventoryServices;
 using Portal.Services.InventoryServices.Exceptions;
 using Xunit;

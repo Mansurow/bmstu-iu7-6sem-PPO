@@ -1,6 +1,6 @@
 ﻿using Portal.Common.Models;
 
-namespace Portal.Database.Repositories.Interfaces;
+namespace Portal.Database.Core.Repositories;
 
 /// <summary>
 /// Идентификатор репозитория меню блюд

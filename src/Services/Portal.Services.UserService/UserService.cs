@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Portal.Database.Repositories.Interfaces;
 using Portal.Common.Models;
 using Portal.Common.Models.Enums;
+using Portal.Database.Core.Repositories;
 using Portal.Services.UserService.Exceptions;
 
 namespace Portal.Services.UserService;
