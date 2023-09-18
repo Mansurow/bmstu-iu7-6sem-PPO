@@ -64,7 +64,6 @@ public class ZoneRepository: BaseRepository, IZoneRepository
         // zoneDb.Rating = zone.Rating;
         zoneDb.Limit = zone.Limit;
         zoneDb.Address = zone.Address;
-        zoneDb.Price = zone.Price;
         zoneDb.Size = zone.Size;
         zoneDb.Inventories = zone.Inventories.Select(InventoryConverter.ConvertAppModelToDbModel).ToList();
         // zoneDb.Packages = zone.Packages.Select(PackageConverter.ConvertAppModelToDbModel).ToList();

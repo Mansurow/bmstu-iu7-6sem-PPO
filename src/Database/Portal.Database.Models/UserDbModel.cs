@@ -7,6 +7,7 @@ namespace Portal.Database.Models;
 /// <summary>
 /// Модель базы данных пользователь
 /// </summary>
+[Table("users")]
 public class UserDbModel
 {
     /// <summary>
@@ -37,8 +38,8 @@ public class UserDbModel
     /// <summary>
     /// Дата рождения
     /// </summary>
-    [Column("birthday", TypeName = "varchar(64)")]
-    public DateTime Birthday { get; set; }
+    [Column("birthday")]
+    public DateOnly Birthday { get; set; }
     
     /// <summary>
     /// Пол (гендер) пользователя - может быть не указан
@@ -67,11 +68,11 @@ public class UserDbModel
     /// <summary>
     /// Права доступа
     /// </summary>
-    [Column("role")]
+    [Column("role", TypeName = "varchar(64)")]
     public Role Role { get; set; }
 
     public UserDbModel(Guid id, string lastName, string firstName, string? middleName, 
-        DateTime birthday, Gender gender, string email, string? phone, string? passwordHash, 
+        DateOnly birthday, Gender gender, string email, string? phone, string? passwordHash, 
         Role role = Role.User)
     {
         Id = id;

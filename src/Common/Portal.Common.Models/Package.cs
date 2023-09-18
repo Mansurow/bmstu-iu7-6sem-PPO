@@ -59,5 +59,23 @@ namespace Portal.Common.Models
             Zones = zones;
             Dishes = dishes;
         }
+        
+        public override bool Equals(object? obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+        
+            var other = (Package) obj;
+            return Id == other.Id
+                   && Name == other.Name
+                   && Math.Abs(Price - other.Price) < 1e-8
+                   && Description == other.Description
+                   && RentalTime == other.RentalTime
+                   && Type == other.Type;
+            // && Inventories == other.Inventories
+            // && Packages == other.Packages;
+        }
     }
 }

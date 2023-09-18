@@ -50,4 +50,19 @@ public class Feedback
         Mark = mark;
         Message = message;
     }
+    
+    public override bool Equals(object? obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        
+        var other = (Feedback) obj;
+        return Id == other.Id
+               && UserId == other.UserId
+               && ZoneId == other.ZoneId
+               && Date == other.Date
+               && Message == other.Message;
+    }
 }

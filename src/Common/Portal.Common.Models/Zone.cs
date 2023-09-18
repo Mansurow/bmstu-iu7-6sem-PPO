@@ -36,13 +36,7 @@ public class Zone
     /// </summary>
     /// <example>25.0</example>
     public double Size { get; set; }
-    
-    /// <summary>
-    /// Стоимость зоны за час в рублях
-    /// </summary>
-    /// <example>349.99</example>
-    public double Price { get; set; }
-    
+
     /// <summary>
     /// Рейнтинг зоны по отзывам пользователей
     /// </summary>
@@ -59,14 +53,13 @@ public class Zone
     /// </summary>
     public ICollection<Package> Packages { get; set; }
     
-    public Zone(Guid id, string name, string address, double size, int limit, double price, double rating, ICollection<Inventory> inventories, ICollection<Package> packages)
+    public Zone(Guid id, string name, string address, double size, int limit, double rating, ICollection<Inventory> inventories, ICollection<Package> packages)
     {
         Id = id;
         Name = name;
         Address = address;
         Size = size;
         Limit = limit;
-        Price = price;
         Rating = rating;
         Inventories = inventories;
         Packages = packages;
@@ -75,11 +68,6 @@ public class Zone
     public void ChangeRating(double rating)
     {
         Rating = rating;
-    }
-
-    public void ChangePrice(double price)
-    {
-        Price = price;
     }
 
     public void ChangeAddress(string address)
@@ -116,9 +104,8 @@ public class Zone
                && Math.Abs(Size - other.Size) < 1e-8
                && Address == other.Address
                && Limit == other.Limit
-               && Math.Abs(Price - other.Price) < 1e-8
-               && Math.Abs(Rating - other.Rating) < 1e-8
-               && Inventories == other.Inventories
-               && Packages == other.Packages;
+               && Math.Abs(Rating - other.Rating) < 1e-8;
+        // && Inventories == other.Inventories
+        // && Packages == other.Packages;
     }
 }

@@ -55,7 +55,7 @@ public class BookingServiceUnitTests
             .Callback((Guid id) =>
             {
                 var booking = bookings.First(b => b.Id == id);
-                booking.ChangeStatus(BookingStatus.NoActual);
+                booking.ChangeStatus(BookingStatus.Done);
             });
     
         // Act
@@ -81,7 +81,7 @@ public class BookingServiceUnitTests
             .Callback((Guid id) =>
             {
                 var booking = bookings.First(b => b.Id == id);
-                booking.ChangeStatus(BookingStatus.NoActual);
+                booking.ChangeStatus(BookingStatus.Done);
             });
     
         // Act
@@ -112,7 +112,7 @@ public class BookingServiceUnitTests
             .Callback((Guid id) =>
             {
                 var booking = bookings.First(b => b.Id == id);
-                booking.ChangeStatus(BookingStatus.NoActual);
+                booking.ChangeStatus(BookingStatus.Done);
             });
     
         // Act
@@ -140,7 +140,7 @@ public class BookingServiceUnitTests
             .Callback((Guid id) =>
             {
                 var booking = bookings.First(b => b.Id == id);
-                booking.ChangeStatus(BookingStatus.NoActual);
+                booking.ChangeStatus(BookingStatus.Done);
             });
         
         // Act
@@ -213,7 +213,10 @@ public class BookingServiceUnitTests
             packages.First().Id, zones.Last().Limit, BookingStatus.TemporaryReserved, 
             DateOnly.FromDateTime(DateTime.UtcNow), 
             new TimeOnly(12, 0),
-            new TimeOnly(20, 0));
+            new TimeOnly(20, 0),
+            DateTime.UtcNow,
+            false,
+            0);
 
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid zoneId) => zones.First(z => z.Id == zoneId));
@@ -266,11 +269,13 @@ public class BookingServiceUnitTests
         var bookings = CreateMockBooking(users, zones, packages);
         var expectedCount = bookings.Count;
         
-        var expectedBooking = new Booking(Guid.NewGuid(), zones.First().Id, users.First().Id, 
+        var expectedBooking = new Booking(Guid.NewGuid(), zones.Last().Id, users.First().Id, 
             packages.First().Id, zones.Last().Limit, BookingStatus.TemporaryReserved, 
             DateOnly.FromDateTime(DateTime.UtcNow  + new TimeSpan(20, 0, 0, 0)), 
             TimeOnly.Parse(startTime),
-            TimeOnly.Parse(endTime));
+            TimeOnly.Parse(endTime),
+            DateTime.UtcNow,
+            false, 0);
 
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid zoneId) => zones.First(z => z.Id == zoneId));
@@ -314,7 +319,9 @@ public class BookingServiceUnitTests
             packages.First().Id, zones.First().Limit, BookingStatus.TemporaryReserved, 
             DateOnly.FromDateTime(DateTime.Today), 
             new TimeOnly(12, 0),
-            new TimeOnly(20, 0));
+            new TimeOnly(20, 0), 
+            DateTime.UtcNow,
+            false, 0);
 
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid zoneId) => zones.First(z => z.Id == zoneId));
@@ -359,7 +366,11 @@ public class BookingServiceUnitTests
             packages.First().Id, zones.First().Limit, BookingStatus.TemporaryReserved, 
             DateOnly.FromDateTime(DateTime.UtcNow), 
             new TimeOnly(12, 0),
-            new TimeOnly(20, 0));
+            new TimeOnly(20, 0),
+            DateTime.UtcNow,
+            false,
+            0);
+
         
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid zoneId) => zones.First(z => z.Id == zoneId));
@@ -396,11 +407,15 @@ public class BookingServiceUnitTests
         var zones = CreateMockZones();
         var bookings = CreateMockBooking(users, zones, packages);
 
-        var expectedBooking = new Booking(Guid.NewGuid(), zones.First().Id, users.First().Id, 
-            Guid.NewGuid(), zones.First().Limit, BookingStatus.TemporaryReserved, 
+        var expectedBooking = new Booking(Guid.NewGuid(), zones.Last().Id, users.First().Id, 
+            Guid.NewGuid(), zones.Last().Limit, BookingStatus.TemporaryReserved, 
             DateOnly.FromDateTime(DateTime.UtcNow), 
             new TimeOnly(12, 0),
-            new TimeOnly(20, 0));
+            new TimeOnly(20, 0),
+            DateTime.UtcNow,
+            false,
+            0);
+
 
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid zoneId) => zones.First(z => z.Id == zoneId));
@@ -447,32 +462,42 @@ public class BookingServiceUnitTests
         {
             // 2002.05.07
             new Booking(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 
-                10, BookingStatus.NoActual,
+                10, BookingStatus.Done,
                 new DateOnly(2002, 05, 7), 
                 new TimeOnly(8 , 0),
-                new TimeOnly(10, 40)),
+                new TimeOnly(10, 40),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 
-                10, BookingStatus.NoActual,
+                10, BookingStatus.Done,
                 new DateOnly(2002, 05, 7), 
                 new TimeOnly(12 , 0),
-                new TimeOnly(15, 30)),
+                new TimeOnly(15, 30),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 
-                10, BookingStatus.NoActual,
+                10, BookingStatus.Done,
                 new DateOnly(2002, 05, 7), 
                 new TimeOnly(11 , 0),
-                new TimeOnly(12, 00)),
+                new TimeOnly(12, 00), 
+                DateTime.UtcNow,
+                false, 100),
             
             // Today
             new Booking(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 
                 15, BookingStatus.Reserved,
                 DateOnly.FromDateTime(DateTime.Today), 
                 new TimeOnly(10 , 0),
-                new TimeOnly(12, 00)),
+                new TimeOnly(12, 00),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 
                 20, BookingStatus.Reserved,
                 DateOnly.FromDateTime(DateTime.Today), 
                 new TimeOnly(16 , 0),
-                new TimeOnly(22, 00))
+                new TimeOnly(22, 00),
+                DateTime.UtcNow,
+                false, 100)
         };
         
         _mockBookingRepository.Setup(s => s.GetAllBookingAsync())
@@ -520,7 +545,7 @@ public class BookingServiceUnitTests
     public async Task GetFreeTimeTest1()
     {
         // Arrange
-        var packages = CreateMockPackages();
+        // var packages = CreateMockPackages();
         var zones = CreateMockZones();
         var zoneId = zones.First().Id;
         var day = DateOnly.FromDateTime(DateTime.UtcNow + new TimeSpan(1, 0, 0 ,0));
@@ -528,36 +553,48 @@ public class BookingServiceUnitTests
         {
             // 2002.05.07
             new Booking(Guid.NewGuid(), zoneId, Guid.NewGuid(), Guid.NewGuid(), 
-                10, BookingStatus.NoActual,
+                10, BookingStatus.Done,
                 new DateOnly(2002, 05, 7), 
                 new TimeOnly(8 , 0),
-                new TimeOnly(10, 40)),
+                new TimeOnly(10, 40),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), zoneId, Guid.NewGuid(), Guid.NewGuid(), 
-                10, BookingStatus.NoActual,
+                10, BookingStatus.Done,
                 new DateOnly(2002, 05, 7), 
                 new TimeOnly(14 , 0),
-                new TimeOnly(18, 30)),
+                new TimeOnly(18, 30),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), zoneId, Guid.NewGuid(), Guid.NewGuid(), 
-                10, BookingStatus.NoActual,
+                10, BookingStatus.Done,
                 new DateOnly(2002, 05, 7), 
                 new TimeOnly(11 , 0),
-                new TimeOnly(12, 00)),
+                new TimeOnly(12, 00),
+                DateTime.UtcNow,
+                false, 100),
             // Today
             new Booking(Guid.NewGuid(), zoneId, Guid.NewGuid(), Guid.NewGuid(), 
                 15, BookingStatus.Reserved,
                 day, 
                 new TimeOnly(13 , 00),
-                new TimeOnly(15, 40)),
+                new TimeOnly(15, 40),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), zoneId, Guid.NewGuid(), Guid.NewGuid(), 
                 20, BookingStatus.Reserved,
                 day, 
                 new TimeOnly(16 , 0),
-                new TimeOnly(20, 00)),
+                new TimeOnly(20, 00),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), zoneId, Guid.NewGuid(), Guid.NewGuid(), 
                 20, BookingStatus.Reserved,
                 day, 
                 new TimeOnly(10, 0),
-                new TimeOnly(11, 20))
+                new TimeOnly(11, 20),
+                DateTime.UtcNow,
+                false, 100)
         };
         
         _mockBookingRepository.Setup(s => s.GetBookingByZoneAsync(It.IsAny<Guid>()))
@@ -587,8 +624,8 @@ public class BookingServiceUnitTests
     [Fact]
     public async Task GetFreeTimeTest2()
     {
-        // Arrange
-        var packages = CreateMockPackages();
+         // Arrange
+        // var packages = CreateMockPackages();
         var zones = CreateMockZones();
         var zoneId = zones.First().Id;
         var day = DateOnly.FromDateTime(DateTime.UtcNow + new TimeSpan(1, 0, 0 ,0));
@@ -596,36 +633,48 @@ public class BookingServiceUnitTests
         {
             // 2002.05.07
             new Booking(Guid.NewGuid(), zoneId, Guid.NewGuid(), Guid.NewGuid(), 
-                10, BookingStatus.NoActual,
+                10, BookingStatus.Done,
                 new DateOnly(2002, 05, 7), 
                 new TimeOnly(8 , 0),
-                new TimeOnly(10, 40)),
+                new TimeOnly(10, 40),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), zoneId, Guid.NewGuid(), Guid.NewGuid(), 
-                10, BookingStatus.NoActual,
+                10, BookingStatus.Done,
                 new DateOnly(2002, 05, 7), 
                 new TimeOnly(14 , 0),
-                new TimeOnly(18, 30)),
+                new TimeOnly(18, 30),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), zoneId, Guid.NewGuid(), Guid.NewGuid(), 
-                10, BookingStatus.NoActual,
+                10, BookingStatus.Done,
                 new DateOnly(2002, 05, 7), 
                 new TimeOnly(11 , 0),
-                new TimeOnly(12, 00)),
+                new TimeOnly(12, 00),
+                DateTime.UtcNow,
+                false, 100),
             // Today
             new Booking(Guid.NewGuid(), zoneId, Guid.NewGuid(), Guid.NewGuid(), 
                 15, BookingStatus.Reserved,
                 day, 
                 new TimeOnly(12 , 00),
-                new TimeOnly(15, 40)),
+                new TimeOnly(15, 40),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), zoneId, Guid.NewGuid(), Guid.NewGuid(), 
                 20, BookingStatus.Reserved,
                 day, 
                 new TimeOnly(16 , 0),
-                new TimeOnly(22, 00)),
+                new TimeOnly(22, 00),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), zoneId, Guid.NewGuid(), Guid.NewGuid(), 
                 20, BookingStatus.Reserved,
                 day, 
                 new TimeOnly(8, 0),
-                new TimeOnly(10, 30))
+                new TimeOnly(10, 30),
+                DateTime.UtcNow,
+                false, 100)
         };
         
         _mockBookingRepository.Setup(s => s.GetBookingByZoneAsync(It.IsAny<Guid>()))
@@ -653,9 +702,9 @@ public class BookingServiceUnitTests
      /// </summary>
      [Theory]
      [InlineData(BookingStatus.TemporaryReserved, BookingStatus.Reserved)]
-     [InlineData(BookingStatus.TemporaryReserved, BookingStatus.NoActual)]
+     [InlineData(BookingStatus.TemporaryReserved, BookingStatus.Done)]
      [InlineData(BookingStatus.TemporaryReserved, BookingStatus.Cancelled)]
-     [InlineData(BookingStatus.Reserved, BookingStatus.NoActual)]
+     [InlineData(BookingStatus.Reserved, BookingStatus.Done)]
      [InlineData(BookingStatus.Reserved, BookingStatus.Cancelled)]
      public async Task ChangeBookingStatusTest(BookingStatus oldStatus, BookingStatus newStatus)
      {
@@ -696,8 +745,8 @@ public class BookingServiceUnitTests
      /// </summary>
      [Theory]
      [InlineData(BookingStatus.Reserved, BookingStatus.TemporaryReserved)]
-     [InlineData(BookingStatus.NoActual, BookingStatus.TemporaryReserved)]
-     [InlineData(BookingStatus.NoActual, BookingStatus.Reserved)]
+     [InlineData(BookingStatus.Done, BookingStatus.TemporaryReserved)]
+     [InlineData(BookingStatus.Done, BookingStatus.Reserved)]
      [InlineData(BookingStatus.Cancelled, BookingStatus.Reserved)]
      public async Task ChangeBookingStatusNotSuitableTest(BookingStatus oldStatus, BookingStatus newStatus)
      {
@@ -745,7 +794,8 @@ public class BookingServiceUnitTests
          var bookings = CreateMockBooking(users, zones, packages);
          var booking = bookings.First();
          var expectedBooking = new Booking(booking.Id, booking.ZoneId, booking.UserId, booking.PackageId,
-             15, booking.Status, booking.Date, booking.StartTime, booking.EndTime);
+             15, booking.Status, booking.Date, booking.StartTime, booking.EndTime, DateTime.UtcNow,
+             false, 100);
 
          _mockBookingRepository.Setup(s => s.GetBookingByIdAsync(It.IsAny<Guid>()))
              .ReturnsAsync((Guid id) => bookings.First(b => b.Id == id));
@@ -787,7 +837,8 @@ public class BookingServiceUnitTests
          var bookings = CreateMockBooking(users, zones, packages);
          var booking = bookings.First();
          var expectedBooking = new Booking(Guid.NewGuid(), booking.ZoneId, booking.UserId, booking.PackageId,
-             20, booking.Status, booking.Date, booking.StartTime, booking.EndTime);
+             20, booking.Status, booking.Date, booking.StartTime, booking.EndTime, DateTime.UtcNow,
+             false, 100);
 
          _mockBookingRepository.Setup(s => s.GetBookingByIdAsync(It.IsAny<Guid>()))
              .ReturnsAsync((Guid id) => bookings.First(b => b.Id == id));
@@ -831,7 +882,8 @@ public class BookingServiceUnitTests
          var bookings = CreateMockBooking(users, zones, packages);
          var booking = bookings.First();
          var expectedBooking = new Booking(booking.Id, booking.ZoneId, booking.UserId, booking.PackageId,
-             100, booking.Status, booking.Date, booking.StartTime, booking.EndTime);
+             100, booking.Status, booking.Date, booking.StartTime, booking.EndTime, DateTime.UtcNow,
+             false, 100);
 
          _mockBookingRepository.Setup(s => s.GetBookingByIdAsync(It.IsAny<Guid>()))
              .ReturnsAsync((Guid id) => bookings.First(b => b.Id == id));
@@ -875,7 +927,9 @@ public class BookingServiceUnitTests
          var bookings = CreateMockBooking(users, zones, packages);
          var booking = bookings.First();
          var expectedBooking = new Booking(booking.Id, booking.ZoneId, booking.UserId, booking.PackageId,
-             15, booking.Status, new DateOnly(2002, 02, 23), booking.StartTime, booking.EndTime);
+             15, booking.Status, new DateOnly(2002, 02, 23), booking.StartTime, booking.EndTime,
+             DateTime.UtcNow,
+             false, 100);
 
          _mockBookingRepository.Setup(s => s.GetBookingByIdAsync(It.IsAny<Guid>()))
              .ReturnsAsync((Guid id) => bookings.First(b => b.Id == id));
@@ -963,7 +1017,7 @@ public class BookingServiceUnitTests
         Assert.Equal(expectedCount, actualCount);
         await Assert.ThrowsAsync<BookingNotFoundException>(Action);
     }
-    
+
     private List<Package> CreateMockPackages()
     {
         return new List<Package>()
@@ -979,10 +1033,10 @@ public class BookingServiceUnitTests
     {
         return new List<Zone>
         {
-            new Zone(Guid.NewGuid(), "Zone1", "address1", 10, 10, 250, 0.0, new List<Inventory>(), new List<Package>()),
-            new Zone(Guid.NewGuid(), "Zone2", "address2", 30, 10, 350, 0.0, new List<Inventory>(), new List<Package>()),
-            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 300, 0.0, new List<Inventory>(), new List<Package>()),
-            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 300, 0.0, new List<Inventory>(), new List<Package>())
+            new Zone(Guid.NewGuid(), "Zone1", "address1", 10, 10, 0.0, new List<Inventory>(), new List<Package>()),
+            new Zone(Guid.NewGuid(), "Zone2", "address2", 30, 10, 0.0, new List<Inventory>(), new List<Package>()),
+            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10,  0.0, new List<Inventory>(), new List<Package>()),
+            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10,  0.0, new List<Inventory>(), new List<Package>())
         };
     }
     
@@ -990,9 +1044,9 @@ public class BookingServiceUnitTests
     {
         return new List<User>()
         {
-            new User(Guid.NewGuid(), "Иванов", "Иван", "Иванович",  new DateTime(2002, 03, 17), Gender.Male, "ivanov@mail.ru", "+7899999999", "password12123434"),
-            new User(Guid.NewGuid(), "Петров", "Петр", "Петрович",  new DateTime(2003, 05, 18), Gender.Male, "petrov@mail.ru", "+7899909999", "password12122323"),
-            new User(Guid.NewGuid(), "Cударь", "Елена", "Александровна",  new DateTime(1999, 09, 18), Gender.Female, "sudar@mail.ru", "+781211111", "password12121212")
+            new User(Guid.NewGuid(), "Иванов", "Иван", "Иванович",  new DateOnly(2002, 03, 17), Gender.Male, "ivanov@mail.ru", "+7899999999", "password12123434"),
+            new User(Guid.NewGuid(), "Петров", "Петр", "Петрович",  new DateOnly(2003, 05, 18), Gender.Male, "petrov@mail.ru", "+7899909999", "password12122323"),
+            new User(Guid.NewGuid(), "Cударь", "Елена", "Александровна",  new DateOnly(1999, 09, 18), Gender.Female, "sudar@mail.ru", "+781211111", "password12121212")
         };
     }
     
@@ -1004,49 +1058,66 @@ public class BookingServiceUnitTests
                 10, BookingStatus.Reserved,
                 DateOnly.FromDateTime(DateTime.Today),
                 new TimeOnly(8, 00), 
-                new TimeOnly(12, 00)),
+                new TimeOnly(12, 00),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), zones[2].Id, users[1].Id, packages[1].Id, 
                 10, BookingStatus.Reserved, 
                 DateOnly.FromDateTime(DateTime.UtcNow + new TimeSpan(1, 0, 0, 0)),
                 new TimeOnly(13, 00, 00), 
-                new TimeOnly(15, 00, 00)),
+                new TimeOnly(15, 00, 00),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), zones[2].Id, users[1].Id, packages[1].Id, 
                 10, BookingStatus.TemporaryReserved, 
                 DateOnly.FromDateTime(DateTime.UtcNow + new TimeSpan(5, 0, 0, 0)),
                 new TimeOnly(13, 00, 00), 
-                new TimeOnly(15, 00, 00)),
+                new TimeOnly(15, 00, 00),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), zones[0].Id, users[2].Id, packages[0].Id, 
-                10, BookingStatus.NoActual,
+                10, BookingStatus.Done,
                 DateOnly.Parse("2023.05.20"),
                 new TimeOnly(12, 00), 
-                new TimeOnly(18, 00)),
+                new TimeOnly(18, 00),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), zones[0].Id, users[0].Id, packages[0].Id, 
                 10, BookingStatus.Reserved, 
                 DateOnly.FromDateTime(DateTime.UtcNow  + new TimeSpan(2, 0, 0, 0)),
                 new TimeOnly(12, 00), 
-                new TimeOnly(18, 00)),
+                new TimeOnly(18, 00),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), zones[0].Id, users[0].Id, packages[0].Id, 
                 10, BookingStatus.Cancelled, 
                 DateOnly.FromDateTime(DateTime.UtcNow  + new TimeSpan(6, 0, 0, 0)),
                 new TimeOnly(12, 00), 
-                new TimeOnly(18, 00)),
+                new TimeOnly(18, 00),
+                DateTime.UtcNow,
+                false, 100),
             
             // Create Reversed Test
             new Booking(Guid.NewGuid(), zones[0].Id, users[2].Id, packages[0].Id, 
                 10, BookingStatus.Cancelled, 
                 DateOnly.FromDateTime(DateTime.UtcNow  + new TimeSpan(20, 0, 0, 0)),
                 new TimeOnly(08, 00), 
-                new TimeOnly(11, 00)),
+                new TimeOnly(11, 00),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), zones[0].Id, users[1].Id, packages[0].Id, 
                 10, BookingStatus.Cancelled, 
                 DateOnly.FromDateTime(DateTime.UtcNow  + new TimeSpan(20, 0, 0, 0)),
                 new TimeOnly(12, 00), 
-                new TimeOnly(16, 00)),
+                new TimeOnly(16, 00),
+                DateTime.UtcNow,
+                false, 100),
             new Booking(Guid.NewGuid(), zones[0].Id, Guid.Empty, packages[0].Id, 
                 10, BookingStatus.Cancelled, 
                 DateOnly.FromDateTime(DateTime.UtcNow  + new TimeSpan(20, 0, 0, 0)),
                 new TimeOnly(18, 00), 
-                new TimeOnly(23, 00)),
+                new TimeOnly(23, 00),DateTime.UtcNow,
+                false, 100),
         };
     }
 }

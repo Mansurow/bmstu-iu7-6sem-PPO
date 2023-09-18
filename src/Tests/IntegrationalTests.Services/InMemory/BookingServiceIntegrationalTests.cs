@@ -243,8 +243,7 @@ public class BookingServiceIntegrationalTests
         var zone = zones.Last();
         var expectedListFreeTime = new List<FreeTime>()
         {
-            new FreeTime("8:00:00", "13:00:00"),
-            new FreeTime("15:00:00", "23:00:00")
+            new FreeTime("8:00:00", "23:00:00")
         };
         
         // Act

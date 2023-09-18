@@ -133,7 +133,7 @@ public class ZoneServiceUnitTests
             .Callback((Zone zone) => zones.Add(zone));
         
         // Act
-        var actualZoneId = await _zoneService.AddZoneAsync(name, address, size, limit, price);
+        var actualZoneId = await _zoneService.AddZoneAsync(name, address, size, limit);
         var actualCount = zones.Count;
         var actualZone = zones.First(e => e.Id == actualZoneId);
         
@@ -144,7 +144,6 @@ public class ZoneServiceUnitTests
         Assert.Equal(address, actualZone.Address);
         Assert.Equal(size, actualZone.Size);
         Assert.Equal(limit, actualZone.Limit);
-        Assert.Equal(price, actualZone.Price);
         Assert.Equal(0, actualZone.Inventories.Count);
         Assert.Equal(0, actualZone.Packages.Count);
     }
@@ -172,7 +171,7 @@ public class ZoneServiceUnitTests
             .Callback((Zone zone) => zones.Add(zone));
         
         // Act
-        var actualZoneId = await _zoneService.AddZoneAsync(name, address, size, limit, price);
+        var actualZoneId = await _zoneService.AddZoneAsync(name, address, size, limit);
         var actualCount = zones.Count;
         var actualZone = zones.First(e => e.Id == actualZoneId);
         
@@ -183,7 +182,6 @@ public class ZoneServiceUnitTests
         Assert.Equal(address, actualZone.Address);
         Assert.Equal(size, actualZone.Size);
         Assert.Equal(limit, actualZone.Limit);
-        Assert.Equal(price, actualZone.Price);
         Assert.Equal(0, actualZone.Inventories.Count);
         Assert.Equal(0, actualZone.Packages.Count);
     }
@@ -212,7 +210,7 @@ public class ZoneServiceUnitTests
         //     .Callback((Zone zone) => zones.Add(zone));
         
         // Act
-        async Task<Guid> Action() => await _zoneService.AddZoneAsync(name!, address!, size, limit, price);
+        async Task<Guid> Action() => await _zoneService.AddZoneAsync(name!, address!, size, limit);
         var actualCount = zones.Count;
         var actualZone = zones.First();
         
@@ -234,7 +232,7 @@ public class ZoneServiceUnitTests
 
         var beforeUpdateZone = zones.First();
         var updateZone = new Zone(beforeUpdateZone.Id, "update zone", "address", 
-            10.0, 15, 350.99, 0.0, new List<Inventory>(), new List<Package>());
+            10.0, 15,  0.0, new List<Inventory>(), new List<Package>());
         
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid id) => zones.First(z => z.Id == id));
@@ -250,7 +248,6 @@ public class ZoneServiceUnitTests
                 zone.Address = uzone.Address;
                 zone.Limit = uzone.Limit;
                 zone.Size = uzone.Size;
-                zone.Price = uzone.Price;
                 zone.Inventories = uzone.Inventories;
                 zone.Packages = uzone.Packages;
             });
@@ -266,7 +263,6 @@ public class ZoneServiceUnitTests
         Assert.Equal(updateZone.Address, actualZone.Address);
         Assert.Equal(updateZone.Size, actualZone.Size);
         Assert.Equal(updateZone.Limit, actualZone.Limit);
-        Assert.Equal(updateZone.Price, actualZone.Price);
         Assert.Equal(updateZone.Inventories, actualZone.Inventories);
         Assert.Equal(updateZone.Packages, actualZone.Packages);
     }
@@ -324,7 +320,7 @@ public class ZoneServiceUnitTests
         var expectedCount = zones.Count;
         
         var updateZone = new Zone(Guid.NewGuid(), "update zone", "address", 
-            10.0, 15, 350.99, 0.0, new List<Inventory>(), new List<Package>());
+            10.0, 15, 0.0, new List<Inventory>(), new List<Package>());
         
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid id) => zones.First(z => z.Id == id));
@@ -340,7 +336,6 @@ public class ZoneServiceUnitTests
                 zone.Address = uzone.Address;
                 zone.Limit = uzone.Limit;
                 zone.Size = uzone.Size;
-                zone.Price = uzone.Price;
                 zone.Inventories = uzone.Inventories;
                 zone.Packages = uzone.Packages;
             });
@@ -390,7 +385,6 @@ public class ZoneServiceUnitTests
             zone.Address = uzone.Address;
             zone.Limit = uzone.Limit;
             zone.Size = uzone.Size;
-            zone.Price = uzone.Price;
             zone.Inventories = uzone.Inventories;
             zone.Packages = uzone.Packages;
         });
@@ -443,7 +437,6 @@ public class ZoneServiceUnitTests
                 zone.Address = uzone.Address;
                 zone.Limit = uzone.Limit;
                 zone.Size = uzone.Size;
-                zone.Price = uzone.Price;
                 zone.Inventories = uzone.Inventories;
                 zone.Packages = uzone.Packages;
             });
@@ -492,7 +485,6 @@ public class ZoneServiceUnitTests
             zone.Address = uzone.Address;
             zone.Limit = uzone.Limit;
             zone.Size = uzone.Size;
-            zone.Price = uzone.Price;
             zone.Inventories = uzone.Inventories;
             zone.Packages = uzone.Packages;
         });
@@ -544,7 +536,6 @@ public class ZoneServiceUnitTests
                 zone.Address = uzone.Address;
                 zone.Limit = uzone.Limit;
                 zone.Size = uzone.Size;
-                zone.Price = uzone.Price;
                 zone.Inventories = uzone.Inventories;
                 zone.Packages = uzone.Packages;
             });
@@ -592,7 +583,6 @@ public class ZoneServiceUnitTests
                 zone.Address = uzone.Address;
                 zone.Limit = uzone.Limit;
                 zone.Size = uzone.Size;
-                zone.Price = uzone.Price;
                 zone.Inventories = uzone.Inventories;
                 zone.Packages = uzone.Packages;
             });
@@ -640,7 +630,6 @@ public class ZoneServiceUnitTests
                 zone.Address = uzone.Address;
                 zone.Limit = uzone.Limit;
                 zone.Size = uzone.Size;
-                zone.Price = uzone.Price;
                 zone.Inventories = uzone.Inventories;
                 zone.Packages = uzone.Packages;
             });
@@ -758,10 +747,10 @@ public class ZoneServiceUnitTests
     {
         return new List<Zone>
         {
-            new Zone(Guid.NewGuid(), "Zone1", "address1", 10, 6, 2500, 4, new List<Inventory>(), new List<Package>()),
-            new Zone(Guid.NewGuid(), "Zone2", "address2", 30, 6, 3500, 0.0, new List<Inventory>(), new List<Package>()),
-            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 3000, 0.0, new List<Inventory>(), new List<Package>()),
-            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 3000, 0.0, new List<Inventory>(), new List<Package>())
+            new Zone(Guid.NewGuid(), "Zone1", "address1", 10, 6, 4, new List<Inventory>(), new List<Package>()),
+            new Zone(Guid.NewGuid(), "Zone2", "address2", 30, 6, 0.0, new List<Inventory>(), new List<Package>()),
+            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 0.0, new List<Inventory>(), new List<Package>()),
+            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 0.0, new List<Inventory>(), new List<Package>())
         };
     }
 }

@@ -22,8 +22,8 @@ public enum BookingStatus
     /// <summary>
     /// Неактуальная бронь (время брони вышло)
     /// </summary>
-    [EnumMember(Value = "Неактуальная")]
-    NoActual = 3,
+    [EnumMember(Value = "Готово")]
+    Done = 3,
     
     /// <summary>
     /// Отмененная бронь

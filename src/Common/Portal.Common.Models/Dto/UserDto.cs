@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using Portal.Common.JsonConverter;
 using Portal.Common.Models.Enums;
 
 namespace Portal.Common.Models.Dto;
@@ -10,7 +10,7 @@ namespace Portal.Common.Models.Dto;
 /// </summary>
 public class UserDto
 {
-    public UserDto(Guid userId, string lastName, string firstName, string middleName, DateTime birthday, Gender gender, string email, string phone, Role role)
+    public UserDto(Guid userId, string lastName, string firstName, string middleName, DateOnly birthday, Gender gender, string email, string phone, Role role)
     {
         UserId = userId;
         LastName = lastName;
@@ -49,8 +49,9 @@ public class UserDto
     /// <summary>
     /// Дата рождения пользователя
     /// </summary>
-    /// <example>2023-08-12</example>
-    public DateTime Birthday { get; set; }
+    /// <example>08.12.2002</example>
+    [JsonConverter(typeof(CustomDateOnlyConverter))]
+    public DateOnly Birthday { get; set; }
     
     /// <summary>
     /// Пол пользователя
@@ -76,4 +77,23 @@ public class UserDto
     /// Права доступа
     /// </summary>
     public Role Role { get; set; }
+    
+    public override bool Equals(object? obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+        
+        var other = (UserDto) obj;
+        return UserId == other.UserId
+               && LastName == other.LastName
+               && FirstName == other.FirstName
+               && LastName == other.LastName
+               && Birthday == other.Birthday
+               && Gender == other.Gender
+               && Email == other.Email
+               && Phone == other.Phone
+               && Role == other.Role;
+    }
 }

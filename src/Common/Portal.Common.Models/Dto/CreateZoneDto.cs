@@ -5,13 +5,12 @@ namespace Portal.Common.Models.Dto;
 /// </summary>
 public class CreateZoneDto
 {
-    public CreateZoneDto(string name, string address, int limit, double size, double price, List<CreateInventoryDto> inventories, List<Guid> packages)
+    public CreateZoneDto(string name, string address, int limit, double size, List<CreateInventoryDto> inventories, List<Guid> packages)
     {
         Name = name;
         Address = address;
         Limit = limit;
         Size = size;
-        Price = price;
         Inventories = inventories;
         Packages = packages;
     }
@@ -39,13 +38,7 @@ public class CreateZoneDto
     /// </summary>
     /// <example>25.0</example>
     public double Size { get; set; }
-    
-    /// <summary>
-    /// Стоимость зоны за час в рублях
-    /// </summary>
-    /// <example>349.99</example>
-    public double Price { get; set; }
-    
+
     /// <summary>
     /// Инвентарь зоны
     /// </summary>

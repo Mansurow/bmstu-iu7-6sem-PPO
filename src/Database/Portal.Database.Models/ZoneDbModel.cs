@@ -6,6 +6,7 @@ namespace Portal.Database.Models;
 /// <summary>
 /// Модель базы данных зона
 /// </summary>
+[Table("zones")]
 public class ZoneDbModel
 {
     /// <summary>
@@ -38,13 +39,7 @@ public class ZoneDbModel
     /// </summary>
     [Column("limit")]
     public int Limit { get; set; }
-    
-    /// <summary>
-    /// Цена за час в рублях
-    /// </summary>
-    [Column("price")]
-    public double Price { get; set; }
-    
+
     /// <summary>
     /// Рейнтинг зоны по отзывам
     /// </summary>
@@ -61,20 +56,19 @@ public class ZoneDbModel
     /// </summary>
     public ICollection<PackageDbModel> Packages { get; set; }
 
-    public ZoneDbModel(Guid id, string name, string address, double size, int limit, double price, double rating)
+    public ZoneDbModel(Guid id, string name, string address, double size, int limit, double rating)
     {
         Id = id;
         Name = name;
         Address = address;
         Size = size;
         Limit = limit;
-        Price = price;
         Rating = rating;
         Inventories = new List<InventoryDbModel>();
         Packages = new List<PackageDbModel>();
     }
 
-    public ZoneDbModel(Guid id, string name, string address, double size, int limit, double price, double rating, 
+    public ZoneDbModel(Guid id, string name, string address, double size, int limit, double rating, 
         ICollection<InventoryDbModel> inventories)
     {
         Id = id;
@@ -82,13 +76,12 @@ public class ZoneDbModel
         Address = address;
         Size = size;
         Limit = limit;
-        Price = price;
         Rating = rating;
         Inventories = inventories;
         Packages = new List<PackageDbModel>();  
     }
 
-    public ZoneDbModel(Guid id, string name, string address, double size, int limit, double price, double rating, 
+    public ZoneDbModel(Guid id, string name, string address, double size, int limit, double rating, 
         ICollection<InventoryDbModel> inventories, ICollection<PackageDbModel> packages)
     {
         Id = id;
@@ -96,7 +89,6 @@ public class ZoneDbModel
         Address = address;
         Size = size;
         Limit = limit;
-        Price = price;
         Rating = rating;
         Inventories = inventories;
         Packages = packages;

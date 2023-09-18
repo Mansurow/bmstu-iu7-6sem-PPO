@@ -1,5 +1,4 @@
 ﻿using Portal.Common.Models.Enums;
-using System.ComponentModel.DataAnnotations;
 
 namespace Portal.Common.Models;
 
@@ -36,7 +35,7 @@ public class User
     /// Дата рождения пользователя
     /// </summary>
     /// <example>05.12.1999</example>
-    public DateTime Birthday { get; set; }
+    public DateOnly Birthday { get; set; }
     
     /// <summary>
     /// Пол пользователя
@@ -66,7 +65,7 @@ public class User
     /// </summary>
     public Role Role { get; private set; }
 
-    public User(Guid id, string lastName, string firstName, string middleName, DateTime birthday, Gender gender, string email, string? phone = null, string? passwordHash = null, Role role = Role.User)
+    public User(Guid id, string lastName, string firstName, string middleName, DateOnly birthday, Gender gender, string email, string? phone = null, string? passwordHash = null, Role role = Role.User)
     {
         Id = id;
         LastName = lastName;

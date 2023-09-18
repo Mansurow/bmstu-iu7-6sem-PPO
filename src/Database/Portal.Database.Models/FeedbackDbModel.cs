@@ -6,6 +6,7 @@ namespace Portal.Database.Models;
 /// <summary>
 /// Модель базы данных отзыв
 /// </summary>
+[Table("feedbacks")]
 public class FeedbackDbModel
 {
     /// <summary>
@@ -32,13 +33,13 @@ public class FeedbackDbModel
     /// <summary>
     /// Дата и время отзыва
     /// </summary>
-    [Column("date", TypeName = "varchar(64)")]
+    [Column("date")]
     public DateTime Date { get; set; }
     
     /// <summary>
     /// Оценка посещение зоны
     /// </summary>
-    [Column("mark")]
+    [Column("mark", TypeName = "numeric")]
     public double Mark { get; set; }
     
     /// <summary>

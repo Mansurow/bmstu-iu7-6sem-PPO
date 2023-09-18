@@ -8,6 +8,7 @@ namespace Portal.Database.Models;
 /// <summary>
 /// Модель базы данных брони
 /// </summary>
+[Table("bookings")]
 public class BookingDbModel
 {
     /// <summary>
@@ -59,7 +60,7 @@ public class BookingDbModel
     /// <summary>
     /// Статус брони
     /// </summary>
-    [Column("status", TypeName = "integer")]
+    [Column("status", TypeName = "varchar(64)")]
     public BookingStatus Status { get; set; }
     
     /// <summary>
@@ -79,9 +80,28 @@ public class BookingDbModel
     /// </summary>
     [Column("end_time")]
     public TimeOnly EndTime { get; set; }
+    
+    /// <summary>
+    /// Время создания брони
+    /// </summary>
+    [Column("create_date_time")]
+    public DateTime CreateDateTime { get; set; }
 
+    /// <summary>
+    /// Оплачена ли бронь
+    /// </summary>
+    [Column("is_paid")]
+    public bool IsPaid { get; set; }
+    
+    /// <summary>
+    /// Общая стоимоcть брони
+    /// </summary>
+    [Column("total_price", TypeName = "numeric")]
+    public double TotalPrice { get; set; }
+    
     public BookingDbModel(Guid id, Guid zoneId, Guid userId, Guid packageId,
-        int amountPeople, DateOnly date, TimeOnly startTime, TimeOnly endTime, BookingStatus status)
+        int amountPeople, DateOnly date, TimeOnly startTime, TimeOnly endTime, DateTime createDateTime, 
+        double totalPrice, BookingStatus status, bool isPaid)
     {
         Id = id;
         ZoneId = zoneId;
@@ -90,7 +110,10 @@ public class BookingDbModel
         AmountPeople = amountPeople;
         Status = status;
         Date = date;
+        CreateDateTime = createDateTime;
         StartTime = startTime;
         EndTime = endTime;
+        IsPaid = isPaid;
+        TotalPrice = totalPrice;
     }
 }

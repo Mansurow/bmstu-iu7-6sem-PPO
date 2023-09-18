@@ -155,6 +155,7 @@ public class OauthController : ControllerBase
             expires: DateTime.Now.AddSeconds(authParams.TokenLifeTime),
             signingCredentials: credentials);
 
-        return "Bearer " + new JwtSecurityTokenHandler().WriteToken(token);
+        // return "Bearer " + new JwtSecurityTokenHandler().WriteToken(token);
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

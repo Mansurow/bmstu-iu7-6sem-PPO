@@ -68,7 +68,7 @@ public class BookingRepository: BaseRepository, IBookingRepository
     public async Task UpdateNoActualBookingAsync(Guid bookingId) 
     {
         var booking = await _context.Bookings.FirstAsync(b => b.Id == bookingId);
-        booking.Status = BookingStatus.NoActual;
+        booking.Status = BookingStatus.Done;
         await _context.SaveChangesAsync();
     }
 
@@ -85,6 +85,9 @@ public class BookingRepository: BaseRepository, IBookingRepository
         booking.Date = updateBooking.Date;
         booking.StartTime = updateBooking.StartTime;
         booking.EndTime = updateBooking.EndTime;
+        booking.TotalPrice = updateBooking.TotalPrice;
+        booking.Date = updateBooking.Date;
+
         
         await _context.SaveChangesAsync();
     }

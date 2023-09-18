@@ -4,7 +4,7 @@ using Serilog;
 
 namespace Portal;
 
-public static class Program
+public class Program
 {
     private const string CorsPolicy = "AllowAllCorsPolicy";
     public static async Task Main(string[] args)

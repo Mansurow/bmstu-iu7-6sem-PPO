@@ -81,11 +81,18 @@ namespace Portal.Services.BookingService
         private async Task UpdateNoActualBookingsAsync(IEnumerable<Booking> bookings)
         {
             foreach (var b in bookings.Where(b => b.IsBookingExpired() 
-                                                  && b.Status is not BookingStatus.NoActual))
+                                                  && b.Status is not BookingStatus.Done
+                                                  && b.Status is not BookingStatus.TemporaryReserved))
             {
-                b.ChangeStatus(BookingStatus.NoActual);
+                b.ChangeStatus(BookingStatus.Done);
                 await _bookingRepository.UpdateNoActualBookingAsync(b.Id);
             }
+            
+            foreach (var booking in bookings.Where(IsTemporaryBookingExpired))
+            {
+                await _bookingRepository.DeleteBookingAsync(booking.Id);
+            }
+
         }
         
         public async Task<List<Booking>> GetBookingByZoneAsync(Guid zoneId)
@@ -112,9 +119,17 @@ namespace Portal.Services.BookingService
             {
                 var booking = await _bookingRepository.GetBookingByIdAsync(bookingId);
                 
+                if (IsTemporaryBookingExpired(booking))
+                {
+                    await _bookingRepository.DeleteBookingAsync(bookingId);
+                    
+                    _logger.LogError("Bookings with id: {BookingId} is expired", bookingId);
+                    throw new BookingNotFoundException($"Bookings with id: {bookingId} is expired");
+                }
+                
                 if (booking.IsBookingExpired())
                 {
-                    booking.ChangeStatus(BookingStatus.NoActual);
+                    booking.ChangeStatus(BookingStatus.Done);
                     await _bookingRepository.UpdateNoActualBookingAsync(booking.Id);
                 }
                 
@@ -132,6 +147,12 @@ namespace Portal.Services.BookingService
             }
         }
 
+        private bool IsTemporaryBookingExpired(Booking booking)
+        {
+            return booking.Status is BookingStatus.TemporaryReserved && 
+                   DateTime.UtcNow - booking.CreateDateTime > _config.TemporaryReservedBookingTime;
+        }
+        
         public async Task<List<FreeTime>> GetFreeTimeAsync(Guid zoneId, DateOnly date)
         {
             var bookings = (await GetBookingByZoneAsync(zoneId))
@@ -186,7 +207,8 @@ namespace Portal.Services.BookingService
             try
             {
                 var zone = await _zoneRepository.GetZoneByIdAsync(zoneId);
-
+                var totalPrice = 0.0;
+                
                 try
                 {
                     await _packageRepository.GetPackageByIdAsync(packageId);
@@ -204,7 +226,7 @@ namespace Portal.Services.BookingService
                     _logger.LogError("User with id: {UserId} reversed for zone with id: {ZoneId}", userId, zoneId);
                     throw new BookingExistsException($"User with id: {userId} reversed for zone with id: {zoneId}");
                 }
-
+                
                 if (!await IsFreeTimeAsync(date, startTime, endTime))
                 {
                     _logger.LogError("Zone full or partial reversed on {Date} from {StartTime} to {EndTime}", date, startTime, endTime);
@@ -214,7 +236,7 @@ namespace Portal.Services.BookingService
 
                 var newBooking = new Booking(Guid.NewGuid(), zoneId, userId, packageId,
                     zone.Limit, BookingStatus.TemporaryReserved,
-                    date, startTime, endTime);
+                    date, startTime, endTime, DateTime.UtcNow, false, totalPrice);
                 await _bookingRepository.InsertBookingAsync(newBooking);
 
                 return newBooking.Id;

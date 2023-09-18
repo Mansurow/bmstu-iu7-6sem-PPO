@@ -130,7 +130,7 @@ public class ZoneController : ControllerBase
             
             await _zoneService.UpdateZoneAsync(new Zone(
                 zoneDto.Id, zoneDto.Name, zoneDto.Address,
-                zoneDto.Size, zoneDto.Limit, zoneDto.Price,
+                zoneDto.Size, zoneDto.Limit,
                 0, zoneDto.Inventories, zoneDto.Packages));
 
             return StatusCode(StatusCodes.Status204NoContent);
@@ -174,8 +174,7 @@ public class ZoneController : ControllerBase
     {
         try
         {
-            var zoneId = await _zoneService.AddZoneAsync(zoneDto.Name, zoneDto.Address, zoneDto.Size, zoneDto.Limit,
-                zoneDto.Price);
+            var zoneId = await _zoneService.AddZoneAsync(zoneDto.Name, zoneDto.Address, zoneDto.Size, zoneDto.Limit);
 
             await _zoneService.AddInventoryAsync(zoneId, zoneDto.Inventories);
             await _zoneService.AddPackageAsync(zoneId, zoneDto.Packages);

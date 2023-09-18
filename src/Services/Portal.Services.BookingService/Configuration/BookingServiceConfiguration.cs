@@ -15,5 +15,11 @@ public class BookingServiceConfiguration
     /// </summary>
     public string EndTimeWorking { get; set; }
     
+    
+    /// <summary>
+    /// Ограничение время на бронирование
+    /// </summary>
+    public TimeSpan TemporaryReservedBookingTime { get; set; }
+    
     // public List<string> Holidays { get; set; }
 }

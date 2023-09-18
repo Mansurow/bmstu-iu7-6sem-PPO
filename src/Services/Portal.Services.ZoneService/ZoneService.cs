@@ -49,7 +49,7 @@ public class ZoneService: IZoneService
         }
     }
     
-    public async Task<Guid> AddZoneAsync(string name, string address, double size, int limit, double price)
+    public async Task<Guid> AddZoneAsync(string name, string address, double size, int limit)
     {
         try
         {
@@ -63,7 +63,7 @@ public class ZoneService: IZoneService
             catch (InvalidOperationException)
             {
                 _logger.LogInformation("This name \"{ZoneName}\" of zone not found.", name);
-                var newZone = new Zone(Guid.NewGuid(), name, address, size, limit, price, 0.0,
+                var newZone = new Zone(Guid.NewGuid(), name, address, size, limit, 0.0,
                     new List<Inventory>(),
                     new List<Package>());
                 await _zoneRepository.InsertZoneAsync(newZone);
@@ -77,8 +77,9 @@ public class ZoneService: IZoneService
             throw new ZoneCreateException("Zone has not been created");
         }
     }
+
     
-    public async Task<Guid> AddZoneAsync(string name, string address, double size, int limit, double price, List<Inventory> inventories, List<Package> packages)
+    public async Task<Guid> AddZoneAsync(string name, string address, double size, int limit, List<Inventory> inventories, List<Package> packages)
     {
         try
         {
@@ -92,11 +93,12 @@ public class ZoneService: IZoneService
             catch (InvalidOperationException)
             {
                 _logger.LogInformation("This name \"{ZoneName}\" of zone not found.", name);
-                var newZone = new Zone(Guid.NewGuid(), name, address, size, limit, price, 0.0, inventories, packages);
+                var newZone = new Zone(Guid.NewGuid(), name, address, size, limit, 0.0, inventories, packages);
                 await _zoneRepository.InsertZoneAsync(newZone);
 
                 return newZone.Id;
             }
+
         }
         catch (DbUpdateException e)
         {

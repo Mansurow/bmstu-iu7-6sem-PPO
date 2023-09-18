@@ -7,6 +7,7 @@ namespace Portal.Database.Models;
 /// <summary>
 /// Модель базы данных блюдо
 /// </summary>
+[Table("dishes")]
 public class DishDbModel
 {
     /// <summary>

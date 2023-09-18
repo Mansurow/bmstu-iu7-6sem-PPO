@@ -21,8 +21,8 @@ public class PackageServiceUnitTests
     public PackageServiceUnitTests()
     {
         _packageService = new PackageService(_mockPackageRepository.Object,
-            NullLogger<PackageService>.Instance,
-            _mockMenuRepository.Object);
+            _mockMenuRepository.Object,
+            NullLogger<PackageService>.Instance);
     }
 
     /// <summary>

@@ -7,6 +7,7 @@ namespace Portal.Database.Models;
 /// <summary>
 /// Модель базы данных инвентарь
 /// </summary>
+[Table("inventories")]
 public class InventoryDbModel
 {
     /// <summary>
@@ -41,9 +42,9 @@ public class InventoryDbModel
     public string Description { get; set; }
     
     /// <summary>
-    /// Год производтсва или выпуска
+    /// Дата производтсва или выпуска
     /// </summary>
-    [Column("year_of_production")]
+    [Column("date_production")]
     public DateOnly YearOfProduction { get; set; }
 
     /// <summary>

@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Database\Portal.Database.Context\Portal.Database.Context.csproj" />
+    <ProjectReference Include="..\..\Database\Portal.Database.Core\Portal.Database.Core.csproj" />
     <ProjectReference Include="..\..\Database\Portal.Database.Repository\Portal.Database.Repositories.csproj" />
     <ProjectReference Include="..\..\Services\Portal.Services.BookingService\Portal.Services.BookingService.csproj" />
     <ProjectReference Include="..\..\Services\Portal.Services.MenuService\Portal.Services.MenuService.csproj" />

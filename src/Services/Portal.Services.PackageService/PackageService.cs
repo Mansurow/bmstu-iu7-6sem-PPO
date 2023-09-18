@@ -17,7 +17,7 @@ public class PackageService: IPackageService
     private readonly IMenuRepository _menuRepository;
     private readonly ILogger<PackageService> _logger;
 
-    public PackageService(IPackageRepository packageRepository, ILogger<PackageService> logger, IMenuRepository menuRepository)
+    public PackageService(IPackageRepository packageRepository, IMenuRepository menuRepository, ILogger<PackageService> logger)
     {
         _packageRepository = packageRepository ?? throw new ArgumentNullException(nameof(packageRepository));
         _menuRepository = menuRepository ?? throw new ArgumentNullException(nameof(menuRepository));

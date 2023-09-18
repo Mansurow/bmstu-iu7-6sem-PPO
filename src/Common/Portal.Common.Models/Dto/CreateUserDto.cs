@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
+using Portal.Common.JsonConverter;
 using Portal.Common.Models.Enums;
 
 namespace Portal.Common.Models.Dto;
@@ -24,13 +26,14 @@ public class CreateUserDto
     /// Отчество пользователя
     /// </summary>
     /// <example>Иванович</example>
-    public string MiddleName { get; set; }
+    public string? MiddleName { get; set; }
     
     /// <summary>
     /// Дата рождения пользователя
     /// </summary>
-    /// <example>2023-08-12</example>
-    public DateTime Birthday { get; set; }
+    /// <example>12.08.2002</example>
+    [JsonConverter(typeof(CustomDateOnlyConverter))]
+    public DateOnly Birthday { get; set; }
     
     /// <summary>
     /// Пол пользователя
@@ -58,7 +61,7 @@ public class CreateUserDto
     /// <example>password123</example>
     public string Password { get; private set; }
     
-    public CreateUserDto(string lastName, string firstName, string middleName, DateTime birthday, Gender gender, string email, string phone, string password)
+    public CreateUserDto(string lastName, string firstName, string middleName, DateOnly birthday, Gender gender, string email, string phone, string password)
     {
         LastName = lastName;
         FirstName = firstName;

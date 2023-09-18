@@ -23,7 +23,10 @@ namespace Portal.Common.Converter
                                date: booking.Date,
                                startTime: booking.StartTime,
                                endTime: booking.EndTime,
-                               status: booking.Status);
+                               status: booking.Status,
+                               createDateTime: booking.CreateDateTime,
+                               isPaid: booking.IsPaid,
+                               totalPrice: booking.TotalPrice);
         }
 
         /// <summary>
@@ -41,7 +44,10 @@ namespace Portal.Common.Converter
                                date: booking.Date,
                                startTime: booking.StartTime,
                                endTime: booking.EndTime,
-                               status: booking.Status);
+                               status: booking.Status,
+                               createDateTime: booking.CreateDateTime,
+                               isPaid: booking.IsPaid,
+                               totalPrice: booking.TotalPrice);
         }
     }
 }

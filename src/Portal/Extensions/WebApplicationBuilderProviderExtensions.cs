@@ -1,11 +1,8 @@
-using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json.Converters;
+using Portal.Common.JsonConverter;
 using Portal.Database.Context;
 using Portal.Database.Repositories;
-using Portal.Json;
-using Portal.Services.BookingService.Configuration;
 using Serilog;
 
 namespace Portal.Extensions;

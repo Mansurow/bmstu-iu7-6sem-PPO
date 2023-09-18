@@ -7,6 +7,7 @@ namespace Portal.Database.Models;
 /// <summary>
 /// Модель базы данных пакет
 /// </summary>
+[Table("packages")]
 public class PackageDbModel
 {
     /// <summary>
@@ -25,13 +26,13 @@ public class PackageDbModel
     /// <summary>
     /// Тип пакета
     /// </summary>
-    [Column("type")]
+    [Column("type", TypeName = "varchar(64)")]
     public PackageType Type { get; set; }
     
     /// <summary>
     /// Цена пакета
     /// </summary>
-    [Column("price")]
+    [Column("price", TypeName = "numeric")]
     public double Price { get; set; }
     
     /// <summary>

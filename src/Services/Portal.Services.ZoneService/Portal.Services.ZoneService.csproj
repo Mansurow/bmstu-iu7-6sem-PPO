@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Portal.Common.Models\Portal.Common.Models.csproj" />
+    <ProjectReference Include="..\..\Database\Portal.Database.Core\Portal.Database.Core.csproj" />
     <ProjectReference Include="..\Portal.Services.InventoryServices\Portal.Services.InventoryServices.csproj" />
     <ProjectReference Include="..\Portal.Services.PackageService\Portal.Services.PackageService.csproj" />
   </ItemGroup>

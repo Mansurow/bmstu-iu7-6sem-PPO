@@ -5,8 +5,9 @@ using Portal.Common.Models.Dto;
 using Portal.Common.Models.Enums;
 using Portal.Services.FeedbackService;
 using Portal.Services.FeedbackService.Exceptions;
-using Portal.Services.MenuService.Exceptions;
+using Portal.Services.UserService.Exceptions;
 using Portal.Services.ZoneService.Exceptions;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Portal.Controllers;
 
@@ -105,7 +106,7 @@ public class FeedbackController: ControllerBase
             });
         }
     }
-    
+
     /// <summary>
     /// Добавить отзыв
     /// </summary>
@@ -118,12 +119,12 @@ public class FeedbackController: ControllerBase
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
     [HttpPost]
     [Authorize(Roles = nameof(Role.User))]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetZoneFeedbacks([FromBody] CreateFeedbackDto feedbackDto)
+    [SwaggerResponse(statusCode: 200, description: "Идентификатор отзыв.")]
+    [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
+    [SwaggerResponse(statusCode: 401, description: "Пользователь неавторизован.")]
+    [SwaggerResponse(statusCode: 403, description: "У пользователя недостаточно прав доступа.")]
+    [SwaggerResponse(statusCode: 500, description: "Ошибка на стороне сервера.")]
+    public async Task<IActionResult> PostFeedback([FromBody] CreateFeedbackDto feedbackDto)
     {
         try
         {
@@ -132,6 +133,21 @@ public class FeedbackController: ControllerBase
 
             return Ok(new { feedbackId });
         }
+        catch (UserNotFoundException e)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest,new
+            {
+                messsage = e.Message
+            });
+        }
+        catch (ZoneNotFoundException e)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest,new
+            {
+                messsage = e.Message
+            });
+        }
+
         catch (Exception e)
         {
             _logger.LogError(e, "Internal server error");

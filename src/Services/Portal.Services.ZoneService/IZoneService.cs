@@ -30,11 +30,10 @@ public interface IZoneService
     /// <param name="address">Адрес зоны</param>
     /// <param name="size">Размер зоны в кв. метрах</param>
     /// <param name="limit">Максимальное количество людей</param>
-    /// <param name="price">Цена за аренду в рублях </param>
     /// <returns>Идентификатор новой зоны</returns>
     /// <exception cref="ZoneNameExistException">Названии зоны уже существует</exception>
     /// <exception cref="ZoneCreateException">При создании зоны</exception>
-    Task<Guid> AddZoneAsync(string name, string address, double size, int limit, double price);
+    Task<Guid> AddZoneAsync(string name, string address, double size, int limit);
     
     /// <summary>
     /// Добавить зону
@@ -43,13 +42,12 @@ public interface IZoneService
     /// <param name="address">Адрес зоны</param>
     /// <param name="size">Размер зоныв кв. метрах</param>
     /// <param name="limit">Максимальное количество людей</param>
-    /// <param name="price">Цена в рублях за час</param>
     /// <param name="inventories">Список инвентаря</param>
     /// <param name="packages">Список пакетов</param>
     /// <returns>Идентификатор новой зоны</returns>
     /// <exception cref="ZoneNameExistException">Названии зоны уже существует</exception>
     /// <exception cref="ZoneCreateException">При создании зоны</exception>
-    Task<Guid> AddZoneAsync(string name, string address, double size, int limit, double price, List<Inventory> inventories, List<Package> packages);
+    Task<Guid> AddZoneAsync(string name, string address, double size, int limit, List<Inventory> inventories, List<Package> packages);
     
     /// <summary>
     /// Обновить зону

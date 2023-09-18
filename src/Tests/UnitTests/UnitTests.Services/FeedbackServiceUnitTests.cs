@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging.Abstractions;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 using Portal.Common.Models;
@@ -424,21 +425,22 @@ public class FeedbackServiceUnitTests
     {
         return new List<Zone>
         {
-            new Zone(Guid.NewGuid(), "Zone1", "address1", 10, 6, 2500, 4, new List<Inventory>(), new List<Package>()),
-            new Zone(Guid.NewGuid(), "Zone2", "address2", 30, 6, 3500, 0.0, new List<Inventory>(), new List<Package>()),
-            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 3000, 0.0, new List<Inventory>(), new List<Package>()),
-            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10, 3000, 0.0, 
+            new Zone(Guid.NewGuid(), "Zone1", "address1", 10, 6, 4, new List<Inventory>(), new List<Package>()),
+            new Zone(Guid.NewGuid(), "Zone2", "address2", 30, 6,  0.0, new List<Inventory>(), new List<Package>()),
+            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10,  0.0, new List<Inventory>(), new List<Package>()),
+            new Zone(Guid.NewGuid(), "Zone3", "address3", 25, 10,  0.0, 
                 CreateMockInventory(Guid.NewGuid()), new List<Package>())
         };
     }
+
 
     private List<User> CreateMockUsers()
     {
         return new List<User>()
         {
-            new User(Guid.NewGuid(), "Иванов", "Иван", "Иванович",  new DateTime(2002, 03, 17), Gender.Male, "ivanov@mail.ru", "+7899999999", "password12123434"),
-            new User(Guid.NewGuid(), "Петров", "Петр", "Петрович",  new DateTime(2003, 05, 18), Gender.Male, "petrov@mail.ru", "+7899909999", "password12122323"),
-            new User(Guid.NewGuid(), "Cударь", "Елена", "Александровна",  new DateTime(1999, 09, 18), Gender.Female, "sudar@mail.ru", "+781211111", "password12121212")
+            new User(Guid.NewGuid(), "Иванов", "Иван", "Иванович",  new DateOnly(2002, 03, 17), Gender.Male, "ivanov@mail.ru", "+7899999999", "password12123434"),
+            new User(Guid.NewGuid(), "Петров", "Петр", "Петрович",  new DateOnly(2003, 05, 18), Gender.Male, "petrov@mail.ru", "+7899909999", "password12122323"),
+            new User(Guid.NewGuid(), "Cударь", "Елена", "Александровна",  new DateOnly(1999, 09, 18), Gender.Female, "sudar@mail.ru", "+781211111", "password12121212")
         };
     }
     

@@ -20,7 +20,6 @@ namespace Portal.Common.Converter
                 address: zone.Address,
                 size: zone.Size,
                 limit: zone.Limit,
-                price: zone.Price,
                 rating: zone.Rating,
                 inventories: zone.Inventories.Select(InventoryConverter.ConvertDbModelToAppModel).ToList(),
                 packages: zone.Packages.Select(PackageConverter.ConvertDbModelToAppModelNoInclude).ToList());
@@ -38,7 +37,6 @@ namespace Portal.Common.Converter
                 address: zone.Address,
                 size: zone.Size,
                 limit: zone.Limit,
-                price: zone.Price,
                 rating: zone.Rating,
                 inventories: zone.Inventories.Select(InventoryConverter.ConvertDbModelToAppModel).ToList(),
                 packages: new List<Package>());
@@ -51,7 +49,6 @@ namespace Portal.Common.Converter
                 address: zone.Address,
                 size: zone.Size,
                 limit: zone.Limit,
-                price: zone.Price,
                 rating: zone.Rating,
                 inventories: zone.Inventories.Select(InventoryConverter.ConvertAppModelToDbModel).ToList(),
                 packages: zone.Packages.Select(PackageConverter.ConvertAppModelToDbModel).ToList());

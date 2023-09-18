@@ -60,8 +60,24 @@ public class Booking
     /// <example>18:00:00</example>
     public TimeOnly EndTime { get; set; }
 
+    /// <summary>
+    /// Время создания брони
+    /// </summary>
+    public DateTime CreateDateTime { get; set; }
+
+    /// <summary>
+    /// Оплачена ли бронь
+    /// </summary>
+    public bool IsPaid { get; set; }
+    
+    /// <summary>
+    /// Общая стоимоcть брони
+    /// </summary>
+    public double TotalPrice { get; set; }
+    
     public Booking(Guid id, Guid zoneId, Guid userId, Guid packageId,
-        int amountPeople, BookingStatus status, DateOnly date, TimeOnly startTime, TimeOnly endTime)
+        int amountPeople, BookingStatus status, DateOnly date, TimeOnly startTime, TimeOnly endTime, 
+        DateTime createDateTime, bool isPaid, double totalPrice)
     {
         Id = id;
         ZoneId = zoneId;
@@ -72,11 +88,14 @@ public class Booking
         Date = date;
         StartTime = startTime;
         EndTime = endTime;
+        CreateDateTime = createDateTime;
+        IsPaid = isPaid;
+        TotalPrice = totalPrice;
     }
 
     public bool IsActualStatus()
     {
-        return Status != BookingStatus.NoActual 
+        return Status != BookingStatus.Done 
                && Status != BookingStatus.Cancelled;
     }
     
