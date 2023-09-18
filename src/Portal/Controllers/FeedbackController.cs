@@ -119,6 +119,7 @@ public class FeedbackController: ControllerBase
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
     [HttpPost]
     [Authorize(Roles = nameof(Role.User))]
+    // Todo: сделать везде также
     [SwaggerResponse(statusCode: 200, description: "Идентификатор отзыв.")]
     [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
     [SwaggerResponse(statusCode: 401, description: "Пользователь неавторизован.")]

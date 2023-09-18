@@ -9,13 +9,13 @@ public class FreeTime
     /// Начало времени
     /// </summary>
     /// <example>12:00:00</example>
-    public TimeOnly StartTime;
-    
+    public TimeOnly StartTime { get; }
+
     /// <summary>
     /// Конец времени
     /// </summary>
     /// <example>18:00:00</example>
-    public TimeOnly EndTime;
+    public TimeOnly EndTime { get; }
 
     public FreeTime(TimeOnly startTime, TimeOnly endTime)
     {
@@ -39,5 +39,10 @@ public class FreeTime
         var other = (FreeTime) obj;
         return StartTime == other.StartTime
                && EndTime == other.EndTime;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(StartTime, EndTime);
     }
 }

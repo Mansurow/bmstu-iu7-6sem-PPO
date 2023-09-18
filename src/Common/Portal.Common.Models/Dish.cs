@@ -40,8 +40,9 @@ public class Dish
         Price = price;
         Description = description;
     }
-
+    
     public override bool Equals(object? obj)
+
     {
         if (obj == null || GetType() != obj.GetType())
         {

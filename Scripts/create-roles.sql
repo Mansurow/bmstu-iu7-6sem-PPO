@@ -37,19 +37,19 @@ GRANT SELECT
     TO portal_user;
     
 GRANT INSERT
-    ON public."Users", 
-       public."Bookings", 
-       public."Feedbacks"
+    ON public.users, 
+       public.bookings, 
+       public.feedbacks
     TO portal_user; 
     
 GRANT DELETE
-    ON public."Bookings", 
-       public."Feedbacks"
+    ON public.bookings, 
+       public.feedbacks
     TO portal_user;
 
 GRANT UPDATE
-    ON public."Bookings",
-       public."Feedbacks"
+    ON public.bookings,
+       public.feedbacks
     TO portal_user; 
    
 -- Роль: Гость (Неавторизированный пользователь) 
@@ -68,17 +68,17 @@ CREATE ROLE portal_guest WITH
 -- права доступа
 
 GRANT SELECT
-    ON public."Zones",
-       public."Inventories",
-       public."Feedbacks",
-       public."Packages",
-       public."ZonePackages",
-       public."Menu",
-       public."PackageDishes"
+    ON public.zones,
+       public.inventories,
+       public.feedbacks,
+       public.packages,
+       public.zone_packages,
+       public.dishes,
+       public.package_dishes
     TO portal_guest;
 
 GRANT INSERT
-    ON public."Users"
+    ON public.users
     TO portal_guest;
     
 -- Удалить права доступа

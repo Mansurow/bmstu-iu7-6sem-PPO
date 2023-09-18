@@ -2,7 +2,7 @@
 
 -- DROP DATABASE IF EXISTS "PortalDb";
 
-CREATE DATABASE "PortalDb"
+CREATE DATABASE "PortalDbS"
     WITH
     OWNER = postgres -- admin
     ENCODING = 'UTF8'

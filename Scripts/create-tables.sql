@@ -1,186 +1,169 @@
--- Table: public.Users
+-- Table: public.users
 
--- DROP TABLE IF EXISTS public."Users";
+-- DROP TABLE IF EXISTS public.users;
 
-CREATE TABLE IF NOT EXISTS public."Users"
+CREATE TABLE IF NOT EXISTS public.users
 (
-    id uuid NOT NULL,
-    last_name character varying(64) NOT NULL,
-    first_name character varying(64) NOT NULL,
-    middle_name character varying(64),
-    birthday character varying(64) NOT NULL,
+    id uuid NOT NULL PRIMARY KEY,
+    last_name varchar(64) NOT NULL,
+    first_name varchar(64) NOT NULL,
+    middle_name varchar(64),
+    birthday timestamp with time zone NOT NULL,
     gender integer NOT NULL,
-    email text NOT NULL,
-    phone text,
-    password character varying(128),
-    role integer NOT NULL,
-    
-    CONSTRAINT "PK_Users" PRIMARY KEY (id)
+    email varchar(64) NOT NULL,
+    phone varchar(64),
+    password character varying(128) NOT NULL,
+    role character varying(64) NOT NULL
 );
 
--- Table: public.Zones
+-- Table: public.zones
 
--- DROP TABLE IF EXISTS public."Zones";
+-- DROP TABLE IF EXISTS public.zones;
 
-CREATE TABLE IF NOT EXISTS public."Zones"
+CREATE TABLE IF NOT EXISTS public.zones
 (
-    id uuid NOT NULL,
-    name character varying(64) NOT NULL,
+    id uuid NOT NULL PRIMARY KEY,
+    name varchar(64) NOT NULL,
     address text NOT NULL,
     size double precision NOT NULL,
     "limit" integer NOT NULL,
-    price double precision NOT NULL,
-    rating numeric NOT NULL,
-    
-    CONSTRAINT "PK_Zones" PRIMARY KEY (id)
+    rating numeric NOT NULL
 );
 
--- Table: public.Inventories
+-- Table: public.inventories
 
--- DROP TABLE IF EXISTS public."Inventories";
+-- DROP TABLE IF EXISTS public.inventories;
 
-CREATE TABLE IF NOT EXISTS public."Inventories"
+CREATE TABLE IF NOT EXISTS public.inventories
 (
-    id uuid NOT NULL,
-    zone_id uuid NOT NULL,
-    name character varying(64) NOT NULL,
-    description text NOT NULL,
-    year_of_production date NOT NULL,
-    is_written_off boolean NOT NULL,
-    
-    CONSTRAINT "PK_Inventories" PRIMARY KEY (id),
-    CONSTRAINT "FK_Inventories_Zones_zone_id" FOREIGN KEY (zone_id)
-        REFERENCES public."Zones" (id) MATCH SIMPLE
+    id uuid NOT NULL PRIMARY KEY ,
+    zone_id uuid NOT NULL REFERENCES public.zones (id) 
+        MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    name varchar(64) NOT NULL,
+    description text NOT NULL,
+    date_production date NOT NULL,
+    is_written_off boolean NOT NULL      
 );
 
--- Table: public.Packages
+-- Table: public.packages
 
--- DROP TABLE IF EXISTS public."Packages";
+-- DROP TABLE IF EXISTS public.packages;
 
-CREATE TABLE IF NOT EXISTS public."Packages"
+CREATE TABLE IF NOT EXISTS public.packages
 (
-    id uuid NOT NULL,
-    name character varying(64) NOT NULL,
-    type integer NOT NULL,
-    price double precision NOT NULL,
+    id uuid NOT NULL PRIMARY KEY,
+    name varchar(64) NOT NULL,
+    type varchar(64) NOT NULL,
+    price numeric NOT NULL,
     rental_time integer NOT NULL,
-    description text NOT NULL,
-    
-    CONSTRAINT "PK_Packages" PRIMARY KEY (id)
+    description text NOT NULL
 );
 
 -- Table: public.ZonePackages
 
--- DROP TABLE IF EXISTS public."ZonePackages";
+-- DROP TABLE IF EXISTS public.zone_packages;
 
-CREATE TABLE IF NOT EXISTS public."ZonePackages"
+CREATE TABLE IF NOT EXISTS public.zone_packages
 (
-    package_id uuid NOT NULL,
-    zone_id uuid NOT NULL,
-    
-    CONSTRAINT "PK_ZonePackages" PRIMARY KEY (package_id, zone_id),
-    CONSTRAINT "FK_ZonePackages_Packages_package_id" FOREIGN KEY (package_id)
-        REFERENCES public."Packages" (id) MATCH SIMPLE
+    package_id uuid NOT NULL
+        REFERENCES public.zones (id) 
+        MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    zone_id uuid NOT NULL 
+        REFERENCES public.packages (id)
+        MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE,
     
-    CONSTRAINT "FK_ZonePackages_Zones_zone_id" FOREIGN KEY (zone_id)
-        REFERENCES public."Zones" (id) MATCH SIMPLE
+    CONSTRAINT pk_zone_packages PRIMARY KEY (package_id, zone_id)
+);
+
+-- Table: public.dishes
+
+-- DROP TABLE IF EXISTS public.dishes;
+
+CREATE TABLE IF NOT EXISTS public.dishes
+(
+    id uuid NOT NULL PRIMARY KEY,
+    name varchar(64) NOT NULL,
+    type varchar(64) NOT NULL,
+    price numeric NOT NULL,
+    description text NOT NULL
+);
+
+-- Table: public.package_dishes
+
+-- DROP TABLE IF EXISTS public.package_dishes;
+
+CREATE TABLE IF NOT EXISTS public.package_dishes
+(
+    dish_id uuid NOT NULL 
+        REFERENCES public.dishes (id) 
+        MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE CASCADE
-);
-
--- Table: public.Menu
-
--- DROP TABLE IF EXISTS public."Menu";
-
-CREATE TABLE IF NOT EXISTS public."Menu"
-(
-    id uuid NOT NULL,
-    name character varying(64) NOT NULL,
-    type character varying(64) NOT NULL,
-    price double precision NOT NULL,
-    description text NOT NULL,
-    CONSTRAINT "PK_Menu" PRIMARY KEY (id)
-);
-
--- Table: public.PackageDishes
-
--- DROP TABLE IF EXISTS public."PackageDishes";
-
-CREATE TABLE IF NOT EXISTS public."PackageDishes"
-(
-    dish_id uuid NOT NULL,
-    package_id uuid NOT NULL,
-    
-    CONSTRAINT "PK_PackageDishes" PRIMARY KEY (dish_id, package_id),
-    CONSTRAINT "FK_PackageDishes_Menu_dish_id" FOREIGN KEY (dish_id)
-        REFERENCES public."Menu" (id) MATCH SIMPLE
+        ON DELETE CASCADE,
+    package_id uuid NOT NULL
+        REFERENCES public.packages (id) 
+        MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE,
     
-    CONSTRAINT "FK_PackageDishes_Packages_package_id" FOREIGN KEY (package_id)
-        REFERENCES public."Packages" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE
+    CONSTRAINT pk_package_dishes PRIMARY KEY (dish_id, package_id)
 );
 
--- Table: public.Feedbacks
+-- Table: public.feedbacks
 
--- DROP TABLE IF EXISTS public."Feedbacks";
+-- DROP TABLE IF EXISTS public.feedbacks;
 
-CREATE TABLE IF NOT EXISTS public."Feedbacks"
+CREATE TABLE IF NOT EXISTS public.feedbacks
 (
-    id uuid NOT NULL,
-    user_id uuid NOT NULL,
-    zone_id uuid NOT NULL,
-    date character varying(64) NOT NULL,
-    mark double precision NOT NULL,
-    
-    message text COLLATE pg_catalog."default",
-    CONSTRAINT "PK_Feedbacks" PRIMARY KEY (id),
-    CONSTRAINT "FK_Feedbacks_Users_user_id" FOREIGN KEY (user_id)
-        REFERENCES public."Users" (id) MATCH SIMPLE
+    id uuid NOT NULL PRIMARY KEY,
+    user_id uuid NOT NULL
+        REFERENCES public.users (id) 
+        MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE,
-    
-    CONSTRAINT "FK_Feedbacks_Zones_zone_id" FOREIGN KEY (zone_id)
-        REFERENCES public."Zones" (id) MATCH SIMPLE
+    zone_id uuid NOT NULL 
+        REFERENCES public.zones (id) 
+        MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    date timestamp with time zone NOT NULL,
+    mark numeric NOT NULL,
+    message text
 );
 
--- Table: public.Bookings
+-- Table: public.bookings
 
--- DROP TABLE IF EXISTS public."Bookings";
+-- DROP TABLE IF EXISTS public.bookings;
 
-CREATE TABLE IF NOT EXISTS public."Bookings"
+CREATE TABLE IF NOT EXISTS public.bookings
 (
-    id uuid NOT NULL,
-    zone_id uuid NOT NULL,
-    user_id uuid NOT NULL,
-    package_id uuid NOT NULL,
+    id uuid NOT NULL PRIMARY KEY,
+    zone_id uuid NOT NULL
+        REFERENCES public.zones (id) 
+        MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    user_id uuid NOT NULL
+        REFERENCES public.users (id) 
+        MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    package_id uuid NOT NULL
+        REFERENCES public.packages (id) 
+        MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
     amount_of_people integer NOT NULL,
-    status integer NOT NULL,
+    status varchar(64) NOT NULL,
     date date NOT NULL,
     start_time time without time zone NOT NULL,
     end_time time without time zone NOT NULL,
-    
-    CONSTRAINT "PK_Bookings" PRIMARY KEY (id),
-    CONSTRAINT "FK_Bookings_Packages_package_id" FOREIGN KEY (package_id)
-        REFERENCES public."Packages" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE,
-    
-    CONSTRAINT "FK_Bookings_Users_user_id" FOREIGN KEY (user_id)
-        REFERENCES public."Users" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE,
-    
-    CONSTRAINT "FK_Bookings_Zones_zone_id" FOREIGN KEY (zone_id)
-        REFERENCES public."Zones" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE
+    create_date_time timestamp with time zone NOT NULL,
+    is_paid boolean NOT NULL,
+    total_price numeric NOT NULL
 );

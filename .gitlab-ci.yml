@@ -37,3 +37,4 @@ integration-tests:
   stage: test
   script: 
     - dotnet test src/Tests/IntegrationalTests.Services/IntegrationalTests.Services.csproj
+    - dotnet test src/Tests/IntegrationalTests.Controllers/IntegrationalTests.Controllers.csproj
