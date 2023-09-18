@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.22" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.22" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
+    <PackageReference Include="xunit" Version="2.5.0" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.5.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Database\Portal.Database.Context\Portal.Database.Context.csproj" />
+    <ProjectReference Include="..\..\Database\Portal.Database.Repository\Portal.Database.Repositories.csproj" />
+    <ProjectReference Include="..\..\Portal\Portal.csproj" />
+    <ProjectReference Include="..\..\Services\Portal.Services.BookingService\Portal.Services.BookingService.csproj" />
+    <ProjectReference Include="..\..\Services\Portal.Services.FeedbackService\Portal.Services.FeedbackService.csproj" />
+    <ProjectReference Include="..\..\Services\Portal.Services.InventoryServices\Portal.Services.InventoryServices.csproj" />
+    <ProjectReference Include="..\..\Services\Portal.Services.MenuService\Portal.Services.MenuService.csproj" />
+    <ProjectReference Include="..\..\Services\Portal.Services.OauthService\Portal.Services.OauthService.csproj" />
+    <ProjectReference Include="..\..\Services\Portal.Services.PackageService\Portal.Services.PackageService.csproj" />
+    <ProjectReference Include="..\..\Services\Portal.Services.UserService\Portal.Services.UserService.csproj" />
+    <ProjectReference Include="..\..\Services\Portal.Services.ZoneService\Portal.Services.ZoneService.csproj" />
+  </ItemGroup>
+
+</Project>
