@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Portal.Common.Converter\Portal.Common.Converter.csproj" />
+    <ProjectReference Include="..\..\Common\Portal.Common.Models\Portal.Common.Models.csproj" />
+    <ProjectReference Include="..\Portal.Database.Context\Portal.Database.Context.csproj" />
+    <ProjectReference Include="..\Portal.Database.Core\Portal.Database.Core.csproj" />
+  </ItemGroup>
+
+</Project>
