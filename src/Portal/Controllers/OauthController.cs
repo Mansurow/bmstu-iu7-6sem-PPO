@@ -10,14 +10,15 @@ using Portal.Common.Models.Dto;
 using Portal.Services.OauthService;
 using Portal.Services.OauthService.Exceptions;
 using Portal.Swagger;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Portal.Controllers;
 
 /// <summary>
-/// Контроллер авторизации и аутентификация
+/// Контроллер авторизации и аутентификация.
 /// </summary>
 [ApiController]
-[Route("api/v1/oauth")]
+[Route("api/v1/users")]
 public class OauthController : ControllerBase
 {
     private readonly IOauthService _oauthService;
@@ -25,33 +26,32 @@ public class OauthController : ControllerBase
     private readonly IOptions<AuthorizationConfiguration> _authOptions;
     
     /// <summary>
-    /// Конструктор контроллера авторизации и аутентификация
+    /// Конструктор контроллера авторизации и аутентификация.
     /// </summary>
-    /// <param name="oauthService">Сервис авторизации и аутентификация</param>
-    /// <param name="logger">Инструмент логирования</param>
-    /// <param name="authOptions">Конфигурация авторизации</param>
-    /// <exception cref="ArgumentNullException">Ошибка происходит, если парметры переданы неверно</exception>
+    /// <param name="oauthService">Сервис авторизации и аутентификация.</param>
+    /// <param name="logger">Инструмент логирования.</param>
+    /// <param name="authOptions">Конфигурация авторизации.</param>
     public OauthController(IOauthService oauthService, ILogger<OauthController> logger, IOptions<AuthorizationConfiguration> authOptions)
     {
-        _oauthService = oauthService ?? throw new ArgumentNullException(nameof(oauthService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _oauthService = oauthService;
+        _logger = logger;
         _authOptions = authOptions;
     }
 
     /// <summary>
-    /// Зарегистрировать пользователя
+    /// Зарегистрировать пользователя.
     /// </summary>
-    /// <param name="userDto">Данные пользователя</param>
-    /// <returns>Возвращает идентификатор зарегистрированного пользователя и токен JWT</returns>
+    /// <param name="userDto">Данные пользователя.</param>
+    /// <returns>Возвращает идентификатор зарегистрированного пользователя и токен JWT.</returns>
     /// <response code="200">OK. Возвращает идентификатор зарегистрированного пользователя и токен JWT.</response>
     /// <response code="400">Bad request. Некорректные данные</response>
     /// <response code="401">Unauthorized. Пользователь неавторизован.</response>
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
-    [HttpPost("signup")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorizationResponse))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpPost()]
+    [SwaggerResponse(statusCode: 200, type: typeof(AuthorizationResponse), description: "Возвращает идентификатор зарегистрированного пользователя и токен JWT.")]
+    [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
+    [SwaggerResponse(statusCode: 401, description: "Пользователь неавторизован.")]
+    [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера.")]
     [AllowAnonymous]
     public async Task<IActionResult> SignUp([FromBody] CreateUserDto userDto)
     {
@@ -63,56 +63,46 @@ public class OauthController : ControllerBase
 
             var token = GenerateJwt(user);
             
-            return Ok(new
-            {
-                userId = user.Id,
-                accessToken = token,
-            });
+            return Ok(new AuthorizationResponse(user.Id, token));
         }
         catch (Exception e)
         {
             _logger.LogError(e, "Internal server error");
-            return StatusCode(StatusCodes.Status500InternalServerError,new
-            {
-                message = e.Message
-            });
+            return StatusCode(StatusCodes.Status500InternalServerError,new ErrorResponse(e));
         }
     }
 
     /// <summary>
-    /// Авторизоваться
+    /// Авторизоваться.
     /// </summary>
-    /// <param name="logins">Данные для авторизации</param>
+    /// <param name="login" example="user@gmail.com">Логин.</param>
+    /// <param name="password" example="password123">Пароль.</param>
     /// <returns>Возвращает идентификатор зарегистрированного пользователя и токен JWT.</returns>
     /// <response code="200">OK. Возвращает идентификатор зарегистрированного пользователя и токен JWT.</response>
     /// <response code="400">Bad request. Некорректные данные</response>
     /// <response code="401">Unauthorized. Пользователь неавторизован.</response>
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
-    [HttpPost("signin")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorizationResponse))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpPost("{login}&{password}")]
+    [SwaggerResponse(statusCode: 200, type: typeof(AuthorizationResponse), description: "Возвращает идентификатор зарегистрированного пользователя и токен JWT.")]
+    [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
+    [SwaggerResponse(statusCode: 401, description: "Пользователь неавторизован.")]
+    [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера.")]
     [AllowAnonymous]
-    public async Task<IActionResult> SignIn([FromBody] LoginModel logins)
+    public async Task<IActionResult> SignIn([FromRoute] string login, [FromRoute] string password)
     {
         var userId = Guid.Empty;
         try
         {
-            var user = await _oauthService.LogIn(logins.Login, logins.Password);
+            var user = await _oauthService.LogIn(login, password);
             userId = user.Id;
 
             var token = GenerateJwt(user);
             
-            return Ok(new
-            {   
-                userId = user.Id,
-                accessToken = token
-            });
+            return Ok(new AuthorizationResponse(user.Id, token));
         }
         catch (UserLoginNotFoundException e)
         {
-            _logger.LogError(e, "Invalid user login: {Login}", logins.Login);
+            _logger.LogError(e, "Invalid user login: {Login}", login);
             return Unauthorized(new
             {
                 message = e.Message
@@ -129,10 +119,7 @@ public class OauthController : ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e, "Internal server error");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = e.Message
-            });
+            return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse(e));
         }
     }
 

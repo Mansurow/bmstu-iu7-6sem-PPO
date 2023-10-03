@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Portal.Common.Models;
+using Portal.Common.Models.Dto;
 using Portal.Common.Models.Enums;
 using Portal.Services.InventoryServices;
 using Portal.Services.InventoryServices.Exceptions;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Portal.Controllers;
 
@@ -24,9 +26,9 @@ public class InventoryController: ControllerBase
     }
 
     /// <summary>
-    /// Получить информации о инвентаре
+    /// Получить информации о инвентаре.
     /// </summary>
-    /// <returns>Список инвентаря</returns>
+    /// <returns>Список инвентаря.</returns>
     /// <response code="200">Ok. Список инвентаря.</response>
     /// <response code="400">Bad request. Некорректные данные.</response>
     /// <response code="401">Unauthorized. Пользователь неавторизован.</response>
@@ -34,11 +36,11 @@ public class InventoryController: ControllerBase
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
     [HttpGet]
     [Authorize(Roles = nameof(Role.Administrator))]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Inventory>))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 200, type: typeof(IEnumerable<Inventory>), description: "Список инвентаря.")]
+    [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
+    [SwaggerResponse(statusCode: 401, description: "Пользователь неавторизован.")]
+    [SwaggerResponse(statusCode: 403, description: "У пользователя недостаточно прав доступа.")]
+    [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера.")]
     public async Task<IActionResult> GetInventories()
     {
         try
@@ -50,17 +52,14 @@ public class InventoryController: ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e, "Internal server error");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = e.Message
-            });
+            return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse(e));
         }
     }
     
     /// <summary>
-    /// Списать инвентарь
+    /// Списать инвентарь.
     /// </summary>
-    /// <param name="inventoryId" example="f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6">Идентификатор инвентаря</param>
+    /// <param name="inventoryId" example="f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6">Идентификатор инвентаря.</param>
     /// <response code="204">NotContent. Инвентарь успешно списан.</response>
     /// <response code="400">Bad request. Некорректные данные.</response>
     /// <response code="401">Unauthorized. Пользователь неавторизован.</response>
@@ -69,14 +68,13 @@ public class InventoryController: ControllerBase
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
     [HttpPatch("{inventoryId:guid}")]
     [Authorize(Roles = nameof(Role.Administrator))]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    // TODO: BadRequest - UpdateException
-    public async Task<IActionResult> MakeOldStatus(Guid inventoryId)
+    [SwaggerResponse(statusCode: 204, description: "Инвентарь успешно списан.")]
+    [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
+    [SwaggerResponse(statusCode: 401, description: "Пользователь неавторизован.")]
+    [SwaggerResponse(statusCode: 403, description: "У пользователя недостаточно прав доступа.")]
+    [SwaggerResponse(statusCode: 404, description: "Инвентарь не найден.")]
+    [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера.")]
+    public async Task<IActionResult> WriteOffInventory(Guid inventoryId)
     {
         try
         {
@@ -97,10 +95,7 @@ public class InventoryController: ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e, "Internal server error");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = e.Message
-            });
+            return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse(e));
         }
     }
 }

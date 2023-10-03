@@ -5,11 +5,12 @@ using Portal.Common.Models.Dto;
 using Portal.Common.Models.Enums;
 using Portal.Services.MenuService;
 using Portal.Services.MenuService.Exceptions;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Portal.Controllers;
 
 /// <summary>
-/// Контроллер меню блюд
+/// Контроллер меню блюд.
 /// </summary>
 [ApiController]
 [Route("api/v1/menu")]
@@ -19,28 +20,27 @@ public class MenuController: ControllerBase
     private readonly ILogger<MenuController> _logger;
 
     /// <summary>
-    /// Конструктор контроллера меню блюд
+    /// Конструктор контроллера меню блюд.
     /// </summary>
-    /// <param name="menuService">Сервис меню блюд</param>
-    /// <param name="logger">Инструмент логгирования</param>
-    /// <exception cref="ArgumentNullException">Ошибка происходит, если парметры переданы неверно</exception>
+    /// <param name="menuService">Сервис меню блюд.</param>
+    /// <param name="logger">Инструмент логгирования.</param>
     public MenuController(IMenuService menuService, ILogger<MenuController> logger)
     {
-        _menuService = menuService ?? throw new ArgumentNullException(nameof(menuService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _menuService = menuService;
+        _logger = logger;
     }
 
     /// <summary>
-    /// Получить меню блюд
+    /// Получить меню блюд.
     /// </summary>
     /// <returns>Возвращает список блюд меню.</returns>
     /// <response code="200">OK. Возвращает список блюд меню.</response>
     /// <response code="400">Bad request. Некорректные данные.</response>
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Dish>))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 200, type: typeof(IEnumerable<Dish>), description: "Возвращает список блюд меню.")]
+    [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
+    [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера.")]
     public async Task<IActionResult> GetMenu()
     {
         try
@@ -52,26 +52,23 @@ public class MenuController: ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e, "Internal server error");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = e.Message
-            });
+            return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse(e));
         }
     }
     
     /// <summary>
-    /// Получить блюдо
+    /// Получить блюдо.
     /// </summary>
     /// <returns>Возвращает данные блюда.</returns>
-    /// <response code="200">OK. Возвращает данные блюда</response>
+    /// <response code="200">OK. Возвращает данные блюда.</response>
     /// <response code="400">Bad request. Некорректные данные.</response>
     /// <response code="404">NotFound. Блюдо не найдено.</response>
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
     [HttpGet("{dishId:guid}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Dish))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 200, type: typeof(Dish), description: "Возвращает данные блюда.")]
+    [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
+    [SwaggerResponse(statusCode: 404, description: "Блюдо не найдено.")]
+    [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера.")]
     public async Task<IActionResult> GetDish(Guid dishId)
     {
         try
@@ -91,17 +88,14 @@ public class MenuController: ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e, "Internal server error");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = e.Message
-            });
+            return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse(e));
         }
     }
     
     /// <summary>
-    /// Добавить блюдо
+    /// Добавить блюдо.
     /// </summary>
-    /// <returns>Возвращается идентификатор добавляемого блюда</returns>
+    /// <returns>Возвращается идентификатор добавляемого блюда.</returns>
     /// <response code="200">OK. Возвращается идентификатор добавляемого блюда.</response>
     /// <response code="400">Bad request. Некорректные данные.</response>
     /// <response code="401">Unauthorized. Пользователь неавторизован.</response>
@@ -109,11 +103,12 @@ public class MenuController: ControllerBase
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
     [HttpPost]
     [Authorize(Roles = nameof(Role.Administrator))]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Guid))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 200, type: typeof(IdResponse), description: "Возвращается идентификатор добавляемого блюда.")]
+    [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
+    [SwaggerResponse(statusCode: 401, description: "Пользователь неавторизован.")]
+    [SwaggerResponse(statusCode: 403, description: "У пользователя недостаточно прав доступа.")]
+    [SwaggerResponse(statusCode: 404, description: "Блюдо не найдено.")]
+    [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера.")]
     public async Task<IActionResult> PostDish([FromBody] CreateDishDto dish)
     {
         try
@@ -128,17 +123,14 @@ public class MenuController: ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e, "Internal server error");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = e.Message
-            });
+            return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse(e));
         }
     }
     
     /// <summary>
-    /// Обновить данные о блюде
+    /// Обновить данные о блюде.
     /// </summary>
-    /// <param name="dish">Данные для обновления блюда</param>
+    /// <param name="dish" example="f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6">Данные для обновления блюда.</param>
     /// <response code="204">NoContent. Обновление успешно произошло.</response>
     /// <response code="400">Bad request. Некорректные данные.</response>
     /// <response code="401">Unauthorized. Пользователь неавторизован.</response>
@@ -147,12 +139,12 @@ public class MenuController: ControllerBase
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
     [HttpPut]
     [Authorize(Roles = nameof(Role.Administrator))]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 204, description: "Обновление успешно произошло.")]
+    [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
+    [SwaggerResponse(statusCode: 401, description: "Пользователь неавторизован.")]
+    [SwaggerResponse(statusCode: 403, description: "У пользователя недостаточно прав доступа.")]
+    [SwaggerResponse(statusCode: 404, description: "Блюдо не найдено.")]
+    [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера.")]
     public async Task<IActionResult> PutDish([FromBody] Dish dish)
     {
         try
@@ -172,17 +164,14 @@ public class MenuController: ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e, "Internal server error");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = e.Message
-            });
+            return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse(e));
         }
     }
     
     /// <summary>
-    /// Удалить блюдо
+    /// Удалить блюдо.
     /// </summary>
-    /// <param name="dishId">Идентификатор блюда</param>
+    /// <param name="dishId" example="f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6">Идентификатор блюда.</param>
     /// <response code="204">NoContent. Удаление успешно произошло.</response>
     /// <response code="400">Bad request. Некорректные данные.</response>
     /// <response code="401">Unauthorized. Пользователь неавторизован.</response>
@@ -191,12 +180,12 @@ public class MenuController: ControllerBase
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
     [Authorize(Roles = nameof(Role.Administrator))]
     [HttpDelete("{dishId:guid}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [SwaggerResponse(statusCode: 204, description: "Удаление успешно произошло.")]
+    [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
+    [SwaggerResponse(statusCode: 401, description: "Пользователь неавторизован.")]
+    [SwaggerResponse(statusCode: 403, description: "У пользователя недостаточно прав доступа.")]
+    [SwaggerResponse(statusCode: 404, description: "Блюдо не найдено.")]
+    [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера.")]
     public async Task<IActionResult> DeleteDish([FromRoute] Guid dishId)
     {
         try
@@ -216,10 +205,7 @@ public class MenuController: ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e, "Internal server error");
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                message = e.Message
-            });
+            return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse(e));
         }
     }
 }
