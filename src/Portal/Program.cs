@@ -39,6 +39,7 @@ public class Program
             app.UseEndpoints(opt =>
             {
                 opt.MapControllers();
+                opt.MapGraphQL();
             });
             // app.MapControllers();
 

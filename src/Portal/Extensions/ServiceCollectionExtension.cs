@@ -76,6 +76,13 @@ public static class ServiceCollectionExtension
         });
     }
 
+    public static void AddPortalGraphql(this IServiceCollection services, IConfiguration config)
+    {
+        services
+            .AddGraphQLServer();
+        //.AddQueryType<>();
+    }
+    
     public static void AddPortalCors(this IServiceCollection services, string policyName)
     {
         services.AddCors(o => o.AddPolicy(policyName,policyBuilder =>
