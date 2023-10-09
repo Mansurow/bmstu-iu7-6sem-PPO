@@ -1,9 +1,9 @@
-﻿using Portal.Common.Models;
-using Portal.Common.Models.Enums;
+﻿using Portal.Common.Core;
 using Portal.Services.BookingService.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Portal.Common.Enums;
 using Portal.Database.Core.Repositories;
 using Portal.Services.BookingService.Configuration;
 using Portal.Services.PackageService.Exceptions;
@@ -12,7 +12,7 @@ using Portal.Services.ZoneService.Exceptions;
 namespace Portal.Services.BookingService
 {
     /// <summary>
-    ///  Сервис бронирования зон
+    ///  Сервис бронирования зонd
     /// </summary>
     public class BookingService : IBookingService
     {

@@ -2,8 +2,8 @@
 using Portal.Services.MenuService;
 using Xunit;
 using Moq;
-using Portal.Common.Models;
-using Portal.Common.Models.Enums;
+using Portal.Common.Core;
+using Portal.Common.Enums;
 using Portal.Database.Core.Repositories;
 using Portal.Services.MenuService.Exceptions;
 

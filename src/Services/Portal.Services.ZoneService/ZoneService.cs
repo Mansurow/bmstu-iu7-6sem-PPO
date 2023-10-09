@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Portal.Common.Models;
-using Portal.Common.Models.Dto;
+using Portal.Common.Core;
+using Portal.Common.Dto.Inventory;
 using Portal.Database.Core.Repositories;
 using Portal.Services.PackageService.Exceptions;
 using Portal.Services.ZoneService.Exceptions;
+using Inventory = Portal.Common.Core.Inventory;
 
 namespace Portal.Services.ZoneService;
 
@@ -140,7 +141,7 @@ public class ZoneService: IZoneService
         }
     }
     
-    public async Task AddInventoryAsync(Guid zoneId, List<CreateInventoryDto> inventories)
+    public async Task AddInventoryAsync(Guid zoneId, List<CreateInventory> inventories)
     {
         try
         {

@@ -1,12 +1,7 @@
 using Portal.Database.Context;
 using Microsoft.EntityFrameworkCore;
-using Portal.Common.Models;
-using Portal.Common.Models.Enums;
 using Portal.Configuration;
-using Portal.Database.Repositories.NpgsqlRepositories;
-using Portal.Services.OauthService;
 using Portal.Services.UserService;
-using Serilog;
 
 namespace Portal.Extensions;
 
@@ -19,8 +14,7 @@ public static class WebApplicationProviderExtension
         
         return app;
     }
-
-    // TODO: Починить добавления админа по запуску
+    
     public static async Task<WebApplication> AddPortalAdministrator(this WebApplication app)
     {
         var adminOptions = app.Configuration.GetSection("AdministratorConfiguration").Get<AdministratorConfiguration>();

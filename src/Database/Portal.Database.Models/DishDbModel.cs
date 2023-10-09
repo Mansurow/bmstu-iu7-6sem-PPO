@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Portal.Common.Models.Enums;
+using Portal.Common.Enums;
 
 namespace Portal.Database.Models;
 

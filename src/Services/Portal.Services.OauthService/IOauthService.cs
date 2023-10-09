@@ -1,4 +1,4 @@
-﻿using Portal.Common.Models;
+﻿using Portal.Common.Core;
 using Portal.Services.OauthService.Exceptions;
 using Portal.Services.UserService.Exceptions;
 

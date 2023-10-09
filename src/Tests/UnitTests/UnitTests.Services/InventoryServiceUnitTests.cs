@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using Portal.Common.Models;
+using Portal.Common.Core;
 using Portal.Database.Core.Repositories;
 using Portal.Services.InventoryServices;
 using Portal.Services.InventoryServices.Exceptions;

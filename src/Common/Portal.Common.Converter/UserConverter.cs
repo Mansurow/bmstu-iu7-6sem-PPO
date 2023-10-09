@@ -1,6 +1,7 @@
-﻿using Portal.Common.Models;
-using Portal.Common.Models.Dto;
-using Portal.Database.Models;
+﻿using Portal.Common.Dto.User;
+using UserCore = Portal.Common.Core.User;
+using UserDB = Portal.Database.Models.UserDbModel;
+using UserDto = Portal.Common.Dto.User.User;
 
 namespace Portal.Common.Converter;
 
@@ -14,9 +15,9 @@ public static class UserConverter
     /// </summary>
     /// <param name="user">Модель Dto</param>
     /// <returns>Модель бизнес логики</returns>
-    public static User ConvertDtoModelToAppModel(CreateUserDto user) 
+    public static UserCore ConvertDtoToCoreModel(CreateUser user) 
     {
-        return new User(id: Guid.NewGuid(), 
+        return new UserCore(id: Guid.NewGuid(), 
             firstName: user.FirstName,
             middleName: user.MiddleName,
             lastName: user.LastName,
@@ -26,9 +27,9 @@ public static class UserConverter
             phone: user.Phone);
     }
     
-    public static UserDto ConvertAppModelToUserDto(User user) 
+    public static UserDto ConvertCoreToDtoModel(UserCore user) 
     {
-        return new UserDto(userId: user.Id, 
+        return new UserDto(id: user.Id, 
             firstName: user.FirstName,
             middleName: user.MiddleName,
             lastName: user.LastName,
@@ -44,9 +45,9 @@ public static class UserConverter
     /// </summary>
     /// <param name="user">Модель базы данных</param>
     /// <returns>Модель бизнес логики</returns>
-    public static User ConvertDbModelToAppModel(UserDbModel user) 
+    public static UserCore ConvertDBToCoreModel(UserDB user) 
     {
-        return new User(id: user.Id,
+        return new UserCore(id: user.Id,
             firstName: user.FirstName,
             middleName: user.MiddleName,
             lastName: user.LastName,
@@ -63,9 +64,9 @@ public static class UserConverter
     /// </summary>
     /// <param name="user">Модель бизнес логики</param>
     /// <returns>Модель базы данных </returns>
-    public static UserDbModel ConvertAppModelToDbModel(User user)
+    public static UserDB ConvertCoreToDBModel(UserCore user)
     {
-        return new UserDbModel(id: user.Id,
+        return new UserDB(id: user.Id,
             firstName: user.FirstName,
             middleName: user.MiddleName,
             lastName: user.LastName,

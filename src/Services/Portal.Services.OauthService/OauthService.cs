@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Portal.Common.Models;
+using Portal.Common.Core;
 using Portal.Database.Core.Repositories;
 using Portal.Services.OauthService.Exceptions;
 using Portal.Services.UserService.Exceptions;

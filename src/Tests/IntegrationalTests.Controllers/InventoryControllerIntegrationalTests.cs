@@ -9,7 +9,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 using Portal;
+using Portal.Common.Dto;
+using Portal.Common.Dto.Inventory;
 using Portal.Common.Models;
+using Portal.Common.Models.Dto;
 using Portal.Services.InventoryServices;
 using Portal.Services.OauthService;
 using Portal.Services.ZoneService;
@@ -24,7 +27,7 @@ public class InventoryControllerIntegrationalTests: IDisposable
     
     private PortalAccessObject _accessObject = new();
 
-    const string PathAuth = "api/v1/oauth";
+    const string PathAuth = "api/v1/users/";
     const string PathInventory = "api/v1/inventory";
     const string DefaultToken = "token";
     const string AuthorizationHeader = "Authorization";
@@ -54,8 +57,7 @@ public class InventoryControllerIntegrationalTests: IDisposable
         var webHost = CreateFakeWebHost();
         var client = webHost.CreateClient();
         
-        var content = JsonContent.Create(new LoginModel(AdminLogin, AdminPassword));
-        var responseAuth = await client.PostAsync(PathAuth + "/signin", content);
+        var responseAuth = await client.PostAsync(PathAuth + $"{AdminLogin}&{AdminPassword}", null);
         var stringResponseAuth = await responseAuth.Content.ReadAsStringAsync();
         var data = JsonConvert.DeserializeObject<AuthorizationResponse>(stringResponseAuth);
         
@@ -104,8 +106,7 @@ public class InventoryControllerIntegrationalTests: IDisposable
         var webHost = CreateFakeWebHost();
         var client = webHost.CreateClient();
         
-        var content = JsonContent.Create(new LoginModel("user1", "password123"));
-        var responseAuth = await client.PostAsync(PathAuth + "/signin", content);
+        var responseAuth = await client.PostAsync(PathAuth + "user1&password123", null);
         var stringResponseAuth = await responseAuth.Content.ReadAsStringAsync();
         var data = JsonConvert.DeserializeObject<AuthorizationResponse>(stringResponseAuth);
         
@@ -193,8 +194,7 @@ public class InventoryControllerIntegrationalTests: IDisposable
         var webHost = CreateFakeWebHost();
         var client = webHost.CreateClient();
         
-        var content = JsonContent.Create(new LoginModel("user1", "password123"));
-        var responseAuth = await client.PostAsync(PathAuth + "/signin", content);
+        var responseAuth = await client.PostAsync(PathAuth + "user1&password123", null);
         var stringResponseAuth = await responseAuth.Content.ReadAsStringAsync();
         var data = JsonConvert.DeserializeObject<AuthorizationResponse>(stringResponseAuth);
         

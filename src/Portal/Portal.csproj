@@ -38,11 +38,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Database\Portal.Database.Context\Portal.Database.Context.csproj" />
+    <ProjectReference Include="..\Database\Portal.Database.Repository\Portal.Database.Repositories.csproj" />
     <ProjectReference Include="..\Services\Portal.Services.BookingService\Portal.Services.BookingService.csproj" />
     <ProjectReference Include="..\Services\Portal.Services.FeedbackService\Portal.Services.FeedbackService.csproj" />
     <ProjectReference Include="..\Services\Portal.Services.MenuService\Portal.Services.MenuService.csproj" />
     <ProjectReference Include="..\Services\Portal.Services.OauthService\Portal.Services.OauthService.csproj" />
     <ProjectReference Include="..\Services\Portal.Services.UserService\Portal.Services.UserService.csproj" />
   </ItemGroup>
+
 
 </Project>

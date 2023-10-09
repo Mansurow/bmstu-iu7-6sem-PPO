@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Portal.Common.Models\Portal.Common.Models.csproj" />
+    <ProjectReference Include="..\..\Common\Portal.Common.Core\Portal.Common.Core.csproj" />
     <ProjectReference Include="..\..\Database\Portal.Database.Core\Portal.Database.Core.csproj" />
   </ItemGroup>
 

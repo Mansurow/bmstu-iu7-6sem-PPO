@@ -1,7 +1,7 @@
 ﻿using IntegrationalTests.Services.AccessObject;
 using Microsoft.Extensions.Logging.Abstractions;
-using Portal.Common.Models;
-using Portal.Common.Models.Enums;
+using Portal.Common.Core;
+using Portal.Common.Enums;
 using Portal.Services.UserService;
 using Portal.Services.UserService.Exceptions;
 using Xunit;

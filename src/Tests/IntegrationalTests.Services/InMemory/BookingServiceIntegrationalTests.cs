@@ -1,6 +1,6 @@
 ﻿using IntegrationalTests.Services.AccessObject;
 using Microsoft.Extensions.Logging.Abstractions;
-using Portal.Common.Models;
+using Portal.Common.Core;
 using Portal.Services.BookingService;
 using Portal.Services.BookingService.Exceptions;
 using Xunit;

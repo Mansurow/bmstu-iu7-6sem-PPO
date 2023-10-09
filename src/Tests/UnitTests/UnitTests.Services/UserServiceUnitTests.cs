@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using Portal.Common.Core;
+using Portal.Common.Enums;
 using Xunit;
 using Portal.Services.UserService;
 using Portal.Services.UserService.Exceptions;
-using Portal.Common.Models;
-using Portal.Common.Models.Enums;
 using Portal.Database.Core.Repositories;
 
 namespace UnitTests.Services;
