@@ -7,7 +7,7 @@ using Portal.Services.InventoryServices;
 using Portal.Services.InventoryServices.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Portal.Controllers;
+namespace Portal.Controllers.v1;
 
 /// <summary>
 /// Контроллер инвентаря 

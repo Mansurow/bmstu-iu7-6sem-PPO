@@ -9,7 +9,7 @@ using Portal.Services.MenuService;
 using Portal.Services.MenuService.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Portal.Controllers;
+namespace Portal.Controllers.v1;
 
 /// <summary>
 /// Контроллер меню блюд.

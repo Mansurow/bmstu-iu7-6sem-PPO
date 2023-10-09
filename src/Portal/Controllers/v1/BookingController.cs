@@ -14,7 +14,7 @@ using Portal.Services.ZoneService.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
 using BookingDto = Portal.Common.Dto.Booking.Booking;
 
-namespace Portal.Controllers;
+namespace Portal.Controllers.v1;
 
 /// <summary>
 /// Контроллер бронирования.

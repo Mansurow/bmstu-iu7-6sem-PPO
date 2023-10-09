@@ -9,7 +9,7 @@ using Portal.Services.PackageService;
 using Portal.Services.PackageService.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Portal.Controllers;
+namespace Portal.Controllers.v1;
 
 /// <summary>
 /// Контроллер пакетов.

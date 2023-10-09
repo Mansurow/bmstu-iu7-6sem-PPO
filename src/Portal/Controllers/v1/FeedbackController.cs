@@ -10,7 +10,7 @@ using Portal.Services.UserService.Exceptions;
 using Portal.Services.ZoneService.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Portal.Controllers;
+namespace Portal.Controllers.v1;
 
 /// <summary>
 /// Контроллер отзывов.
