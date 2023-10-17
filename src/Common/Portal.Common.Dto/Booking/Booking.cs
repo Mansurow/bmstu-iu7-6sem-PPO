@@ -3,24 +3,27 @@ using Portal.Common.Enums;
 
 namespace Portal.Common.Dto.Booking;
 
+/// <summary>
+/// Модель DTO брони зоны.
+/// </summary>
 public class Booking
 {
     /// <summary>
-    /// Идентификатор брони
+    /// Идентификатор брони.
     /// </summary>
     /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
     [Required]
     public Guid Id { get; set; }
     
     /// <summary>
-    /// Идентификатор зоны
+    /// Идентификатор зоны.
     /// </summary>
     /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
     [Required]
     public Guid ZoneId { get; set; }
     
     /// <summary>
-    /// Идентификатор пользователя
+    /// Идентификатор пользователя.
     /// </summary>
     /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
     [Required]

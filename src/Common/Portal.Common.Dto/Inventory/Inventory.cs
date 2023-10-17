@@ -2,45 +2,48 @@
 
 namespace Portal.Common.Dto.Inventory;
 
+/// <summary>
+/// Модель DTO инвентаря.
+/// </summary>
 public class Inventory
 {
     /// <summary>
-    /// Идентификатор инветаря
+    /// Идентификатор инветаря.
     /// </summary>
     /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
     [Required]
     public Guid Id { get; set; }
     
     /// <summary>
-    /// Идентификатор зоны
+    /// Идентификатор зоны.
     /// </summary>
     /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
     [Required]
     public Guid ZoneId { get; set; }
     
     /// <summary>
-    /// Название инветаря
+    /// Название инветаря.
     /// </summary>
     /// <example>f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6</example>
     [Required]
     public string Name { get; set; }
     
     /// <summary>
-    /// Описание инветаря
+    /// Описание инветаря.
     /// </summary>
     /// <example>Новый инвентарь</example>
     [Required]
     public string Description { get; set; }
     
     /// <summary>
-    /// Год выпуска или производства
+    /// Год выпуска или производства.
     /// </summary>
     /// <example>10.12.2023</example>
     [Required]
     public DateOnly YearOfProduction { get; set; }
 
     /// <summary>
-    /// Списали ли инвентарь
+    /// Списали ли инвентарь.
     /// </summary>
     [Required]
     public bool IsWrittenOff { get; set; }

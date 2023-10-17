@@ -12,6 +12,8 @@
   <ItemGroup>
     <PackageReference Include="HotChocolate" Version="13.5.1" />
     <PackageReference Include="HotChocolate.AspNetCore" Version="13.5.1" />
+    <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="13.5.1" />
+    <PackageReference Include="HotChocolate.AspNetCore.Playground" Version="10.5.5" />
     <PackageReference Include="HotChocolate.Data" Version="13.5.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.21" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
@@ -48,12 +50,17 @@
     <ProjectReference Include="..\Services\Portal.Services.MenuService\Portal.Services.MenuService.csproj" />
     <ProjectReference Include="..\Services\Portal.Services.OauthService\Portal.Services.OauthService.csproj" />
     <ProjectReference Include="..\Services\Portal.Services.UserService\Portal.Services.UserService.csproj" />
+    
+
+
+
   </ItemGroup>
 
 
 
-  <ItemGroup>
-    <Folder Include="Graphql\" />
-  </ItemGroup>
+
+
+
+
 
 </Project>

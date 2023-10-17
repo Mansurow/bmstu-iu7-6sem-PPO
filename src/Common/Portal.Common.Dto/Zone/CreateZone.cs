@@ -4,7 +4,7 @@ using Portal.Common.Dto.Inventory;
 namespace Portal.Common.Dto.Zone;
 
 /// <summary>
-/// Модель Dto для создания зоны
+/// Модель Dto для создания зоны.
 /// </summary>
 public class CreateZone
 {

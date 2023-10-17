@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Portal.Common.Dto;
 using Portal.Common.Dto.Feedback;
 using Portal.Common.Enums;
-using Portal.Common.Models.Dto;
 using Portal.Services.FeedbackService;
 using Portal.Services.FeedbackService.Exceptions;
 using Portal.Services.UserService.Exceptions;
@@ -63,43 +62,6 @@ public class FeedbackController: ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse(e));
         }
     }
-    
-    /// <summary>
-    /// Получить все отзывы пользователей для комнаты.
-    /// </summary>
-    /// <param name="zoneId" example="f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6">Идентификатор зоны.</param>
-    /// <returns>Возвращается список отзывов комнаты.</returns>
-    /// <response code="200">Ok. Возвращается список отзывов.</response>
-    /// <response code="400">Bad request. Некорректные данные.</response>
-    /// <response code="404">NotFound. Зона не найдена.</response>
-    /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
-    [HttpGet("{zoneId:guid}")]
-    [SwaggerResponse(statusCode: 200, type: typeof(IEnumerable<Feedback>), description: "Возвращается список отзывов.")]
-    [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
-    [SwaggerResponse(statusCode: 404, description: "У пользователя недостаточно прав доступа.")]
-    [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера.")]
-    public async Task<IActionResult> GetZoneFeedbacks(Guid zoneId)
-    {
-        try
-        {
-            var feedbacks = await _feedbackService.GetAllFeedbackByZoneAsync(zoneId);
-
-            return Ok(feedbacks);
-        }
-        catch (ZoneNotFoundException e)
-        {
-            _logger.LogError("Zone: {ZoneId} not found", zoneId);
-            return NotFound(new
-            {
-                message = e.Message
-            });
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Internal server error");
-            return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse(e));
-        }
-    }
 
     /// <summary>
     /// Добавить отзыв.
@@ -125,7 +87,7 @@ public class FeedbackController: ControllerBase
             var feedbackId = await _feedbackService.AddFeedbackAsync(feedbackDto.ZoneId, feedbackDto.UserId,
                 feedbackDto.Mark, feedbackDto.Message);
 
-            return Ok(new IdResponse() { Id = feedbackId });
+            return Ok(new IdResponse(feedbackId));
         }
         catch (UserNotFoundException e)
         {

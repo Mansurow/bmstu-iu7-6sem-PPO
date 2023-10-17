@@ -1,7 +1,5 @@
 ﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using IntegrationalTests.Controllers.AccessObject;
-using Portal.Common.Models;
 using Xunit;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -15,7 +13,6 @@ using Portal;
 using Portal.Common.Converter;
 using Portal.Common.Dto;
 using Portal.Common.Dto.User;
-using Portal.Common.Models.Dto;
 using Portal.Services.OauthService;
 
 namespace IntegrationalTests.Controllers;

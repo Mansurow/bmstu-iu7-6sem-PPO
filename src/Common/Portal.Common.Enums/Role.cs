@@ -25,9 +25,9 @@ public enum Role
     [EnumMember(Value = "Пользователь")]
     User = 2,
     
-    /// <summary>
+    /*/// <summary>
     /// Сотрудник
     /// </summary>
     [EnumMember(Value = "Сотрудник")]
-    Employee = 3,
+    Employee = 3,*/
 }

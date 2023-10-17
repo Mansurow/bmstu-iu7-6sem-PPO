@@ -4,6 +4,7 @@ using Portal.Common.Enums;
 using Portal.Database.Core.Repositories;
 using Portal.Database.Repositories.NpgsqlRepositories;
 using Portal.Services.BookingService.Configuration;
+using Portal.Services.OauthService.Configuration;
 using Portal.Swagger;
 
 namespace IntegrationalTests.Controllers.AccessObject;

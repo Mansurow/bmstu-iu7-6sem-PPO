@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Portal.Common.Dto;
+namespace Portal.Common.Dto.Zone;
 
 /// <summary>
-/// Модель для обновления зоны
+/// Модель для обновления зоны.
 /// </summary>
 public class UpdateZone
 {

@@ -40,7 +40,7 @@ namespace Portal.Services.BookingService
         /// <param name="zoneId">Идентификатор зоны</param>
         /// <param name="date">Дата бронирования</param>
         /// <returns>Список свободного времени</returns>
-        Task<List<FreeTime>> GetFreeTimeAsync(Guid zoneId, DateOnly date);
+        Task<List<FreeTime>> GetFreeTimeAsync(Guid zoneId, DateOnly? date);
         
         /// <summary>
         /// Получить бронь зоны

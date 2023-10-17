@@ -3,6 +3,9 @@ using Portal.Common.Enums;
 
 namespace Portal.Common.Dto.Package;
 
+/// <summary>
+/// Модель DTO пакета
+/// </summary>
 public class Package
 {
     /// <summary>

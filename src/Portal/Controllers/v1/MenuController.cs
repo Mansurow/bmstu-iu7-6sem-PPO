@@ -4,7 +4,6 @@ using Portal.Common.Converter;
 using Portal.Common.Dto;
 using Portal.Common.Dto.Dish;
 using Portal.Common.Enums;
-using Portal.Common.Models.Dto;
 using Portal.Services.MenuService;
 using Portal.Services.MenuService.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
@@ -15,7 +14,7 @@ namespace Portal.Controllers.v1;
 /// Контроллер меню блюд.
 /// </summary>
 [ApiController]
-[Route("api/v1/menu")]
+[Route("api/v1/dishes")]
 public class MenuController: ControllerBase
 {
     private readonly IMenuService _menuService;

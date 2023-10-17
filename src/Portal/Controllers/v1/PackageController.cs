@@ -4,7 +4,6 @@ using Portal.Common.Converter;
 using Portal.Common.Dto;
 using Portal.Common.Dto.Package;
 using Portal.Common.Enums;
-using Portal.Common.Models.Dto;
 using Portal.Services.PackageService;
 using Portal.Services.PackageService.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
@@ -118,7 +117,7 @@ public class PackageController: ControllerBase
             var packageId = await _packageService.AddPackageAsync(package.Name, package.Type, package.Price, 
                 package.RentalTime, package.Description, package.Dishes);
 
-            return Ok(new IdResponse() { Id = packageId });
+            return Ok(new IdResponse(packageId));
         }
         catch (Exception e)
         {

@@ -153,8 +153,10 @@ namespace Portal.Services.BookingService
                    DateTime.UtcNow - booking.CreateDateTime > _config.TemporaryReservedBookingTime;
         }
         
-        public async Task<List<FreeTime>> GetFreeTimeAsync(Guid zoneId, DateOnly date)
+        public async Task<List<FreeTime>> GetFreeTimeAsync(Guid zoneId, DateOnly? date)
         {
+            date ??= DateOnly.FromDateTime(DateTime.Today);
+            
             var bookings = (await GetBookingByZoneAsync(zoneId))
                 .FindAll(e => e.Date == date && e.IsActualStatus())
                 .OrderBy(e => e.StartTime).ToList();

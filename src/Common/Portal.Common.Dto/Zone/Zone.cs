@@ -2,6 +2,9 @@
 
 namespace Portal.Common.Dto.Zone;
 
+/// <summary>
+/// Модель DTO зоны.
+/// </summary>
 public class Zone
 {
     /// <summary>

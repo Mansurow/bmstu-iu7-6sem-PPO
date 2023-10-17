@@ -1,7 +1,7 @@
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Portal.Swagger;
+namespace Portal.Services.OauthService.Configuration;
 
 public class AuthorizationConfiguration
 {

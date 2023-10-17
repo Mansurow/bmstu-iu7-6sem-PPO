@@ -1,9 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Portal.Common.Core;
 using Portal.Database.Core.Repositories;
+using Portal.Services.OauthService.Configuration;
 using Portal.Services.OauthService.Exceptions;
 using Portal.Services.UserService.Exceptions;
+using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace Portal.Services.OauthService
 {
@@ -13,12 +19,16 @@ namespace Portal.Services.OauthService
     public class OauthService: IOauthService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IOptions<AuthorizationConfiguration> _authOptions;
         private readonly ILogger<OauthService> _logger;
 
-        public OauthService(IUserRepository userRepository, ILogger<OauthService> logger)
+        public OauthService(IUserRepository userRepository, 
+            IOptions<AuthorizationConfiguration> authOptions,
+            ILogger<OauthService> logger)
         {
-            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _userRepository = userRepository;
+            _logger = logger;
+            _authOptions = authOptions;
         }
 
         public async Task Registrate(User user, string password) 
@@ -63,6 +73,29 @@ namespace Portal.Services.OauthService
                 _logger.LogError(e, "User with login: {Login} not found", login);
                 throw new UserLoginNotFoundException($"User with login: {login} not found.");
             }
+        }
+        
+        public string GenerateJwt(User user)
+        {
+            var authParams = _authOptions.Value;
+        
+            var securityKey = authParams.GetSymmetricSecurityKey();
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new List<Claim>()
+            {
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim("role", user.Role.ToString())
+            };
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddSeconds(authParams.TokenLifeTime),
+                signingCredentials: credentials);
+
+            // return "Bearer " + new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

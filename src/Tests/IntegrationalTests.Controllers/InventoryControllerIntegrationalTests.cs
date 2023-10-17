@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using IntegrationalTests.Controllers.AccessObject;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -11,11 +10,8 @@ using Newtonsoft.Json;
 using Portal;
 using Portal.Common.Dto;
 using Portal.Common.Dto.Inventory;
-using Portal.Common.Models;
-using Portal.Common.Models.Dto;
 using Portal.Services.InventoryServices;
 using Portal.Services.OauthService;
-using Portal.Services.ZoneService;
 using Xunit;
 
 namespace IntegrationalTests.Controllers;

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
@@ -8,12 +9,15 @@ using Portal.Common.Converter;
 using Portal.Common.Dto;
 using Portal.Common.Dto.User;
 using Portal.Common.Enums;
+using Portal.Services.BookingService;
 using Portal.Services.OauthService;
 using Portal.Services.OauthService.Exceptions;
 using Portal.Services.UserService;
 using Portal.Services.UserService.Exceptions;
 using Portal.Swagger;
 using Swashbuckle.AspNetCore.Annotations;
+using UserDto = Portal.Common.Dto.User.User;
+using BookingDto = Portal.Common.Dto.Booking.Booking;
 
 namespace Portal.Controllers.v1;
 
@@ -21,21 +25,23 @@ namespace Portal.Controllers.v1;
 /// Контроллер пользователей.
 /// </summary>
 [ApiController]
-[Route("api/v1/users/")]
+[Route("api/v1/")]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly ILogger<UserController> _logger;
     private readonly IOauthService _oauthService;
-    private readonly IOptions<AuthorizationConfiguration> _authOptions;
+    private readonly IBookingService _bookingService;
     
-    public UserController(IUserService userService, ILogger<UserController> logger, 
-        IOauthService oauthService, IOptions<AuthorizationConfiguration> authOptions)
+    public UserController(IUserService userService, 
+        ILogger<UserController> logger, 
+        IOauthService oauthService,
+        IBookingService bookingService)
     {
         _userService = userService;
         _logger = logger;
         _oauthService = oauthService;
-        _authOptions = authOptions;
+        _bookingService = bookingService;
     }
     
     /// <summary>
@@ -47,7 +53,7 @@ public class UserController : ControllerBase
     /// <response code="400">Bad request. Некорректные данные</response>
     /// <response code="401">Unauthorized. Пользователь неавторизован.</response>
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
-    [HttpPost()]
+    [HttpPost("auth")]
     [SwaggerResponse(statusCode: 200, type: typeof(AuthorizationResponse), description: "Возвращает идентификатор зарегистрированного пользователя и токен JWT.")]
     [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
     [SwaggerResponse(statusCode: 401, description: "Пользователь неавторизован.")]
@@ -61,7 +67,7 @@ public class UserController : ControllerBase
 
             await _oauthService.Registrate(user, userDto.Password);
             
-            var token = GenerateJwt(UserConverter.ConvertCoreToDtoModel(user));
+            var token = _oauthService.GenerateJwt(user);
             
             return Ok(new AuthorizationResponse(user.Id, token));
         }
@@ -82,22 +88,21 @@ public class UserController : ControllerBase
     /// <response code="400">Bad request. Некорректные данные</response>
     /// <response code="401">Unauthorized. Пользователь неавторизован.</response>
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
-    [HttpPost("{login}&{password}")]
+    [HttpGet("auth")]
     [SwaggerResponse(statusCode: 200, type: typeof(AuthorizationResponse), description: "Возвращает идентификатор зарегистрированного пользователя и токен JWT.")]
     [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
     [SwaggerResponse(statusCode: 401, description: "Пользователь неавторизован.")]
     [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера.")]
     [AllowAnonymous]
-    public async Task<IActionResult> SignIn([FromRoute] string login, [FromRoute] string password)
+    public async Task<IActionResult> SignIn([FromQuery][Required] string login, [FromQuery][Required] string password)
     {
         var userId = Guid.Empty;
         try
         {
             var user = await _oauthService.LogIn(login, password);
             userId = user.Id;
-            var userDto = UserConverter.ConvertCoreToDtoModel(user);
             
-            var token = GenerateJwt(userDto);
+            var token = _oauthService.GenerateJwt(user);
             
             return Ok(new AuthorizationResponse(user.Id, token));
         }
@@ -123,29 +128,6 @@ public class UserController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse(e));
         }
     }
-
-    private string GenerateJwt(User user)
-    {
-        var authParams = _authOptions.Value;
-        
-        var securityKey = authParams.GetSymmetricSecurityKey();
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-        var claims = new List<Claim>()
-        {
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim("role", user.Role.ToString())
-        };
-
-        var token = new JwtSecurityToken(
-            claims: claims,
-            expires: DateTime.Now.AddSeconds(authParams.TokenLifeTime),
-            signingCredentials: credentials);
-
-        // return "Bearer " + new JwtSecurityTokenHandler().WriteToken(token);
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
     
     /// <summary>
     /// Получить всех пользователей.
@@ -156,7 +138,7 @@ public class UserController : ControllerBase
     /// <response code="401">Unauthorized. Пользователь неавторизован.</response>
     /// <response code="403">Forbidden. У пользователя недостаточно прав доступа.</response>
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
-    [HttpGet]
+    [HttpGet("users")]
     [Authorize(Roles = nameof(Role.Administrator))]
     [SwaggerResponse(statusCode: 200, type: typeof(IEnumerable<User>), description: "Возвращается список всех пользователей.")]
     [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
@@ -179,6 +161,48 @@ public class UserController : ControllerBase
     }
     
     /// <summary>
+    /// Получить всех броней пользователя.
+    /// </summary>
+    /// <param name="userId" example="f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6">Идентификатор пользователя.</param>
+    /// <returns>Список все бронь пользователя.</returns>
+    /// <response code="200">OK. Список всех броней пользователя.</response>
+    /// <response code="400">Bad request. Некорректные данные.</response>
+    /// <response code="401">Unauthorized. Пользователь неавторизован.</response>
+    /// <response code="403">Forbidden. У пользователя недостаточно прав доступа.</response>
+    /// <response code="404">NotFound. Пользователь не найден.</response>
+    /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
+    [HttpGet("users/{userId:guid}/bookings")]
+    [Authorize]
+    [SwaggerResponse(statusCode: 200, type: typeof(IEnumerable<BookingDto>), description: "Список броней зон.")]
+    [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
+    [SwaggerResponse(statusCode: 401, description: "Пользователь неавторизован.")]
+    [SwaggerResponse(statusCode: 403, description: "У пользователя недостаточно прав доступа.")]
+    [SwaggerResponse(statusCode: 404, description: "Пользователь не найден.")]
+    [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера.")]
+    public async Task<IActionResult> GetUserBookings(Guid userId)
+    {
+        try
+        {
+            var bookings = await _bookingService.GetBookingByUserAsync(userId);
+
+            return Ok(bookings);
+        }
+        catch (UserNotFoundException e)
+        {
+            _logger.LogError(e, "User {UserId} not found", userId);
+            return NotFound(new
+            {
+                message = e.Message
+            });
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Internal server error");
+            return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse(e));
+        }
+    }
+    
+    /// <summary>
     /// Получить пользователя.
     /// </summary>
     /// <param name="userId" example="f0fe5f0b-cfad-4caf-acaf-f6685c3a5fc6">Идентификатор пользователя.</param>
@@ -189,7 +213,7 @@ public class UserController : ControllerBase
     /// <response code="403">Forbidden. У пользователя недостаточно прав доступа.</response>
     /// <response code="404">NotFound. Пользователь не найден.</response>
     /// <response code="500">Internal server error. Ошибка на стороне сервера.</response>
-    [HttpGet("{userId:guid}")]
+    [HttpGet("users/{userId:guid}")]
     [Authorize]
     [SwaggerResponse(statusCode: 200, type: typeof(User), description: "Данные пользователя.")]
     [SwaggerResponse(statusCode: 400, description: "Некорректные данные.")]
