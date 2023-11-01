@@ -126,6 +126,14 @@ public class BookingController: ControllerBase
                 message = e.Message
             });
         }
+        catch (UserNotFoundException e)
+        {
+            _logger.LogError(e, "User: {UserId} not found", bookingDto.UserId);
+            return BadRequest(new
+            {
+                message = e.Message
+            });
+        }
         catch (Exception e)
         {
             _logger.LogError(e, "Internal server error");
@@ -170,13 +178,12 @@ public class BookingController: ControllerBase
             }
             
             booking.Date = bookingDto.Date;
-            booking.StartTime = booking.StartTime;
-            booking.EndTime = booking.EndTime;
+            booking.StartTime = bookingDto.StartTime;
+            booking.EndTime = bookingDto.EndTime;
             booking.AmountPeople = bookingDto.AmountPeople;
             booking.PackageId = bookingDto.PackageId;
-            booking.ChangeStatus(BookingStatus.Reserved);
 
-            await _bookingService.UpdateBookingAsync(booking);
+            await _bookingService.ConfirmBooking(booking);
 
             return StatusCode(StatusCodes.Status204NoContent);
         }
@@ -184,6 +191,14 @@ public class BookingController: ControllerBase
         {
             _logger.LogError(e, "Booking {BookingId} not found", bookingDto.Id);
             return NotFound(new
+            {
+                message = e.Message
+            });
+        }
+        catch (PackageNotFoundException e)
+        {
+            _logger.LogError(e, "Package {PackageId} not found", bookingDto.PackageId);
+            return BadRequest(new
             {
                 message = e.Message
             });

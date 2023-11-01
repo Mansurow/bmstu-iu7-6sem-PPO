@@ -7,6 +7,7 @@ using Portal.Common.Enums;
 using Portal.Database.Core.Repositories;
 using Portal.Services.BookingService.Configuration;
 using Portal.Services.PackageService.Exceptions;
+using Portal.Services.UserService.Exceptions;
 using Portal.Services.ZoneService.Exceptions;
 
 namespace Portal.Services.BookingService
@@ -18,6 +19,7 @@ namespace Portal.Services.BookingService
     {
         private readonly IBookingRepository _bookingRepository;
         private readonly IPackageRepository _packageRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IZoneRepository _zoneRepository;
         private readonly ILogger<BookingService> _logger;
         private readonly BookingServiceConfiguration _config;
@@ -27,12 +29,14 @@ namespace Portal.Services.BookingService
         /// </summary>
         /// <param name="bookingRepository"></param>
         /// <param name="packageRepository"></param>
+        /// <param name="userRepository"></param>
         /// <param name="zoneRepository"></param>
         /// <param name="logger"></param>
         /// <param name="config"></param>
         /// <exception cref="ArgumentNullException"></exception>
         public BookingService(IBookingRepository bookingRepository, 
             IPackageRepository packageRepository,
+            IUserRepository userRepository,
             IZoneRepository zoneRepository,
             ILogger<BookingService> logger, 
             IOptions<BookingServiceConfiguration> config)
@@ -41,6 +45,7 @@ namespace Portal.Services.BookingService
             _packageRepository = packageRepository ?? throw new ArgumentNullException(nameof(packageRepository));
             _zoneRepository = zoneRepository ?? throw new ArgumentNullException(nameof(zoneRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _userRepository = userRepository;
             _config = config is null ? throw new ArgumentNullException(nameof(config)): config.Value;
         }
 
@@ -105,6 +110,11 @@ namespace Portal.Services.BookingService
 
                 return bookings;
             }
+            catch (InvalidOperationException e)
+            {
+                _logger.LogError(e, "Zone: {ZoneId} not found", zoneId);
+                throw new ZoneNotFoundException($"Zone {zoneId} not found");
+            }
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, "Error while updating no actual bookings when getting bookings for zone: {ZoneId}", zoneId);
@@ -155,8 +165,9 @@ namespace Portal.Services.BookingService
         
         public async Task<List<FreeTime>> GetFreeTimeAsync(Guid zoneId, DateOnly? date)
         {
+
             date ??= DateOnly.FromDateTime(DateTime.Today);
-            
+        
             var bookings = (await GetBookingByZoneAsync(zoneId))
                 .FindAll(e => e.Date == date && e.IsActualStatus())
                 .OrderBy(e => e.StartTime).ToList();
@@ -169,11 +180,11 @@ namespace Portal.Services.BookingService
                         _config.EndTimeWorking)
                 };
             }
-            
+        
             var freeTimes = new List<FreeTime>();
             var startTimeWork = TimeOnly.Parse(_config.StartTimeWorking);
             var endTimeWork = TimeOnly.Parse(_config.EndTimeWorking);
-            
+        
             for (var i = 0; i <= bookings.Count; i++)
             {
                 FreeTime addFreeTime;
@@ -196,7 +207,7 @@ namespace Portal.Services.BookingService
                 {
                     addFreeTime = new FreeTime(bookings[i - 1].EndTime, bookings[i].StartTime);
                 }
-                
+            
                 if (addFreeTime.EndTime - addFreeTime.StartTime >= new TimeSpan(1, 0, 0))
                     freeTimes.Add(addFreeTime);
             }
@@ -219,6 +230,16 @@ namespace Portal.Services.BookingService
                 {
                     _logger.LogError(e, "Package with id: {PackageId} not found", packageId);
                     throw new PackageNotFoundException($"Package with id: {packageId} not found");
+                }
+                
+                try
+                {
+                    await _userRepository.GetUserByIdAsync(userId);
+                }
+                catch (InvalidOperationException e)
+                {
+                    _logger.LogError(e, "User with id: {UserId} not found", userId);
+                    throw new UserNotFoundException($"User with id: {userId} not found");
                 }
                 
                 var booking = (await _bookingRepository.GetBookingByUserAndZoneAsync(userId, zoneId))
@@ -254,7 +275,41 @@ namespace Portal.Services.BookingService
                 throw new BookingCreateException("Booking has bot been created");
             }
         }
-        
+
+        public async Task ConfirmBooking(Booking booking)
+        {
+            try
+            {
+                var package = await _packageRepository.GetPackageByIdAsync(booking.PackageId);
+                
+                booking.ChangeStatus(BookingStatus.Reserved);
+                
+                var totalprice = 0.0;
+                if (package.Type is PackageType.Usual)
+                {
+                    var time = booking.EndTime - booking.StartTime;
+                    var m = 1.0;
+                    if (time.Minutes > 0)
+                        m = time.Minutes / 60;
+                    totalprice = package.Price * time.Hours * m;
+                }
+                else
+                {
+                    totalprice = package.Price;
+                }
+
+                booking.TotalPrice = totalprice;
+                
+                await UpdateBookingAsync(booking);
+            }
+            catch (InvalidOperationException e)
+            {
+                _logger.LogError(e, "Package with id: {PackageId} not found", booking.PackageId);
+                throw new PackageNotFoundException($"Package with id: {booking.PackageId} not found");
+            }
+        }
+
+
         public async Task<bool> IsFreeTimeAsync(DateOnly date, TimeOnly startTime, TimeOnly endTime)
         {
             var bookings =  (await _bookingRepository.GetAllBookingAsync())

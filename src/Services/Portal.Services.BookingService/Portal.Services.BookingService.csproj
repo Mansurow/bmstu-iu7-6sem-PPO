@@ -11,6 +11,7 @@
     <ProjectReference Include="..\..\Common\Portal.Common.Core\Portal.Common.Core.csproj" />
     <ProjectReference Include="..\..\Database\Portal.Database.Core\Portal.Database.Core.csproj" />
     <ProjectReference Include="..\Portal.Services.PackageService\Portal.Services.PackageService.csproj" />
+    <ProjectReference Include="..\Portal.Services.UserService\Portal.Services.UserService.csproj" />
     <ProjectReference Include="..\Portal.Services.ZoneService\Portal.Services.ZoneService.csproj" />
   </ItemGroup>
 

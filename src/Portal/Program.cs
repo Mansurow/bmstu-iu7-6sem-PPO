@@ -26,11 +26,11 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
             
-            /*app.UsePlayground(new PlaygroundOptions
+            app.UsePlayground(new PlaygroundOptions
             {
                 QueryPath = "/api/v2",
-                Path = "/playground"
-            });*/
+                Path = "/graphql"
+            });
             
             await app.MigrateDatabaseAsync();
             await app.AddPortalAdministrator();
@@ -42,11 +42,12 @@ public class Program
         
             app.UseAuthentication();
             app.UseAuthorization();
-        
+            
             app.UseEndpoints(opt =>
             {
                 opt.MapControllers();
-                opt.MapGraphQL("/graphql");
+                //opt.MapGraphQL("/graphql");
+                opt.MapGraphQLHttp("/api/v2");
             });
             // app.MapControllers();
 

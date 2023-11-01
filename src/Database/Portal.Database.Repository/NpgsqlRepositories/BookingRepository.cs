@@ -35,9 +35,11 @@ public class BookingRepository: BaseRepository, IBookingRepository
             .ToListAsync();
     }
 
-    public Task<List<Booking>> GetBookingByZoneAsync(Guid zoneId)
+    public async Task<List<Booking>> GetBookingByZoneAsync(Guid zoneId)
     {
-        return _context.Bookings.Where(b => b.ZoneId == zoneId)
+        var zone = await _context.Zones.FirstAsync(z => z.Id == zoneId);
+        
+        return await _context.Bookings.Where(b => b.ZoneId == zone.Id)
             .OrderBy(b => b.Date)
             .Select(b => BookingConverter.ConvertDBToCoreModel(b))
             .ToListAsync();

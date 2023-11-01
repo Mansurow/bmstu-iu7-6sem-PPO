@@ -1,6 +1,6 @@
 ARG CONFIGURATION
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
-WORKDIR /app
+WORKDIR /backend
 EXPOSE 80
 EXPOSE 443
 
@@ -17,16 +17,16 @@ RUN echo ${CONFIGURATION}
 
 RUN dotnet restore 
 WORKDIR /src/Portal
-RUN dotnet build "Portal.csproj" -c "$CONFIGURATION" -o /app/build
+RUN dotnet build "Portal.csproj" -c "$CONFIGURATION" -o /backend/build
 
 ARG CONFIGURATION
 RUN echo ${CONFIGURATION}
 
 FROM build AS publish
-RUN dotnet publish "Portal.csproj" -c "$CONFIGURATION" -o /app/publish
+RUN dotnet publish "Portal.csproj" -c "$CONFIGURATION" -o /backend/publish
 
 FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
+WORKDIR /backend
+COPY --from=publish /backend/publish .
 ENV DOTNET_EnableDiagnostics=0
 ENTRYPOINT ["dotnet", "Portal.dll"]

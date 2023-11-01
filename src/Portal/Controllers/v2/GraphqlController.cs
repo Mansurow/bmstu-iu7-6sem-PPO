@@ -6,32 +6,37 @@ using Portal.Common.Dto;
 namespace Portal.Controllers.v2;
 
 [ApiController]
-[Route("/api/v2/")]
+[Route("/graphql")]
 public class GraphqlController: ControllerBase
 {
-    private readonly ILogger<GraphqlController> _logger;
-    private readonly IRequestExecutor _executor;
+    private readonly IRequestExecutor _documentExecuter;
+    private readonly ISchema _schema;
 
-    public GraphqlController(IRequestExecutor executor, 
-        ILogger<GraphqlController> logger)
+    public GraphqlController(IRequestExecutor documentExecuter, ISchema schema)
     {
-        _executor = executor;
-        _logger = logger;
+        _documentExecuter = documentExecuter;
+        _schema = schema;
     }
-
+    
     /*[HttpPost]
-    public async Task<IActionResult> PostAsync([FromBody] GraphQLRequest request)
+    public async Task<IActionResult> Post([FromBody] GraphQLQuery query)
     {
-        try
+        if (query == null) { throw new ArgumentNullException(nameof(query)); }
+        var inputs = query.Variables.ToInputs();
+        var executionOptions = new ExecutionOptions
         {
-            /*var result = await _executor.ExecuteAsync(request);
-            return Ok(result);#1#
-            return Ok();
-        }
-        catch (Exception e)
+            Schema = _schema,
+            Query = query.Query,
+            Inputs = inputs
+        };
+
+        var result = await _documentExecuter.ExecuteAsync(executionOptions).ConfigureAwait(false);
+
+        if (result.Errors?.Count > 0)
         {
-            Console.WriteLine(e);
-            return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse(e));
+            return BadRequest(result);
         }
+
+        return Ok(result);
     }*/
 }

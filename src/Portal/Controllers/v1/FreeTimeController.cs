@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Portal.Common.Core;
 using Portal.Common.Dto;
 using Portal.Services.BookingService;
+using Portal.Services.ZoneService.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Portal.Controllers.v1;
@@ -45,10 +46,17 @@ public class FreeTimeController: ControllerBase
         try
         {
             date ??= DateTime.Today.ToString();
-            
+
             var freeTime = await _bookingService.GetFreeTimeAsync(zoneId, DateOnly.Parse(date!));
 
             return Ok(freeTime);
+        }
+        catch (ZoneNotFoundException e)
+        {
+            return NotFound(new
+            {
+                message = e.Message
+            });
         }
         catch (Exception e)
         {

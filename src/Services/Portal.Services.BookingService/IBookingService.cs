@@ -66,6 +66,8 @@ namespace Portal.Services.BookingService
         /// <exception cref="BookingExistsException">Пользователь уже забронировал зону на указанный день</exception>
         /// <exception cref="BookingReversedException">Бронь уже существует на указанный день и время</exception>
         Task<Guid> AddBookingAsync(Guid userId, Guid zoneId, Guid packageId, DateOnly date, TimeOnly startTime, TimeOnly endTime);
+
+        Task ConfirmBooking(Booking booking);
         
         /// <summary>
         /// Изменить статус брони

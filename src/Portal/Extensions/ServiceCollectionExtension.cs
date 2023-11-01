@@ -9,6 +9,7 @@ using Portal.Common.Dto.Inventory;
 using Portal.Common.Dto.Package;
 using Portal.Common.Dto.User;
 using Portal.Common.Dto.Zone;
+using Portal.Graphql.Filters;
 using Portal.Graphql.Mutations;
 using Portal.Graphql.Queries;
 using Portal.Services.BookingService;
@@ -31,14 +32,14 @@ public static class ServiceCollectionExtension
     {
         services.Configure<BookingServiceConfiguration>(config.GetRequiredSection("BookingServiceConfiguration"));
         
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IBookingService, BookingService>();
-        services.AddScoped<IFeedbackService, FeedbackService>();
-        services.AddScoped<IOauthService, OauthService>();
-        services.AddScoped<IMenuService, MenuService>();
-        services.AddScoped<IZoneService, ZoneService>();
-        services.AddScoped<IInventoryService, InventoryService>();
-        services.AddScoped<IPackageService, PackageService>();
+        services.AddTransient<IUserService, UserService>();
+        services.AddTransient<IBookingService, BookingService>();
+        services.AddTransient<IFeedbackService, FeedbackService>();
+        services.AddTransient<IOauthService, OauthService>();
+        services.AddTransient<IMenuService, MenuService>();
+        services.AddTransient<IZoneService, ZoneService>();
+        services.AddTransient<IInventoryService, InventoryService>();
+        services.AddTransient<IPackageService, PackageService>();
     }
     
     public static void AddPortalSwaggerGen(this IServiceCollection services, IConfiguration config)
@@ -131,7 +132,8 @@ public static class ServiceCollectionExtension
             .AddMutationType(m =>
             {
                 m.Name("Mutation");
-            });
+            })
+            .AddErrorFilter<GraphQlErrorFilter>();
     }
     
     public static void AddPortalCors(this IServiceCollection services, string policyName)
