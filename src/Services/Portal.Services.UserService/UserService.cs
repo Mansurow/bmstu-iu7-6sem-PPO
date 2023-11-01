@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Portal.Common.Models;
-using Portal.Common.Models.Enums;
+using Portal.Common.Core;
+using Portal.Common.Enums;
 using Portal.Database.Core.Repositories;
 using Portal.Services.UserService.Exceptions;
 
@@ -67,6 +67,11 @@ public class UserService : IUserService
         {
             var admins = await _userRepository.GetAdmins();
 
+            /*foreach (var admin in admins)
+            {
+                await _userRepository.DeleteUserAsync(admin.Id);
+            }*/
+            
             if (admins.Any(admin => admin.Email == login))
             {
                 _logger.LogInformation("Administrator already has been created");

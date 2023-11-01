@@ -1,5 +1,5 @@
-﻿using Portal.Common.Models;
-using Portal.Common.Models.Enums;
+﻿using Portal.Common.Core;
+using Portal.Common.Enums;
 using Portal.Services.MenuService.Exceptions;
 
 namespace Portal.Services.MenuService;

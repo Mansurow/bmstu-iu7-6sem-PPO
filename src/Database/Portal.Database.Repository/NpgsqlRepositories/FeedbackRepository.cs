@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Portal.Common.Converter;
-using Portal.Common.Models;
+using Portal.Common.Core;
 using Portal.Database.Context;
 using Portal.Database.Core.Repositories;
 
@@ -20,7 +20,7 @@ public class FeedbackRepository: BaseRepository, IFeedbackRepository
         return _context.Feedbacks
             .Where(f => f.ZoneId == zoneId)
             .OrderBy(f => f.Date)
-            .Select(f => FeedbackConverter.ConvertDbModelToAppModel(f))
+            .Select(f => FeedbackConverter.ConvertDBToCoreModel(f))
             .ToListAsync();
     }
 
@@ -29,7 +29,7 @@ public class FeedbackRepository: BaseRepository, IFeedbackRepository
         return _context.Feedbacks
             .Where(f => f.UserId == userId)
             .OrderBy(f => f.Date)
-            .Select(f => FeedbackConverter.ConvertDbModelToAppModel(f))
+            .Select(f => FeedbackConverter.ConvertDBToCoreModel(f))
             .ToListAsync();
     }
 
@@ -37,7 +37,7 @@ public class FeedbackRepository: BaseRepository, IFeedbackRepository
     {
         return _context.Feedbacks
             .OrderBy(f => f.Date)
-            .Select(f => FeedbackConverter.ConvertDbModelToAppModel(f))
+            .Select(f => FeedbackConverter.ConvertDBToCoreModel(f))
             .ToListAsync();
     }
 
@@ -45,12 +45,12 @@ public class FeedbackRepository: BaseRepository, IFeedbackRepository
     {
         var feedback = await _context.Feedbacks.FirstAsync(f => f.Id == feedbackId);
 
-        return FeedbackConverter.ConvertDbModelToAppModel(feedback);
+        return FeedbackConverter.ConvertDBToCoreModel(feedback);
     }
 
     public async Task InsertFeedbackAsync(Feedback feedback)
     {
-        var feedbackDb = FeedbackConverter.ConvertAppModelToDbModel(feedback);
+        var feedbackDb = FeedbackConverter.ConvertCoreToDBModel(feedback);
         
         await _context.Feedbacks.AddAsync(feedbackDb);
         await _context.SaveChangesAsync();

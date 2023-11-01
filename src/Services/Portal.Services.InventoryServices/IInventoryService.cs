@@ -1,4 +1,4 @@
-﻿using Portal.Common.Models;
+﻿using Portal.Common.Core;
 using Portal.Services.InventoryServices.Exceptions;
 
 namespace Portal.Services.InventoryServices;

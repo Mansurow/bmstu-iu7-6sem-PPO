@@ -1,5 +1,9 @@
-﻿using Portal.Common.Models;
-using Portal.Database.Models;
+﻿using PackageCore = Portal.Common.Core.Package;
+using PackageDB = Portal.Database.Models.PackageDbModel;
+using PackageDto = Portal.Common.Dto.Package.Package;
+using ZoneCore = Portal.Common.Core.Zone;
+using ZoneDB = Portal.Database.Models.ZoneDbModel;
+using ZoneDto = Portal.Common.Dto.Zone.Zone;
 
 namespace Portal.Common.Converter;
 
@@ -13,16 +17,16 @@ public static class PackageConverter
     /// </summary>
     /// <param name="package">Модель базы данных</param>
     /// <returns>Модель бизнес логики</returns>
-    public static Package ConvertDbModelToAppModel(PackageDbModel package)
+    public static PackageCore ConvertDBToCoreModel(PackageDB package)
     {
-        return new Package(id: package.Id,
+        return new PackageCore(id: package.Id,
             name: package.Name,
             type: package.Type,
             price: package.Price,
             rentalTime: package.RentalTime,
             description: package.Description,
-            dishes: package.Dishes.Select(MenuConverter.ConvertDbModelToAppModel).ToList(),
-            zones: package.Zones.Select(ZoneConverter.ConvertDbModelToAppModelNoInclude).ToList());
+            dishes: package.Dishes.Select(MenuConverter.ConvertDBToCoreModel).ToList(),
+            zones: package.Zones.Select(ZoneConverter.ConvertDBToCoreModelNoInclude).ToList());
     }
     
     /// <summary>
@@ -30,16 +34,16 @@ public static class PackageConverter
     /// </summary>
     /// <param name="package">Модель базы данных</param>
     /// <returns>Модель бизнес логики</returns>
-    public static Package ConvertDbModelToAppModelNoInclude(PackageDbModel package)
+    public static PackageCore ConvertDBToCoreModelNoInclude(PackageDB package)
     {
-        return new Package(id: package.Id,
+        return new PackageCore(id: package.Id,
             name: package.Name,
             type: package.Type,
             price: package.Price,
             rentalTime: package.RentalTime,
             description: package.Description,
-            dishes: package.Dishes.Select(MenuConverter.ConvertDbModelToAppModel).ToList(),
-            zones: new List<Zone>());
+            dishes: package.Dishes.Select(MenuConverter.ConvertDBToCoreModel).ToList(),
+            zones: new List<ZoneCore>());
     }
     
     /// <summary>
@@ -47,15 +51,49 @@ public static class PackageConverter
     /// </summary>
     /// <param name="package">Модель бизнес логики</param>
     /// <returns>Модель базы данных </returns>
-    public static PackageDbModel ConvertAppModelToDbModel(Package package)
+    public static PackageDB ConvertCoreToDBModel(PackageCore package)
     {
-        return new PackageDbModel(id: package.Id,
+        return new PackageDB(id: package.Id,
             name: package.Name,
             type: package.Type,
             price: package.Price,
             rentalTime: package.RentalTime,
             description: package.Description,
-            dishes: package.Dishes.Select(MenuConverter.ConvertAppModelToDbModel).ToList(),
-            zones: package.Zones.Select(ZoneConverter.ConvertAppModelToDbModel).ToList());
+            dishes: package.Dishes.Select(MenuConverter.ConvertCoreToDBModel).ToList(),
+            zones: package.Zones.Select(ZoneConverter.ConvertCoreToDBModel).ToList());
+    }
+    
+    /// <summary>
+    /// Преобразовать из модели бизнес логики в модели DTO
+    /// </summary>
+    /// <param name="package">Модель бизнес логики</param>
+    /// <returns>Модель DTO</returns>
+    public static PackageDto ConvertCoreToDtoModel(PackageCore package)
+    {
+        return new PackageDto(id: package.Id,
+            name: package.Name,
+            type: package.Type,
+            price: package.Price,
+            rentalTime: package.RentalTime,
+            description: package.Description,
+            dishes: package.Dishes.Select(MenuConverter.ConvertCoreToDtoModel).ToList(),
+            zones: package.Zones.Select(ZoneConverter.ConvertCoreToDtoModel).ToList());
+    }
+    
+    /// <summary>
+    /// Преобразовать из модели DTO в модели бизнес логики
+    /// </summary>
+    /// <param name="package">Модель DTO</param>
+    /// <returns>Модель бизнес логики</returns>
+    public static PackageCore ConvertDtoToCoreModel(PackageDto package)
+    {
+        return new PackageCore(id: package.Id,
+            name: package.Name,
+            type: package.Type,
+            price: package.Price,
+            rentalTime: package.RentalTime,
+            description: package.Description,
+            dishes: package.Dishes.Select(MenuConverter.ConvertDtoToCoreModel).ToList(),
+            zones: package.Zones.Select(ZoneConverter.ConvertDtoToCoreModel).ToList());
     }
 }

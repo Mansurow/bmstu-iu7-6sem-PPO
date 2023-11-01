@@ -1,4 +1,4 @@
-﻿using Portal.Common.Models;
+﻿using Portal.Common.Core;
 using Portal.Services.OauthService.Exceptions;
 using Portal.Services.UserService.Exceptions;
 
@@ -27,4 +27,11 @@ public interface IOauthService
     /// <exception cref="IncorrectPasswordException">Пароль неверный</exception>
     /// <exception cref="UserLoginNotFoundException">Логин не найден</exception>
     Task<User> LogIn(string login, string password);
+
+    /// <summary>
+    /// Выдать токен
+    /// </summary>
+    /// <param name="user">Данные пользователя</param>
+    /// <returns>Токен JWT</returns>
+    public string GenerateJwt(User user);
 }

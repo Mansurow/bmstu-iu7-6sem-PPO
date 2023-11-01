@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Logging.Abstractions;
+﻿using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using Portal.Common.Core;
+using Portal.Common.Enums;
 using Xunit;
-using Portal.Common.Models;
-using Portal.Common.Models.Enums;
 using Portal.Database.Core.Repositories;
 using Portal.Services.FeedbackService;
 using Portal.Services.FeedbackService.Exceptions;

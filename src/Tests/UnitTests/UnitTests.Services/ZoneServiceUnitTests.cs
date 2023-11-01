@@ -1,13 +1,14 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using Portal.Common.Models;
-using Portal.Common.Models.Dto;
-using Portal.Common.Models.Enums;
+using Portal.Common.Core;
+using Portal.Common.Dto.Inventory;
+using Portal.Common.Enums;
 using Portal.Database.Core.Repositories;
 using Xunit;
 using Portal.Services.PackageService.Exceptions;
 using Portal.Services.ZoneService;
 using Portal.Services.ZoneService.Exceptions;
+using Inventory = Portal.Common.Core.Inventory;
 
 namespace UnitTests.Services;
 
@@ -369,9 +370,9 @@ public class ZoneServiceUnitTests
         
         var expectedZone = zones[2];
         var expectedCount = expectedZone.Inventories.Count + 1;
-        var inventory = new List<CreateInventoryDto>()
+        var inventory = new List<CreateInventory>()
         {
-            new CreateInventoryDto("new inventory", "description", "2020-10-12")
+            new CreateInventory("new inventory", "description", "2020-10-12")
         };
         
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))
@@ -421,9 +422,9 @@ public class ZoneServiceUnitTests
         zones[1].Inventories = CreateMockInventories(zones[1].Id);
         
         var expectedZoneId = Guid.NewGuid();
-        var inventory = new List<CreateInventoryDto>()
+        var inventory = new List<CreateInventory>()
             {
-                new CreateInventoryDto("new inventory", "description", "2020-10-12")
+                new CreateInventory("new inventory", "description", "2020-10-12")
             };
         
         _mockZoneRepository.Setup(s => s.GetZoneByIdAsync(It.IsAny<Guid>()))

@@ -1,5 +1,6 @@
 ﻿using IntegrationalTests.Services.AccessObject;
 using Microsoft.Extensions.Logging.Abstractions;
+using Portal.Common.Core;
 using Portal.Common.Models;
 using Portal.Services.MenuService;
 using Portal.Services.MenuService.Exceptions;

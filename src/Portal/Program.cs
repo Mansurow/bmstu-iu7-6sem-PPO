@@ -1,4 +1,5 @@
-
+using HotChocolate.AspNetCore;
+using HotChocolate.AspNetCore.Playground;
 using Portal.Extensions;
 using Serilog;
 
@@ -25,6 +26,12 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
             
+            app.UsePlayground(new PlaygroundOptions
+            {
+                QueryPath = "/api/v2",
+                Path = "/graphql"
+            });
+            
             await app.MigrateDatabaseAsync();
             await app.AddPortalAdministrator();
             
@@ -35,10 +42,12 @@ public class Program
         
             app.UseAuthentication();
             app.UseAuthorization();
-        
+            
             app.UseEndpoints(opt =>
             {
                 opt.MapControllers();
+                //opt.MapGraphQL("/graphql");
+                opt.MapGraphQLHttp("/api/v2");
             });
             // app.MapControllers();
 
@@ -53,7 +62,5 @@ public class Program
             Log.Information("Portal Service is stopping...");
             await Log.CloseAndFlushAsync();
         }
-
-        
     }
 }

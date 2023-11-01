@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Portal.Common.Models;
+using Portal.Common.Core;
 using Portal.Services.MenuService.Exceptions;
-using Portal.Common.Models.Enums;
+using Portal.Common.Enums;
 using Portal.Database.Core.Repositories;
-
 
 namespace Portal.Services.MenuService;
 

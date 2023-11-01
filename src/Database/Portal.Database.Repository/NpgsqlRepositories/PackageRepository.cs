@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Portal.Common.Converter;
-using Portal.Common.Models;
+using Portal.Common.Core;
 using Portal.Database.Context;
 using Portal.Database.Core.Repositories;
 using Portal.Database.Models;
@@ -22,7 +22,7 @@ public class PackageRepository: BaseRepository, IPackageRepository
             .Include(p => p.Zones)
             .Include(p => p.Dishes)
             .AsNoTracking()
-            .Select(p => PackageConverter.ConvertDbModelToAppModel(p))
+            .Select(p => PackageConverter.ConvertDBToCoreModel(p))
             .ToListAsync();
     }
 
@@ -34,7 +34,7 @@ public class PackageRepository: BaseRepository, IPackageRepository
             .AsNoTracking()
             .FirstAsync(p => p.Id == packageId);
 
-        return PackageConverter.ConvertDbModelToAppModel(package);
+        return PackageConverter.ConvertDBToCoreModel(package);
     }
 
     public async Task InsertPackageAsync(Package package)
@@ -73,7 +73,7 @@ public class PackageRepository: BaseRepository, IPackageRepository
         packageDb.Type = package.Type;
         packageDb.RentalTime = package.RentalTime;
         packageDb.Price = package.Price;
-        packageDb.Dishes = package.Dishes.Select(MenuConverter.ConvertAppModelToDbModel).ToList();
+        packageDb.Dishes = package.Dishes.Select(MenuConverter.ConvertCoreToDBModel).ToList();
         // packageDb.Zones = package.Zones.Select(ZoneConverter.ConvertAppModelToDbModel).ToList();
         
         await _context.SaveChangesAsync();

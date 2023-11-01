@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Portal.Common.Converter;
-using Portal.Common.Models;
+using Portal.Common.Core;
 using Portal.Database.Context;
 using Portal.Database.Core.Repositories;
 using Portal.Database.Models;
@@ -22,7 +22,7 @@ public class ZoneRepository: BaseRepository, IZoneRepository
             .Include(z => z.Inventories)
             .Include(z => z.Packages)
             .AsNoTracking()
-            .Select(z => ZoneConverter.ConvertDbModelToAppModel(z))
+            .Select(z => ZoneConverter.ConvertDBToCoreModel(z))
             .ToListAsync();
     }
 
@@ -34,7 +34,7 @@ public class ZoneRepository: BaseRepository, IZoneRepository
             .AsNoTracking()
             .FirstAsync(z => z.Id == zoneId);
 
-        return ZoneConverter.ConvertDbModelToAppModel(zone);
+        return ZoneConverter.ConvertDBToCoreModel(zone);
     }
 
     public async Task<Zone> GetZoneByNameAsync(string name)
@@ -42,12 +42,12 @@ public class ZoneRepository: BaseRepository, IZoneRepository
         var zone = await _context.Zones
             .FirstAsync(z => string.Equals(z.Name, name, StringComparison.CurrentCultureIgnoreCase));
 
-        return ZoneConverter.ConvertDbModelToAppModel(zone);
+        return ZoneConverter.ConvertDBToCoreModel(zone);
     }
 
     public async Task InsertZoneAsync(Zone zone)
     {
-        var zoneDb = ZoneConverter.ConvertAppModelToDbModel(zone);
+        var zoneDb = ZoneConverter.ConvertCoreToDBModel(zone);
 
         await _context.Zones.AddAsync(zoneDb);
         await _context.SaveChangesAsync();
@@ -65,7 +65,7 @@ public class ZoneRepository: BaseRepository, IZoneRepository
         zoneDb.Limit = zone.Limit;
         zoneDb.Address = zone.Address;
         zoneDb.Size = zone.Size;
-        zoneDb.Inventories = zone.Inventories.Select(InventoryConverter.ConvertAppModelToDbModel).ToList();
+        zoneDb.Inventories = zone.Inventories.Select(InventoryConverter.ConvertCoreToDBModel).ToList();
         // zoneDb.Packages = zone.Packages.Select(PackageConverter.ConvertAppModelToDbModel).ToList();
 
         var packages = new List<PackageDbModel>();

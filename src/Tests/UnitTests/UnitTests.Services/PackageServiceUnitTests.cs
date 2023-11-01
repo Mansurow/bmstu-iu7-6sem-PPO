@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using Portal.Common.Models;
-using Portal.Common.Models.Enums;
+using Portal.Common.Core;
+using Portal.Common.Enums;
 using Portal.Database.Core.Repositories;
 using Portal.Services.PackageService;
 using Portal.Services.PackageService.Exceptions;

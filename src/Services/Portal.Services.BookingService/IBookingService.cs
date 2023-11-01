@@ -1,5 +1,5 @@
-﻿using Portal.Common.Models;
-using Portal.Common.Models.Enums;
+﻿using Portal.Common.Core;
+using Portal.Common.Enums;
 using Portal.Services.BookingService.Exceptions;
 using Portal.Services.PackageService.Exceptions;
 using Portal.Services.ZoneService.Exceptions;
@@ -40,7 +40,7 @@ namespace Portal.Services.BookingService
         /// <param name="zoneId">Идентификатор зоны</param>
         /// <param name="date">Дата бронирования</param>
         /// <returns>Список свободного времени</returns>
-        Task<List<FreeTime>> GetFreeTimeAsync(Guid zoneId, DateOnly date);
+        Task<List<FreeTime>> GetFreeTimeAsync(Guid zoneId, DateOnly? date);
         
         /// <summary>
         /// Получить бронь зоны
@@ -66,6 +66,8 @@ namespace Portal.Services.BookingService
         /// <exception cref="BookingExistsException">Пользователь уже забронировал зону на указанный день</exception>
         /// <exception cref="BookingReversedException">Бронь уже существует на указанный день и время</exception>
         Task<Guid> AddBookingAsync(Guid userId, Guid zoneId, Guid packageId, DateOnly date, TimeOnly startTime, TimeOnly endTime);
+
+        Task ConfirmBooking(Booking booking);
         
         /// <summary>
         /// Изменить статус брони

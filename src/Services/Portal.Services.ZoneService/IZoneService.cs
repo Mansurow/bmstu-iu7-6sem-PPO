@@ -1,6 +1,7 @@
-﻿using Portal.Common.Models;
-using Portal.Common.Models.Dto;
+﻿using Portal.Common.Core;
+using Portal.Common.Dto.Inventory;
 using Portal.Services.ZoneService.Exceptions;
+using Inventory = Portal.Common.Core.Inventory;
 
 namespace Portal.Services.ZoneService;
 
@@ -73,7 +74,7 @@ public interface IZoneService
     /// <param name="inventories">Данные инвентаря</param>
     /// <exception cref="ZoneNotFoundException">Зона не найдена</exception>
     /// <exception cref="ZoneUpdateException">При обновлении зоны</exception>
-    Task AddInventoryAsync(Guid zoneId, List<CreateInventoryDto> inventories);
+    Task AddInventoryAsync(Guid zoneId, List<CreateInventory> inventories);
 
     /// <summary>
     /// Добавить пакет

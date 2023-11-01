@@ -1,4 +1,4 @@
-﻿using Portal.Common.Models;
+﻿using Portal.Common.Core;
 
 namespace Portal.Database.Core.Repositories;
 

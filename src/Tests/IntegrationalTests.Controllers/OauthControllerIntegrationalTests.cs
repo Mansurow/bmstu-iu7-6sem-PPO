@@ -9,9 +9,9 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 using Portal;
 using Portal.Common.Converter;
-using Portal.Common.Models;
-using Portal.Common.Models.Dto;
-using Portal.Common.Models.Enums;
+using Portal.Common.Dto;
+using Portal.Common.Dto.User;
+using Portal.Common.Enums;
 using Portal.Services.OauthService;
 using Xunit;
 
@@ -23,7 +23,7 @@ public class OauthControllerIntegrationalTests: IDisposable
     
     private PortalAccessObject _accessObject = new();
 
-    const string PathAuth = "api/v1/oauth";
+    const string PathAuth = "api/v1/users/";
     const string DefaultToken = "token";
     const string AuthorizationHeader = "Authorization";
     const string AuthorizationScheme = "Bearer";
@@ -41,19 +41,19 @@ public class OauthControllerIntegrationalTests: IDisposable
     {
         // Arrange
         var users = _accessObject.CreateMockUsers();
-        var expectedUsers = users.Select(UserConverter.ConvertAppModelToUserDto).ToList();
+        var expectedUsers = users.Select(UserConverter.ConvertCoreToDtoModel).ToList();
         await _accessObject.InsertManyUsers(users);
         
         var webHost = CreateFakeWebHost();
         var client = webHost.CreateClient();
         
         // Act
-        var content = JsonConvert.SerializeObject(new CreateUserDto("Сидоров", "Иван", "Александрович", 
+        var content = JsonConvert.SerializeObject(new CreateUser("Сидоров", "Иван", "Александрович", 
             new DateOnly(2002, 08, 12), Gender.Male, "new-email@gmail.com","89990099902", "password123"));
 
         var httContent = JsonContent.Create(content);
         
-        var response = await client.PostAsync(PathAuth + "/signup", httContent);
+        var response = await client.PostAsync(PathAuth, httContent);
         var stringResponse = await response.Content.ReadAsStringAsync();
         var data = JsonConvert.DeserializeObject<AuthorizationResponse>(stringResponse);
         
@@ -67,21 +67,19 @@ public class OauthControllerIntegrationalTests: IDisposable
     {
         // Arrange
         var users = _accessObject.CreateMockUsers();
-        var expectedUsers = users.Select(UserConverter.ConvertAppModelToUserDto).ToList();
+        var expectedUsers = users.Select(UserConverter.ConvertCoreToDtoModel).ToList();
         await _accessObject.InsertManyUsers(users);
         
         var webHost = CreateFakeWebHost();
         var client = webHost.CreateClient();
         
         // Act
-        var httContent = JsonContent.Create(new LoginModel("user1", "password123"));
-        
-        var response = await client.PostAsync(PathAuth + "/signin", httContent);
-        var stringResponse = await response.Content.ReadAsStringAsync();
-        var data = JsonConvert.DeserializeObject<AuthorizationResponse>(stringResponse);
+        var responseAuth = await client.PostAsync(PathAuth + "user1&password123", null);
+        var stringResponseAuth = await responseAuth.Content.ReadAsStringAsync();
+        var data = JsonConvert.DeserializeObject<AuthorizationResponse>(stringResponseAuth);
         
         // Assert
-        Assert.Equal(StatusCodes.Status200OK, (int)response.StatusCode);
+        Assert.Equal(StatusCodes.Status200OK, (int)responseAuth.StatusCode);
     }
 
     [Fact] 
@@ -89,21 +87,19 @@ public class OauthControllerIntegrationalTests: IDisposable
     {
         // Arrange
         var users = _accessObject.CreateMockUsers();
-        var expectedUsers = users.Select(UserConverter.ConvertAppModelToUserDto).ToList();
+        var expectedUsers = users.Select(UserConverter.ConvertCoreToDtoModel).ToList();
         await _accessObject.InsertManyUsers(users);
         
         var webHost = CreateFakeWebHost();
         var client = webHost.CreateClient();
         
         // Act
-        var httContent = JsonContent.Create(new LoginModel("user1111", "password123"));
-        
-        var response = await client.PostAsync(PathAuth + "/signin", httContent);
-        var stringResponse = await response.Content.ReadAsStringAsync();
-        var data = JsonConvert.DeserializeObject<AuthorizationResponse>(stringResponse);
+        var responseAuth = await client.PostAsync(PathAuth + "user&password123", null);
+        var stringResponseAuth = await responseAuth.Content.ReadAsStringAsync();
+        var data = JsonConvert.DeserializeObject<AuthorizationResponse>(stringResponseAuth);
         
         // Assert
-        Assert.Equal(StatusCodes.Status401Unauthorized, (int)response.StatusCode);
+        Assert.Equal(StatusCodes.Status401Unauthorized, (int)responseAuth.StatusCode);
     }
     
     [Fact] 
@@ -111,21 +107,19 @@ public class OauthControllerIntegrationalTests: IDisposable
     {
         // Arrange
         var users = _accessObject.CreateMockUsers();
-        var expectedUsers = users.Select(UserConverter.ConvertAppModelToUserDto).ToList();
+        var expectedUsers = users.Select(UserConverter.ConvertCoreToDtoModel).ToList();
         await _accessObject.InsertManyUsers(users);
         
         var webHost = CreateFakeWebHost();
         var client = webHost.CreateClient();
         
         // Act
-        var httContent = JsonContent.Create(new LoginModel("user1", "password123111"));
-        
-        var response = await client.PostAsync(PathAuth + "/signin", httContent);
-        var stringResponse = await response.Content.ReadAsStringAsync();
-        var data = JsonConvert.DeserializeObject<AuthorizationResponse>(stringResponse);
+        var responseAuth = await client.PostAsync(PathAuth + "user1&password", null);
+        var stringResponseAuth = await responseAuth.Content.ReadAsStringAsync();
+        var data = JsonConvert.DeserializeObject<AuthorizationResponse>(stringResponseAuth);
         
         // Assert
-        Assert.Equal(StatusCodes.Status401Unauthorized, (int)response.StatusCode);
+        Assert.Equal(StatusCodes.Status401Unauthorized, (int)responseAuth.StatusCode);
     }
     
     private WebApplicationFactory<Program> CreateFakeWebHost()

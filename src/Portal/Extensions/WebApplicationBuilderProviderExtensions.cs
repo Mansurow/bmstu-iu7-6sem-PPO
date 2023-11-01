@@ -32,8 +32,8 @@ public static class WebApplicationBuilderProviderExtensions
         serviceCollection.AddPortalCors(policyName);
         serviceCollection.AddPortalJwtAuthentication(config);
         serviceCollection.AddPortalSwaggerGen(config);
+        serviceCollection.AddPortalGraphql(config);
         
-        // TODO: Добавить conneсt на каждую роль - 3 конекта в общем
         serviceCollection.AddDbContext<PortalDbContext>(
             opt => opt.UseNpgsql(config.GetConnectionString("DefaultConnection")),
             ServiceLifetime.Transient,

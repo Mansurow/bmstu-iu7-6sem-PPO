@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Portal.Common.Converter;
-using Portal.Common.Models;
-using Portal.Common.Models.Enums;
+using Portal.Common.Core;
+using Portal.Common.Enums;
 using Portal.Database.Context;
 using Portal.Database.Core.Repositories;
 
@@ -23,7 +23,7 @@ public class BookingRepository: BaseRepository, IBookingRepository
     {
         return _context.Bookings
             .OrderBy(b => b.Date)
-            .Select(b => BookingConverter.ConvertDbModelToAppModel(b))
+            .Select(b => BookingConverter.ConvertDBToCoreModel(b))
             .ToListAsync();
     }
 
@@ -31,15 +31,17 @@ public class BookingRepository: BaseRepository, IBookingRepository
     {
         return _context.Bookings.Where(b => b.UserId == userId)
             .OrderBy(b => b.Date)
-            .Select(b => BookingConverter.ConvertDbModelToAppModel(b))
+            .Select(b => BookingConverter.ConvertDBToCoreModel(b))
             .ToListAsync();
     }
 
-    public Task<List<Booking>> GetBookingByZoneAsync(Guid zoneId)
+    public async Task<List<Booking>> GetBookingByZoneAsync(Guid zoneId)
     {
-        return _context.Bookings.Where(b => b.ZoneId == zoneId)
+        var zone = await _context.Zones.FirstAsync(z => z.Id == zoneId);
+        
+        return await _context.Bookings.Where(b => b.ZoneId == zone.Id)
             .OrderBy(b => b.Date)
-            .Select(b => BookingConverter.ConvertDbModelToAppModel(b))
+            .Select(b => BookingConverter.ConvertDBToCoreModel(b))
             .ToListAsync();
     }
 
@@ -47,7 +49,7 @@ public class BookingRepository: BaseRepository, IBookingRepository
     {
         return _context.Bookings.Where(b => b.UserId == userId && b.ZoneId == zoneId)
             .OrderBy(b => b.Date)
-            .Select(b => BookingConverter.ConvertDbModelToAppModel(b))
+            .Select(b => BookingConverter.ConvertDBToCoreModel(b))
             .ToListAsync();
     }
     
@@ -55,12 +57,12 @@ public class BookingRepository: BaseRepository, IBookingRepository
     {
         var booking = await _context.Bookings.FirstAsync(b => b.Id == bookingId);
 
-        return BookingConverter.ConvertDbModelToAppModel(booking);
+        return BookingConverter.ConvertDBToCoreModel(booking);
     }
 
     public async Task InsertBookingAsync(Booking createBooking) 
     {
-        var booking = BookingConverter.ConvertAppModelToDbModel(createBooking);
+        var booking = BookingConverter.ConvertCoreToDBModel(createBooking);
         await _context.Bookings.AddAsync(booking);
         await _context.SaveChangesAsync();
     }

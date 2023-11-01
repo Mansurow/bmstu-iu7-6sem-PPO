@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
-using Portal.Common.Models;
-using Portal.Common.Models.Enums;
+using Portal.Common.Core;
+using Portal.Common.Enums;
 using Portal.Database.Context;
 using Portal.Database.Core.Repositories;
 using Portal.Database.Repositories.NpgsqlRepositories;

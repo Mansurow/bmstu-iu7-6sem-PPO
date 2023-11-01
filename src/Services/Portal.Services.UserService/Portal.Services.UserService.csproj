@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Database\Portal.Database.Core\Portal.Database.Core.csproj" />
-    <ProjectReference Include="..\..\Database\Portal.Database.Core\Portal.Database.Core\Portal.Database.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
