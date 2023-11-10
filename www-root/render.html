@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Portal</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/10.0.0/markdown-it.min.js"></script>
+    </head>
+    <body>
+        <div id="markdown"></div>
+        <script>
+            let show = (data) => {
+                let md = new markdownit();
+                let result = md.render(data);
+                document.getElementById('markdown').innerHTML = result;
+            };
+
+            fetch('./README.md')
+            .then(response => response.text())
+            .then(data => show(data))
+            .catch(error => console.log(error))
+        </script>
+    </body>
+</html>

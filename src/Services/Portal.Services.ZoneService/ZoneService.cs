@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 using Portal.Common.Core;
 using Portal.Common.Dto.Inventory;
 using Portal.Database.Core.Repositories;
@@ -45,6 +46,8 @@ public class ZoneService: IZoneService
         }
         catch (InvalidOperationException e)
         {
+            if (e.InnerException is NpgsqlException)
+                throw e.InnerException;
             _logger.LogError(e, "Zone with id: {ZoneId} not found", zoneId);
             throw new ZoneNotFoundException($"Zone with id: {zoneId} not found");
         }
