@@ -14,4 +14,8 @@
     <ProjectReference Include="..\Portal.Services.PackageService\Portal.Services.PackageService.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Npgsql" Version="7.0.4" />
+  </ItemGroup>
+
 </Project>

@@ -39,4 +39,5 @@ msbuild.wrn
 
 # Docker volumes
 data/
+ssl/
 

@@ -30,7 +30,7 @@ services:
     volumes:
       - ../data/postgres-master-2/:/var/lib/postgresql/data
     depends_on:
-      - postgres-master-1  
+      - postgres-master-1
     networks:
       - postgres
     ports:
@@ -67,7 +67,6 @@ services:
     volumes:
       - ./b-1/logs:/backend/logs/
     ports:
-      - 443:443
       - 8080:80
     depends_on:
       - postgres-master-1   
@@ -131,9 +130,11 @@ services:
       - ../www-root/render.html:/usr/share/nginx/apache/render.html
       - ../www-root/apache:/usr/share/nginx/apache/
       - ../nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ../nginx/ssl:/etc/nginx/ssl
       - ../nginx/logs:/var/log/nginx
     ports:
       - 80:80
+      - 443:443
 
 networks:
   postgres:
